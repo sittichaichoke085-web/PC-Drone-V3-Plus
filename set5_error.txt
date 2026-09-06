@@ -1,0 +1,121 @@
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+
+> Task :app:compileDebugKotlin FAILED
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:3:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:4:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:5:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:6:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:7:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:8:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:9:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:10:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:11:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:12:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:13:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:14:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:15:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:16:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:17:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:18:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:19:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:20:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:21:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:22:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:23:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:24:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:25:17 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:33:8 Unresolved reference 'ExperimentalMaterial3Api'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:33:8 Annotation argument must be a compile-time constant.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:34:2 Unresolved reference 'Composable'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:37:21 Unresolved reference 'remember'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:38:9 Unresolved reference 'mutableStateListOf'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:47:5 Unresolved reference 'Scaffold'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:49:13 Unresolved reference 'TopAppBar'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:51:30 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:56:13 Unresolved reference 'FloatingActionButton'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:67:26 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:70:9 Cannot infer type for value parameter 'innerPadding'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:72:9 Unresolved reference 'Column'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:73:24 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:78:22 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:80:25 Unresolved reference 'MaterialTheme'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:81:28 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:82:32 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:83:30 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:84:30 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:88:22 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:90:25 Unresolved reference 'MaterialTheme'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:91:28 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:92:32 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:93:30 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:94:29 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:98:13 Unresolved reference 'Spacer'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:99:28 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:99:46 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:102:13 Unresolved reference 'LazyColumn'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:103:34 Unresolved reference 'PaddingValues'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:103:51 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:104:39 Unresolved reference 'Arrangement'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:104:63 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:105:28 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:108:17 Unresolved reference 'items'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:108:36 Cannot infer type for value parameter 'customer'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:110:21 Unresolved reference 'Card'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:111:36 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:114:25 Unresolved reference 'Column'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:115:40 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:115:60 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:118:38 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:119:49 Unresolved reference 'name'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:120:41 Unresolved reference 'MaterialTheme'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:123:29 Unresolved reference 'Spacer'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:124:44 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:124:62 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:127:38 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:128:57 Unresolved reference 'phone'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:131:38 Unresolved reference 'compose'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:132:61 Unresolved reference 'area'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:135:29 Unresolved reference 'Spacer'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:136:44 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:136:63 Unresolved reference 'dp'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:139:29 Unresolved reference 'Row'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:140:44 Unresolved reference 'Modifier'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:141:57 Unresolved reference 'Arrangement'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:144:33 Unresolved reference 'Button'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:146:51 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:146:51 'fun <T> MutableList<T>.remove(index: Int): T' is deprecated. Use removeAt(index) instead.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/ui/customers/CustomersScreen.kt:149:46 Unresolved reference 'compose'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 2s
+17 actionable tasks: 1 executed, 16 up-to-date
