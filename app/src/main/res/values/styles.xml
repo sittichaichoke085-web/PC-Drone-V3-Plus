@@ -4,9 +4,10 @@
     <style name="Theme.PCDrone" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">#075B24</item>
-        <item name="android:navigationBarColor">#000000</item>
-        <item name="android:colorAccent">#0B7A30</item>
+        <item name="android:statusBarColor">@color/pc_green_dark</item>
+        <item name="android:navigationBarColor">@color/pc_black</item>
+        <item name="android:windowBackground">@color/pc_white</item>
+        <item name="android:colorAccent">@color/pc_green</item>
     </style>
 
 </resources>

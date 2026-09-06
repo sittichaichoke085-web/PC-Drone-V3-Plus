@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.pcdrone.v3plus.app-debug-4:/values_values.arsc.flat",
+            "outputFile": "com.pcdrone.v3plus.app-debug-6:/values_values.arsc.flat",
             "map": [
                 {
                     "source": "/workspaces/PC-Drone-V3-Plus/app/src/main/res/values/styles.xml",
@@ -9,17 +9,51 @@
                         "startLines": "3",
                         "startColumns": "4",
                         "startOffsets": "56",
-                        "endLines": "9",
+                        "endLines": "10",
                         "endColumns": "12",
-                        "endOffsets": "446"
+                        "endOffsets": "544"
                     },
                     "to": {
+                        "startLines": "8",
+                        "startColumns": "4",
+                        "startOffsets": "335",
+                        "endLines": "15",
+                        "endColumns": "12",
+                        "endOffsets": "823"
+                    }
+                },
+                {
+                    "source": "/workspaces/PC-Drone-V3-Plus/app/src/main/res/values/strings.xml",
+                    "from": {
                         "startLines": "2",
                         "startColumns": "4",
                         "startOffsets": "55",
-                        "endLines": "8",
-                        "endColumns": "12",
-                        "endOffsets": "445"
+                        "endColumns": "53",
+                        "endOffsets": "104"
+                    },
+                    "to": {
+                        "startLines": "7",
+                        "startColumns": "4",
+                        "startOffsets": "281",
+                        "endColumns": "53",
+                        "endOffsets": "330"
+                    }
+                },
+                {
+                    "source": "/workspaces/PC-Drone-V3-Plus/app/src/main/res/values/colors.xml",
+                    "from": {
+                        "startLines": "5,3,2,4,6",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "195,103,55,146,238",
+                        "endColumns": "42,42,47,48,42",
+                        "endOffsets": "233,141,98,190,276"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "55,98,141,189,238",
+                        "endColumns": "42,42,47,48,42",
+                        "endOffsets": "93,136,184,233,276"
                     }
                 }
             ]

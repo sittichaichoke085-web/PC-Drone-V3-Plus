@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pc_green_dark">#075B24</color>
+    <color name="pc_green">#0B7A30</color>
+    <color name="pc_green_light">#DDF4E2</color>
+    <color name="pc_black">#111111</color>
+    <color name="pc_white">#FFFFFF</color>
+</resources>

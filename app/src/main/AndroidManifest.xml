@@ -3,7 +3,7 @@
 
     <application
         android:allowBackup="true"
-        android:label="PC Drone V3 Plus"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.PCDrone">
 

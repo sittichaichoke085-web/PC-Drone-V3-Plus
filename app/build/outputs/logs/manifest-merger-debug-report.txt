@@ -4,6 +4,11 @@ ADDED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:2:1-23:
 INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:2:1-23:12
 INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:2:1-23:12
 INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:2:1-23:12
+MERGED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:17:1-31:12
+MERGED from [androidx.annotation:annotation-experimental:1.5.0] /home/codespace/.gradle/caches/8.13/transforms/8e1ac809eaef44e13a288d1c1158104d/transformed/annotation-experimental-1.5.0/AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/codespace/.gradle/caches/8.13/transforms/95cacb2fb7847dab9beb4ea6f30e2593/transformed/core-runtime-2.2.0/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite-framework-android:2.6.2] /home/codespace/.gradle/caches/8.13/transforms/fb0064fe1ca2cb13696944e7b83893b2/transformed/sqlite-framework/AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite-android:2.6.2] /home/codespace/.gradle/caches/8.13/transforms/5b5a11955d35980cec9a5580ba4667ab/transformed/sqlite/AndroidManifest.xml:17:1-22:12
 	package
 		INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml
 	android:versionName
@@ -15,6 +20,8 @@ INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:2:1-
 application
 ADDED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:4:5-21:19
 INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:4:5-21:19
+MERGED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:23:5-29:19
 	android:extractNativeLibs
 		INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml
 	android:supportsRtl
@@ -45,7 +52,27 @@ uses-sdk
 INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml
 INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml
+MERGED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:21:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.5.0] /home/codespace/.gradle/caches/8.13/transforms/8e1ac809eaef44e13a288d1c1158104d/transformed/annotation-experimental-1.5.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.5.0] /home/codespace/.gradle/caches/8.13/transforms/8e1ac809eaef44e13a288d1c1158104d/transformed/annotation-experimental-1.5.0/AndroidManifest.xml:5:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/codespace/.gradle/caches/8.13/transforms/95cacb2fb7847dab9beb4ea6f30e2593/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] /home/codespace/.gradle/caches/8.13/transforms/95cacb2fb7847dab9beb4ea6f30e2593/transformed/core-runtime-2.2.0/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework-android:2.6.2] /home/codespace/.gradle/caches/8.13/transforms/fb0064fe1ca2cb13696944e7b83893b2/transformed/sqlite-framework/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework-android:2.6.2] /home/codespace/.gradle/caches/8.13/transforms/fb0064fe1ca2cb13696944e7b83893b2/transformed/sqlite-framework/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-android:2.6.2] /home/codespace/.gradle/caches/8.13/transforms/5b5a11955d35980cec9a5580ba4667ab/transformed/sqlite/AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-android:2.6.2] /home/codespace/.gradle/caches/8.13/transforms/5b5a11955d35980cec9a5580ba4667ab/transformed/sqlite/AndroidManifest.xml:20:5-44
 	android:targetSdkVersion
 		INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
 		INJECTED from /workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml
+service#androidx.room.MultiInstanceInvalidationService
+ADDED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:24:9-28:63
+	android:exported
+		ADDED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:28:13-60
+	android:directBootAware
+		ADDED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:26:13-43
+	android:name
+		ADDED from [androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:25:13-74

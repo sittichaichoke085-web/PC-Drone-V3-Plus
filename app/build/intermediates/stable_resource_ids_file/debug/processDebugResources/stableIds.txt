@@ -1,1 +1,7 @@
-com.pcdrone.v3plus:style/Theme.PCDrone = 0x7f010000
+com.pcdrone.v3plus:style/Theme.PCDrone = 0x7f030000
+com.pcdrone.v3plus:color/pc_green_light = 0x7f010003
+com.pcdrone.v3plus:color/pc_green_dark = 0x7f010002
+com.pcdrone.v3plus:color/pc_green = 0x7f010001
+com.pcdrone.v3plus:color/pc_white = 0x7f010004
+com.pcdrone.v3plus:string/app_name = 0x7f020000
+com.pcdrone.v3plus:color/pc_black = 0x7f010000
