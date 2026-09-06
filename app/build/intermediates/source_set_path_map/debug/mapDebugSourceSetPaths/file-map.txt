@@ -1,0 +1,8 @@
+com.pcdrone.v3plus.app-pngs-0 /workspaces/PC-Drone-V3-Plus/app/build/generated/res/pngs/debug
+com.pcdrone.v3plus.app-resValues-1 /workspaces/PC-Drone-V3-Plus/app/build/generated/res/resValues/debug
+com.pcdrone.v3plus.app-updated_navigation_xml-2 /workspaces/PC-Drone-V3-Plus/app/build/generated/updated_navigation_xml/debug
+com.pcdrone.v3plus.app-packageDebugResources-3 /workspaces/PC-Drone-V3-Plus/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.pcdrone.v3plus.app-packageDebugResources-4 /workspaces/PC-Drone-V3-Plus/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.pcdrone.v3plus.app-debug-5 /workspaces/PC-Drone-V3-Plus/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.pcdrone.v3plus.app-debug-6 /workspaces/PC-Drone-V3-Plus/app/src/debug/res
+com.pcdrone.v3plus.app-main-7 /workspaces/PC-Drone-V3-Plus/app/src/main/res
