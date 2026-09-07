@@ -5198,6 +5198,29 @@ class MainActivity : Activity() {
 
             pendingIntent.cancel()
         }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
     }
 
 
@@ -5906,6 +5929,37 @@ class MainActivity : Activity() {
                 )?.toList()
                     ?: emptyList()
 
+            val appointmentRecords =
+                prefs.getStringSet(
+                    "job_appointments",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            val appointmentMap =
+                appointmentRecords
+                    .mapNotNull { appointmentRecord ->
+
+                        val appointmentParts =
+                            appointmentRecord.split(
+                                "|||",
+                                ignoreCase = false,
+                                limit = 3
+                            )
+
+                        val appointmentJobId =
+                            appointmentParts
+                                .getOrNull(0)
+                                ?.toLongOrNull()
+
+                        if (appointmentJobId != null) {
+                            appointmentJobId to appointmentParts
+                        } else {
+                            null
+                        }
+                    }
+                    .toMap()
+
             val sortedRecords =
                 records.sortedByDescending { record ->
 
@@ -5976,6 +6030,63 @@ class MainActivity : Activity() {
                 val note =
                     parts.getOrNull(8)
                         ?: ""
+
+                val appointmentParts =
+                    appointmentMap[time]
+
+                val appointmentMillis =
+                    appointmentParts
+                        ?.getOrNull(1)
+                        ?.toLongOrNull()
+                        ?: 0L
+
+                val reminderEnabled =
+                    appointmentParts
+                        ?.getOrNull(2)
+                        ?.toBooleanStrictOrNull()
+                        ?: false
+
+                val appointmentText =
+                    if (appointmentMillis > 0L) {
+
+                        val appointmentCalendar =
+                            java.util.Calendar.getInstance(
+                                java.util.TimeZone.getTimeZone(
+                                    "Asia/Bangkok"
+                                )
+                            ).apply {
+                                timeInMillis =
+                                    appointmentMillis
+                            }
+
+                        "%02d/%02d/%04d %02d:%02d น.".format(
+                            appointmentCalendar.get(
+                                java.util.Calendar.DAY_OF_MONTH
+                            ),
+                            appointmentCalendar.get(
+                                java.util.Calendar.MONTH
+                            ) + 1,
+                            appointmentCalendar.get(
+                                java.util.Calendar.YEAR
+                            ) + 543,
+                            appointmentCalendar.get(
+                                java.util.Calendar.HOUR_OF_DAY
+                            ),
+                            appointmentCalendar.get(
+                                java.util.Calendar.MINUTE
+                            )
+                        )
+
+                    } else {
+                        "ไม่มีข้อมูลนัดหมาย"
+                    }
+
+                val reminderText =
+                    if (reminderEnabled) {
+                        "เปิด"
+                    } else {
+                        "ปิด"
+                    }
 
                 totalRai += rai
                 totalValue += total
@@ -6056,7 +6167,9 @@ class MainActivity : Activity() {
                     ).apply {
 
                         text =
-                            "วันที่: $dateText\n" +
+                            "วันที่บันทึก: $dateText\n" +
+                            "วันนัดหมาย: $appointmentText\n" +
+                            "แจ้งเตือน: $reminderText\n" +
                             "งาน: $service\n" +
                             "พื้นที่: $location\n" +
                             "จำนวน: %.2f ไร่\n".format(rai) +
@@ -6147,6 +6260,36 @@ class MainActivity : Activity() {
                                             current
                                         )
                                         .apply()
+
+                                    val appointmentCurrent =
+                                        prefs.getStringSet(
+                                            "job_appointments",
+                                            emptySet()
+                                        )?.toMutableSet()
+                                            ?: mutableSetOf()
+
+                                    appointmentCurrent.removeAll {
+                                        appointmentRecord ->
+
+                                        appointmentRecord
+                                            .split(
+                                                "|||",
+                                                ignoreCase = false,
+                                                limit = 3
+                                            )
+                                            .getOrNull(0)
+                                            ?.toLongOrNull() ==
+                                            time
+                                    }
+
+                                    prefs.edit()
+                                        .putStringSet(
+                                            "job_appointments",
+                                            appointmentCurrent
+                                        )
+                                        .apply()
+
+                                    cancelJobReminder(time)
 
                                     android.widget.Toast.makeText(
                                         this@MainActivity,
