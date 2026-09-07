@@ -1895,6 +1895,143 @@ class MainActivity : Activity() {
             }
         )
 
+        val pdfButton =
+            android.widget.Button(this).apply {
+
+                text = "สร้างและแชร์ PDF"
+                textSize = 18f
+                isAllCaps = false
+
+                setOnClickListener {
+
+                    try {
+                        val reportDir =
+                            java.io.File(
+                                cacheDir,
+                                "finance_reports"
+                            ).apply {
+                                mkdirs()
+                            }
+
+                        val pdfFile =
+                            java.io.File(
+                                reportDir,
+                                "PC-Drone-Finance-Report.pdf"
+                            )
+
+                        val document =
+                            android.graphics.pdf.PdfDocument()
+
+                        val pageInfo =
+                            android.graphics.pdf.PdfDocument.PageInfo
+                                .Builder(
+                                    595,
+                                    842,
+                                    1
+                                )
+                                .create()
+
+                        val page =
+                            document.startPage(pageInfo)
+
+                        val canvas =
+                            page.canvas
+
+                        val paint =
+                            android.graphics.Paint().apply {
+                                color =
+                                    android.graphics.Color.BLACK
+                                textSize = 18f
+                                isAntiAlias = true
+                                typeface =
+                                    android.graphics.Typeface.DEFAULT_BOLD
+                            }
+
+                        canvas.drawText(
+                            "PC DRONE",
+                            48f,
+                            60f,
+                            paint
+                        )
+
+                        paint.textSize = 22f
+
+                        canvas.drawText(
+                            "Finance Report",
+                            210f,
+                            115f,
+                            paint
+                        )
+
+                        document.finishPage(page)
+
+                        java.io.FileOutputStream(pdfFile).use {
+                            document.writeTo(it)
+                        }
+
+                        document.close()
+
+                        val uri =
+                            android.net.Uri.Builder()
+                                .scheme(
+                                    android.content.ContentResolver.SCHEME_CONTENT
+                                )
+                                .authority(
+                                    packageName +
+                                        ".finance-reports"
+                                )
+                                .appendPath(
+                                    pdfFile.name
+                                )
+                                .build()
+
+                        val shareIntent =
+                            android.content.Intent(
+                                android.content.Intent.ACTION_SEND
+                            ).apply {
+
+                                type = "application/pdf"
+
+                                putExtra(
+                                    android.content.Intent.EXTRA_STREAM,
+                                    uri
+                                )
+
+                                addFlags(
+                                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                )
+                            }
+
+                        startActivity(
+                            android.content.Intent.createChooser(
+                                shareIntent,
+                                "แชร์รายงาน PDF"
+                            )
+                        )
+
+                    } catch (e: Exception) {
+
+                        android.widget.Toast.makeText(
+                            this@MainActivity,
+                            "สร้าง PDF ไม่สำเร็จ: " +
+                                (e.message ?: "ไม่ทราบสาเหตุ"),
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+        root.addView(
+            pdfButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(62)
+            ).apply {
+                topMargin = dp(10)
+            }
+        )
+
+
         root.addView(
             android.widget.TextView(this).apply {
                 text = "ตารางรายงาน"
