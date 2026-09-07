@@ -1,0 +1,476 @@
+private fun showReports() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), dp(30))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "รายงาน"
+                textSize = 30f
+                setTextColor(greenDark)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "สรุปรายวัน รายเดือน รายปี และแชร์เอกสาร"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(14))
+            }
+        )
+
+        val periodSpinner =
+            android.widget.Spinner(this)
+
+        val periodOptions =
+            arrayOf(
+                "วันนี้",
+                "เดือนนี้",
+                "ปีนี้"
+            )
+
+        periodSpinner.adapter =
+            android.widget.ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                periodOptions
+            )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "ช่วงรายงาน"
+                textSize = 16f
+                setTextColor(android.graphics.Color.BLACK)
+                setPadding(0, dp(6), 0, dp(4))
+            }
+        )
+
+        root.addView(periodSpinner)
+
+        val reportText =
+            android.widget.TextView(this).apply {
+                textSize = 15f
+                setTextColor(android.graphics.Color.BLACK)
+                setPadding(
+                    dp(10),
+                    dp(14),
+                    dp(10),
+                    dp(14)
+                )
+            }
+
+        fun inPeriod(
+            time: Long,
+            mode: String
+        ): Boolean {
+
+            val now =
+                java.util.Calendar.getInstance()
+
+            val item =
+                java.util.Calendar.getInstance().apply {
+                    timeInMillis = time
+                }
+
+            return when (mode) {
+
+                "วันนี้" ->
+                    now.get(java.util.Calendar.YEAR) ==
+                        item.get(java.util.Calendar.YEAR) &&
+                    now.get(java.util.Calendar.DAY_OF_YEAR) ==
+                        item.get(java.util.Calendar.DAY_OF_YEAR)
+
+                "เดือนนี้" ->
+                    now.get(java.util.Calendar.YEAR) ==
+                        item.get(java.util.Calendar.YEAR) &&
+                    now.get(java.util.Calendar.MONTH) ==
+                        item.get(java.util.Calendar.MONTH)
+
+                else ->
+                    now.get(java.util.Calendar.YEAR) ==
+                        item.get(java.util.Calendar.YEAR)
+            }
+        }
+
+        fun buildReport(): String {
+
+            val mode =
+                periodSpinner.selectedItem.toString()
+
+            val business =
+                prefs.getString(
+                    "setting_business_name",
+                    "PC DRONE"
+                ) ?: "PC DRONE"
+
+            val title =
+                prefs.getString(
+                    "setting_report_title",
+                    "สรุปรายรับ - รายจ่าย"
+                ) ?: "สรุปรายรับ - รายจ่าย"
+
+            val onlyCompleted =
+                prefs.getBoolean(
+                    "setting_only_completed_jobs",
+                    true
+                )
+
+            val dateFormat =
+                java.text.SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    java.util.Locale.getDefault()
+                )
+
+            val jobs =
+                prefs.getStringSet(
+                    "flight_jobs",
+                    emptySet()
+                )?.toList() ?: emptyList()
+
+            val finance =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                )?.toList() ?: emptyList()
+
+            val rows =
+                mutableListOf<
+                    Triple<Long, String, Pair<Double, Double>>
+                >()
+
+            var totalIncome = 0.0
+            var totalExpense = 0.0
+            var totalRai = 0.0
+            var jobCount = 0
+
+            jobs.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 9
+                    )
+
+                if (p.size >= 8) {
+
+                    val time =
+                        p.getOrNull(0)
+                            ?.toLongOrNull() ?: 0L
+
+                    if (time <= 0L ||
+                        !inPeriod(time, mode)
+                    ) {
+                        return@forEach
+                    }
+
+                    val customer =
+                        p.getOrNull(1) ?: "-"
+
+                    val service =
+                        p.getOrNull(2) ?: "-"
+
+                    val rai =
+                        p.getOrNull(4)
+                            ?.toDoubleOrNull() ?: 0.0
+
+                    val total =
+                        p.getOrNull(6)
+                            ?.toDoubleOrNull() ?: 0.0
+
+                    val status =
+                        p.getOrNull(7) ?: ""
+
+                    if (!onlyCompleted ||
+                        status == "เสร็จแล้ว"
+                    ) {
+
+                        totalIncome += total
+                        totalRai += rai
+                        jobCount++
+
+                        rows.add(
+                            Triple(
+                                time,
+                                "$service - $customer",
+                                Pair(total, 0.0)
+                            )
+                        )
+                    }
+                }
+            }
+
+            finance.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                if (p.size >= 4) {
+
+                    val time =
+                        p.getOrNull(0)
+                            ?.toLongOrNull() ?: 0L
+
+                    if (time <= 0L ||
+                        !inPeriod(time, mode)
+                    ) {
+                        return@forEach
+                    }
+
+                    val type =
+                        p.getOrNull(1) ?: "EXPENSE"
+
+                    val category =
+                        p.getOrNull(2) ?: "-"
+
+                    val amount =
+                        p.getOrNull(3)
+                            ?.toDoubleOrNull() ?: 0.0
+
+                    val note =
+                        p.getOrNull(4) ?: ""
+
+                    if (type == "INCOME") {
+                        totalIncome += amount
+
+                        rows.add(
+                            Triple(
+                                time,
+                                if (note.isBlank())
+                                    category
+                                else
+                                    "$category - $note",
+                                Pair(amount, 0.0)
+                            )
+                        )
+
+                    } else {
+
+                        totalExpense += amount
+
+                        rows.add(
+                            Triple(
+                                time,
+                                if (note.isBlank())
+                                    category
+                                else
+                                    "$category - $note",
+                                Pair(0.0, amount)
+                            )
+                        )
+                    }
+                }
+            }
+
+            val openingBalance =
+                prefs.getString(
+                    "setting_opening_balance",
+                    "0"
+                )?.toDoubleOrNull() ?: 0.0
+
+            val net =
+                totalIncome - totalExpense
+
+            val balance =
+                openingBalance + net
+
+            val sb =
+                StringBuilder()
+
+            sb.append("$business\n")
+            sb.append("$title\n")
+            sb.append("ช่วง: $mode\n")
+            sb.append("--------------------------------\n")
+            sb.append("วันที่ | รายการ | รายรับ | รายจ่าย\n")
+            sb.append("--------------------------------\n")
+
+            rows.sortedBy { it.first }
+                .forEach { row ->
+
+                    val date =
+                        dateFormat.format(
+                            java.util.Date(row.first)
+                        )
+
+                    sb.append(date)
+                    sb.append(" | ")
+                    sb.append(row.second)
+                    sb.append(" | ")
+
+                    if (row.third.first > 0.0) {
+                        sb.append(
+                            "%.2f".format(
+                                row.third.first
+                            )
+                        )
+                    } else {
+                        sb.append("-")
+                    }
+
+                    sb.append(" | ")
+
+                    if (row.third.second > 0.0) {
+                        sb.append(
+                            "%.2f".format(
+                                row.third.second
+                            )
+                        )
+                    } else {
+                        sb.append("-")
+                    }
+
+                    sb.append("\n")
+                }
+
+            sb.append("--------------------------------\n")
+            sb.append(
+                "รวมรายรับ: %.2f บาท\n".format(
+                    totalIncome
+                )
+            )
+
+            sb.append(
+                "รวมรายจ่าย: %.2f บาท\n".format(
+                    totalExpense
+                )
+            )
+
+            sb.append(
+                "กำไรสุทธิ: %.2f บาท\n".format(
+                    net
+                )
+            )
+
+            sb.append(
+                "ยอดคงเหลือ: %.2f บาท\n".format(
+                    balance
+                )
+            )
+
+            sb.append(
+                "จำนวนงาน: $jobCount งาน\n"
+            )
+
+            sb.append(
+                "พื้นที่บินรวม: %.2f ไร่\n".format(
+                    totalRai
+                )
+            )
+
+            return sb.toString()
+        }
+
+        fun refreshReport() {
+
+            reportText.text =
+                buildReport()
+        }
+
+        val calculateButton =
+            android.widget.Button(this).apply {
+
+                text = "ประมวลผลรายงาน"
+                textSize = 17f
+                isAllCaps = false
+
+                setOnClickListener {
+                    refreshReport()
+                }
+            }
+
+        root.addView(
+            calculateButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(56)
+            ).apply {
+                topMargin = dp(12)
+            }
+        )
+
+        root.addView(reportText)
+
+        val shareButton =
+            android.widget.Button(this).apply {
+
+                text = "แชร์รายงานไปยังแอปอื่น"
+                textSize = 17f
+                isAllCaps = false
+
+                setOnClickListener {
+
+                    val report =
+                        buildReport()
+
+                    val intent =
+                        android.content.Intent(
+                            android.content.Intent.ACTION_SEND
+                        ).apply {
+
+                            type = "text/plain"
+
+                            putExtra(
+                                android.content.Intent.EXTRA_SUBJECT,
+                                "รายงาน PC DRONE"
+                            )
+
+                            putExtra(
+                                android.content.Intent.EXTRA_TEXT,
+                                report
+                            )
+                        }
+
+                    startActivity(
+                        android.content.Intent.createChooser(
+                            intent,
+                            "แชร์รายงาน"
+                        )
+                    )
+                }
+            }
+
+        root.addView(
+            shareButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(56)
+            ).apply {
+                topMargin = dp(8)
+            }
+        )
+
+        refreshReport()
+
+        val scroll =
+            android.widget.ScrollView(this).apply {
+
+                addView(
+                    root,
+                    android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                )
+            }
+
+        setContentView(scroll)
+    }

@@ -5,3 +5,4 @@ int color pc_green_light 0x7f010003
 int color pc_white 0x7f010004
 int string app_name 0x7f020000
 int style Theme_PCDrone 0x7f030000
+int xml file_paths 0x7f040000

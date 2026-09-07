@@ -1,0 +1,223 @@
+]633;E;echo "===== A. BALANCE CORE =====";a86294ab-1816-4e95-a2f8-5da40f98f467]633;C===== A. BALANCE CORE =====
+  4825	
+  4826	                card.addView(
+  4827	                    financeActionRow
+  4828	                )
+  4829	
+  4830	                transactionContainer.addView(
+  4831	                    card
+  4832	                )
+  4833	            }
+  4834	
+  4835	            val totalIncome =
+  4836	                jobIncome.add(
+  4837	                    manualIncome
+  4838	                )
+  4839	
+  4840	            val balance =
+  4841	                totalIncome.subtract(
+  4842	                    totalExpense
+  4843	                )
+  4844	
+  4845	            jobIncomeText.text =
+  4846	                "รายรับจากงานบิน ($completedJobCount งาน): " +
+  4847	                "${moneyFormat.format(jobIncome)} บาท"
+  4848	
+  4849	            manualIncomeText.text =
+  4850	                "รายรับอื่น: " +
+  4851	                "${moneyFormat.format(manualIncome)} บาท"
+  4852	
+  4853	            totalIncomeText.text =
+  4854	                "รายรับรวม: " +
+  4855	                "${moneyFormat.format(totalIncome)} บาท"
+  4856	
+  4857	            expenseText.text =
+  4858	                "รายจ่ายรวม: " +
+  4859	                "${moneyFormat.format(totalExpense)} บาท"
+  4860	
+  4861	            balanceText.text =
+  4862	                "คงเหลือ: " +
+  4863	                "${moneyFormat.format(balance)} บาท"
+  4864	
+  4865	            balanceText.setTextColor(
+
+===== B. RECORD SAVE CORE =====
+  4925	                        )
+  4926	
+  4927	                    if (
+  4928	                        amount.compareTo(
+  4929	                            java.math.BigDecimal.ZERO
+  4930	                        ) <= 0
+  4931	                    ) {
+  4932	
+  4933	                        amountInput.error =
+  4934	                            "กรุณากรอกจำนวนเงินมากกว่า 0"
+  4935	
+  4936	                        return@setOnClickListener
+  4937	                    }
+  4938	
+  4939	                    val selectedType =
+  4940	                        typeSpinner.selectedItem
+  4941	                            .toString()
+  4942	
+  4943	                    val typeCode =
+  4944	                        if (
+  4945	                            selectedType ==
+  4946	                            "รายรับอื่น"
+  4947	                        ) {
+  4948	                            "INCOME"
+  4949	                        } else {
+  4950	                            "EXPENSE"
+  4951	                        }
+  4952	
+  4953	                    val category =
+  4954	                        safeText(
+  4955	                            categorySpinner
+  4956	                                .selectedItem
+  4957	                                .toString()
+  4958	                        )
+  4959	
+  4960	                    val note =
+  4961	                        safeText(
+  4962	                            noteInput.text
+  4963	                                .toString()
+  4964	                        )
+  4965	
+  4966	                    val record =
+  4967	                        listOf(
+  4968	                            System.currentTimeMillis()
+  4969	                                .toString(),
+  4970	                            typeCode,
+  4971	                            category,
+  4972	                            amount
+  4973	                                .stripTrailingZeros()
+  4974	                                .toPlainString(),
+  4975	                            note
+  4976	                        ).joinToString(
+  4977	                            "|||"
+  4978	                        )
+  4979	
+  4980	                    val current =
+  4981	                        prefs.getStringSet(
+  4982	                            "finance_transactions",
+  4983	                            emptySet()
+  4984	                        )?.toMutableSet()
+  4985	                            ?: mutableSetOf()
+  4986	
+  4987	                    current.add(
+  4988	                        record
+  4989	                    )
+  4990	
+  4991	                    prefs.edit()
+  4992	                        .putStringSet(
+  4993	                            "finance_transactions",
+  4994	                            current
+  4995	                        )
+  4996	                        .apply()
+  4997	
+  4998	                    amountInput.text.clear()
+  4999	                    noteInput.text.clear()
+  5000	
+  5001	                    android.widget.Toast.makeText(
+  5002	                        this@MainActivity,
+  5003	                        "บันทึกรายการเงินเรียบร้อย",
+  5004	                        android.widget.Toast.LENGTH_SHORT
+  5005	                    ).show()
+
+===== C. RECORD EDIT CORE =====
+  5325	
+  5326	                if (
+  5327	                    amount.compareTo(
+  5328	                        java.math.BigDecimal.ZERO
+  5329	                    ) <= 0
+  5330	                ) {
+  5331	
+  5332	                    amountInput.error =
+  5333	                        "กรุณากรอกจำนวนเงินมากกว่า 0"
+  5334	
+  5335	                    return@setOnClickListener
+  5336	                }
+  5337	
+  5338	                val typeCode =
+  5339	                    if (
+  5340	                        typeSpinner.selectedItem
+  5341	                            .toString() ==
+  5342	                        "รายรับอื่น"
+  5343	                    ) {
+  5344	                        "INCOME"
+  5345	                    } else {
+  5346	                        "EXPENSE"
+  5347	                    }
+  5348	
+  5349	                val category =
+  5350	                    categorySpinner
+  5351	                        .selectedItem
+  5352	                        .toString()
+  5353	                        .replace(
+  5354	                            "|||",
+  5355	                            " "
+  5356	                        )
+  5357	                        .replace(
+  5358	                            "\n",
+  5359	                            " "
+  5360	                        )
+  5361	                        .trim()
+  5362	
+  5363	                val note =
+  5364	                    noteInput.text
+  5365	                        .toString()
+  5366	                        .replace(
+  5367	                            "|||",
+  5368	                            " "
+  5369	                        )
+  5370	                        .replace(
+  5371	                            "\n",
+  5372	                            " "
+  5373	                        )
+  5374	                        .trim()
+  5375	
+  5376	                val updatedRecord =
+  5377	                    listOf(
+  5378	                        originalTime.toString(),
+  5379	                        typeCode,
+  5380	                        category,
+  5381	                        amount
+  5382	                            .stripTrailingZeros()
+  5383	                            .toPlainString(),
+  5384	                        note
+  5385	                    ).joinToString(
+  5386	                        "|||"
+  5387	                    )
+  5388	
+  5389	                val current =
+  5390	                    prefs.getStringSet(
+  5391	                        "finance_transactions",
+  5392	                        emptySet()
+  5393	                    )?.toMutableSet()
+  5394	                        ?: mutableSetOf()
+  5395	
+  5396	                /*
+  5397	                 * ลบรายการเดิมก่อน
+  5398	                 * แล้วเพิ่มรายการที่แก้ไข
+  5399	                 *
+  5400	                 * จึงไม่เกิดยอดซ้ำ
+  5401	                 */
+  5402	                current.remove(
+  5403	                    originalRecord
+  5404	                )
+  5405	
+  5406	                current.add(
+  5407	                    updatedRecord
+  5408	                )
+  5409	
+  5410	                prefs.edit()
+  5411	                    .putStringSet(
+  5412	                        "finance_transactions",
+  5413	                        current
+  5414	                    )
+  5415	                    .apply()
+  5416	
+  5417	                android.widget.Toast.makeText(
+  5418	                    this@MainActivity,
+  5419	                    "แก้ไขรายการเงินเรียบร้อย",
+  5420	                    android.widget.Toast.LENGTH_SHORT

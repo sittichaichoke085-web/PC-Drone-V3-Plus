@@ -1,4 +1,5 @@
 com.pcdrone.v3plus:style/Theme.PCDrone = 0x7f030000
+com.pcdrone.v3plus:xml/file_paths = 0x7f040000
 com.pcdrone.v3plus:color/pc_green_light = 0x7f010003
 com.pcdrone.v3plus:color/pc_green_dark = 0x7f010002
 com.pcdrone.v3plus:color/pc_green = 0x7f010001

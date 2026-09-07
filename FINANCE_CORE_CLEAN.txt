@@ -1,0 +1,278 @@
+
+                card.addView(
+                    financeActionRow
+                )
+
+                transactionContainer.addView(
+                    card
+                )
+            }
+
+            val totalIncome =
+                jobIncome.add(
+                    manualIncome
+                )
+
+            val balance =
+                totalIncome.subtract(
+                    totalExpense
+                )
+
+            jobIncomeText.text =
+                "รายรับจากงานบิน ($completedJobCount งาน): " +
+                "${moneyFormat.format(jobIncome)} บาท"
+
+            manualIncomeText.text =
+                "รายรับอื่น: " +
+                "${moneyFormat.format(manualIncome)} บาท"
+
+            totalIncomeText.text =
+                "รายรับรวม: " +
+                "${moneyFormat.format(totalIncome)} บาท"
+
+            expenseText.text =
+                "รายจ่ายรวม: " +
+                "${moneyFormat.format(totalExpense)} บาท"
+
+            balanceText.text =
+                "คงเหลือ: " +
+                "${moneyFormat.format(balance)} บาท"
+
+            balanceText.setTextColor(
+                if (
+                    balance.compareTo(
+                        java.math.BigDecimal.ZERO
+                    ) >= 0
+                ) {
+                    android.graphics.Color.rgb(
+                        0,
+                        120,
+                        55
+                    )
+                } else {
+                    android.graphics.Color.rgb(
+                        190,
+                        25,
+                        25
+                    )
+                }
+            )
+
+            if (sortedTransactions.isEmpty()) {
+
+                transactionContainer.addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text =
+                            "ยังไม่มีรายรับ/รายจ่ายที่บันทึกเอง"
+
+                        textSize = 16f
+
+                        setTextColor(
+                            android.graphics.Color.GRAY
+                        )
+
+                        setPadding(
+                            0,
+                            dp(10),
+                            0,
+                            dp(10)
+                        )
+                    }
+                )
+            }
+        }
+
+        val saveButton =
+            android.widget.Button(this).apply {
+
+                text = "บันทึกรายการ"
+
+                textSize = 18f
+
+                setOnClickListener {
+
+                    val amount =
+                        parseMoney(
+                            amountInput.text
+                                .toString()
+                        )
+
+                    if (
+                        amount.compareTo(
+                            java.math.BigDecimal.ZERO
+                        ) <= 0
+                    ) {
+
+                        amountInput.error =
+                            "กรุณากรอกจำนวนเงินมากกว่า 0"
+
+                        return@setOnClickListener
+                    }
+
+                    val selectedType =
+                        typeSpinner.selectedItem
+                            .toString()
+
+                    val typeCode =
+                        if (
+                            selectedType ==
+                            "รายรับอื่น"
+                        ) {
+                            "INCOME"
+                        } else {
+                            "EXPENSE"
+                        }
+
+                    val category =
+                        safeText(
+                            categorySpinner
+                                .selectedItem
+                                .toString()
+                        )
+
+                    val note =
+                        safeText(
+                            noteInput.text
+                                .toString()
+                        )
+
+                    val record =
+                        listOf(
+                            System.currentTimeMillis()
+                                .toString(),
+                            typeCode,
+                            category,
+                            amount
+                                .stripTrailingZeros()
+                                .toPlainString(),
+                            note
+                        ).joinToString(
+                            "|||"
+                        )
+
+                    val current =
+                        prefs.getStringSet(
+                            "finance_transactions",
+                            emptySet()
+                        )?.toMutableSet()
+                            ?: mutableSetOf()
+
+                    current.add(
+                        record
+                    )
+
+                    prefs.edit()
+                        .putStringSet(
+                            "finance_transactions",
+                            current
+                        )
+                        .apply()
+
+                    amountInput.text.clear()
+                    noteInput.text.clear()
+
+                    android.widget.Toast.makeText(
+                        this@MainActivity,
+                        "บันทึกรายการเงินเรียบร้อย",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+
+                if (
+                    amount.compareTo(
+                        java.math.BigDecimal.ZERO
+                    ) <= 0
+                ) {
+
+                    amountInput.error =
+                        "กรุณากรอกจำนวนเงินมากกว่า 0"
+
+                    return@setOnClickListener
+                }
+
+                val typeCode =
+                    if (
+                        typeSpinner.selectedItem
+                            .toString() ==
+                        "รายรับอื่น"
+                    ) {
+                        "INCOME"
+                    } else {
+                        "EXPENSE"
+                    }
+
+                val category =
+                    categorySpinner
+                        .selectedItem
+                        .toString()
+                        .replace(
+                            "|||",
+                            " "
+                        )
+                        .replace(
+                            "\n",
+                            " "
+                        )
+                        .trim()
+
+                val note =
+                    noteInput.text
+                        .toString()
+                        .replace(
+                            "|||",
+                            " "
+                        )
+                        .replace(
+                            "\n",
+                            " "
+                        )
+                        .trim()
+
+                val updatedRecord =
+                    listOf(
+                        originalTime.toString(),
+                        typeCode,
+                        category,
+                        amount
+                            .stripTrailingZeros()
+                            .toPlainString(),
+                        note
+                    ).joinToString(
+                        "|||"
+                    )
+
+                val current =
+                    prefs.getStringSet(
+                        "finance_transactions",
+                        emptySet()
+                    )?.toMutableSet()
+                        ?: mutableSetOf()
+
+                /*
+                 * ลบรายการเดิมก่อน
+                 * แล้วเพิ่มรายการที่แก้ไข
+                 *
+                 * จึงไม่เกิดยอดซ้ำ
+                 */
+                current.remove(
+                    originalRecord
+                )
+
+                current.add(
+                    updatedRecord
+                )
+
+                prefs.edit()
+                    .putStringSet(
+                        "finance_transactions",
+                        current
+                    )
+                    .apply()
+
+                android.widget.Toast.makeText(
+                    this@MainActivity,
+                    "แก้ไขรายการเงินเรียบร้อย",
+                    android.widget.Toast.LENGTH_SHORT
+ง

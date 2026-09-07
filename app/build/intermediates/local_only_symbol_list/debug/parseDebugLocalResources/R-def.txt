@@ -7,3 +7,4 @@ color pc_green_light
 color pc_white
 string app_name
 style Theme.PCDrone
+xml file_paths

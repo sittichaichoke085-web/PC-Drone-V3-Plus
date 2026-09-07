@@ -1,0 +1,131 @@
+        fun buildReport(): String {
+
+            val mode =
+                periodSpinner.selectedItem.toString()
+
+            val business =
+                prefs.getString(
+                    "setting_business_name",
+                    "PC DRONE"
+                ) ?: "PC DRONE"
+
+            val title =
+                prefs.getString(
+                    "setting_report_title",
+                    "สรุปรายรับ - รายจ่าย"
+                ) ?: "สรุปรายรับ - รายจ่าย"
+
+            val onlyCompleted =
+                prefs.getBoolean(
+                    "setting_only_completed_jobs",
+                    true
+                )
+
+            val dateFormat =
+                java.text.SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    java.util.Locale.getDefault()
+                )
+
+            val jobs =
+                prefs.getStringSet(
+                    "flight_jobs",
+                    emptySet()
+                )?.toList() ?: emptyList()
+
+            val finance =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                )?.toList() ?: emptyList()
+
+            val rows =
+                mutableListOf<
+                    Triple<Long, String, Pair<Double, Double>>
+                >()
+
+            var totalIncome = 0.0
+            var totalExpense = 0.0
+            var totalRai = 0.0
+            var jobCount = 0
+
+            jobs.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 9
+                    )
+
+                if (p.size >= 8) {
+
+                    val time =
+                        p.getOrNull(0)
+                            ?.toLongOrNull() ?: 0L
+
+                    if (time <= 0L ||
+                        !inPeriod(time, mode)
+                    ) {
+                        return@forEach
+                    }
+
+                    val customer =
+                        p.getOrNull(1) ?: "-"
+
+                    val service =
+                        p.getOrNull(2) ?: "-"
+
+                    val rai =
+                        p.getOrNull(4)
+                            ?.toDoubleOrNull() ?: 0.0
+
+                    val total =
+                        p.getOrNull(6)
+                            ?.toDoubleOrNull() ?: 0.0
+
+                    val status =
+                        p.getOrNull(7) ?: ""
+
+                    if (!onlyCompleted ||
+                        status == "เสร็จแล้ว"
+                    ) {
+
+                        totalIncome += total
+                        totalRai += rai
+                        jobCount++
+
+                        rows.add(
+                            Triple(
+                                time,
+                                "$service - $customer",
+                                Pair(total, 0.0)
+                            )
+                        )
+                    }
+                }
+            }
+
+            finance.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                if (p.size >= 4) {
+
+                    val time =
+                        p.getOrNull(0)
+                            ?.toLongOrNull() ?: 0L
+
+                    if (time <= 0L ||
+                        !inPeriod(time, mode)
+                    ) {
+                        return@forEach
+                    }
+
+                    val type =
+                        p.getOrNull(1) ?: "EXPENSE"

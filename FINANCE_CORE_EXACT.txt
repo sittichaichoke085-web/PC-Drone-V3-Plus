@@ -1,0 +1,481 @@
+
+===== BLOCK 1 : LINES 89-159 =====
+00089:                 val total =
+00090:                     money(
+00091:                         parts.getOrNull(6)
+00092:                     )
+00093: 
+00094:                 val status =
+00095:                     parts.getOrNull(7)
+00096:                         ?.trim() ?: ""
+00097: 
+00098:                 when (status) {
+00099: 
+00100:                     "เสร็จแล้ว" -> {
+00101:                         completedJobs++
+00102:                         totalRai += rai
+00103:                         jobIncome =
+00104:                             jobIncome.add(total)
+00105:                     }
+00106: 
+00107:                     "ยกเลิก" -> {
+00108:                         // ไม่นับ
+00109:                     }
+00110: 
+00111:                     else -> {
+00112:                         waitingJobs++
+00113:                     }
+00114:                 }
+00115:             }
+00116:         }
+00117: 
+00118:         // =========================================
+00119:         // คำนวณการเงิน
+00120:         // =========================================
+00121: 
+00122:         val transactions =
+00123:             prefs.getStringSet(
+00124:                 "finance_transactions",
+00125:                 emptySet()
+00126:             )?.toList() ?: emptyList()
+00127: 
+00128:         var otherIncome =
+00129:             java.math.BigDecimal.ZERO
+00130: 
+00131:         var expense =
+00132:             java.math.BigDecimal.ZERO
+00133: 
+00134:         transactions.forEach { record ->
+00135: 
+00136:             val parts =
+00137:                 record.split(
+00138:                     "|||",
+00139:                     ignoreCase = false,
+00140:                     limit = 5
+00141:                 )
+00142: 
+00143:             if (parts.size >= 4) {
+00144: 
+00145:                 val type =
+00146:                     parts.getOrNull(1)
+00147:                         ?.trim() ?: ""
+00148: 
+00149:                 val amount =
+00150:                     money(
+00151:                         parts.getOrNull(3)
+00152:                     )
+00153: 
+00154:                 if (type == "INCOME") {
+00155:                     otherIncome =
+00156:                         otherIncome.add(amount)
+00157:                 }
+00158: 
+00159:                 if (type == "EXPENSE") {
+
+===== BLOCK 2 : LINES 1519-1589 =====
+01519:                         )
+01520: 
+01521:                     if (
+01522:                         fromMillis == null ||
+01523:                         toMillis == null
+01524:                     ) {
+01525: 
+01526:                         android.widget.Toast.makeText(
+01527:                             this@MainActivity,
+01528:                             "กรุณากรอกวันที่ให้ถูกต้อง",
+01529:                             android.widget.Toast.LENGTH_SHORT
+01530:                         ).show()
+01531: 
+01532:                         return@setOnClickListener
+01533:                     }
+01534: 
+01535:                     if (fromMillis > toMillis) {
+01536: 
+01537:                         android.widget.Toast.makeText(
+01538:                             this@MainActivity,
+01539:                             "วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด",
+01540:                             android.widget.Toast.LENGTH_SHORT
+01541:                         ).show()
+01542: 
+01543:                         return@setOnClickListener
+01544:                     }
+01545: 
+01546:                     val prefs =
+01547:                         getSharedPreferences(
+01548:                             "pc_drone_v3_data",
+01549:                             android.content.Context.MODE_PRIVATE
+01550:                         )
+01551: 
+01552:                     val rawSet =
+01553:                         prefs.getStringSet(
+01554:                             "finance_transactions",
+01555:                             emptySet()
+01556:                         ) ?: emptySet()
+01557: 
+01558:                     val all =
+01559:                         rawSet.mapNotNull {
+01560:                             parseTx(it)
+01561:                         }.sortedBy {
+01562:                             it.time
+01563:                         }
+01564: 
+01565:                     /*
+01566:                      * คงเหลือก่อนวันเริ่มรายงาน
+01567:                      */
+01568:                     var runningBalance = 0.0
+01569: 
+01570:                     all.filter {
+01571:                         it.time < fromMillis
+01572:                     }.forEach {
+01573: 
+01574:                         if (isIncome(it.type)) {
+01575:                             runningBalance += it.amount
+01576:                         } else {
+01577:                             runningBalance -= it.amount
+01578:                         }
+01579:                     }
+01580: 
+01581:                     val selected =
+01582:                         all.filter {
+01583:                             it.time in fromMillis..toMillis
+01584:                         }
+01585: 
+01586:                     table.removeAllViews()
+01587:                     addHeader()
+01588: 
+01589:                     var totalIncome = 0.0
+
+===== BLOCK 3 : LINES 4505-4575 =====
+04505:                 val parts =
+04506:                     record.split(
+04507:                         "|||",
+04508:                         ignoreCase = false,
+04509:                         limit = 9
+04510:                     )
+04511: 
+04512:                 if (parts.size >= 8) {
+04513: 
+04514:                     val total =
+04515:                         parseMoney(
+04516:                             parts.getOrNull(6)
+04517:                         )
+04518: 
+04519:                     val status =
+04520:                         parts.getOrNull(7)
+04521:                             ?.trim()
+04522:                             ?: ""
+04523: 
+04524:                     if (status == "เสร็จแล้ว") {
+04525: 
+04526:                         jobIncome =
+04527:                             jobIncome.add(total)
+04528: 
+04529:                         completedJobCount++
+04530:                     }
+04531:                 }
+04532:             }
+04533: 
+04534:             // =============================================
+04535:             // 2. MANUAL TRANSACTIONS
+04536:             // =============================================
+04537: 
+04538:             val transactions =
+04539:                 prefs.getStringSet(
+04540:                     "finance_transactions",
+04541:                     emptySet()
+04542:                 )?.toList()
+04543:                     ?: emptyList()
+04544: 
+04545:             val sortedTransactions =
+04546:                 transactions.sortedByDescending { record ->
+04547: 
+04548:                     record
+04549:                         .split(
+04550:                             "|||",
+04551:                             ignoreCase = false,
+04552:                             limit = 5
+04553:                         )
+04554:                         .getOrNull(0)
+04555:                         ?.toLongOrNull()
+04556:                         ?: 0L
+04557:                 }
+04558: 
+04559:             var manualIncome =
+04560:                 java.math.BigDecimal.ZERO
+04561: 
+04562:             var totalExpense =
+04563:                 java.math.BigDecimal.ZERO
+04564: 
+04565:             sortedTransactions.forEach { record ->
+04566: 
+04567:                 val parts =
+04568:                     record.split(
+04569:                         "|||",
+04570:                         ignoreCase = false,
+04571:                         limit = 5
+04572:                     )
+04573: 
+04574:                 if (parts.size < 4) {
+04575:                     return@forEach
+
+===== BLOCK 4 : LINES 4736-4817 =====
+04736:                                 record
+04737:                             ) {
+04738:                                 reloadFinance()
+04739:                             }
+04740:                         }
+04741:                     }
+04742: 
+04743:                 val deleteButton =
+04744:                     android.widget.Button(
+04745:                         this@MainActivity
+04746:                     ).apply {
+04747: 
+04748:                         text = "ลบรายการ"
+04749: 
+04750:                         setOnClickListener {
+04751: 
+04752:                             android.app.AlertDialog.Builder(
+04753:                                 this@MainActivity
+04754:                             )
+04755:                                 .setTitle(
+04756:                                     "ยืนยันการลบ"
+04757:                                 )
+04758:                                 .setMessage(
+04759:                                     "ต้องการลบรายการเงินนี้หรือไม่?"
+04760:                                 )
+04761:                                 .setNegativeButton(
+04762:                                     "ยกเลิก",
+04763:                                     null
+04764:                                 )
+04765:                                 .setPositiveButton(
+04766:                                     "ลบ"
+04767:                                 ) { _, _ ->
+04768: 
+04769:                                     val current =
+04770:                                         prefs.getStringSet(
+04771:                                             "finance_transactions",
+04772:                                             emptySet()
+04773:                                         )?.toMutableSet()
+04774:                                             ?: mutableSetOf()
+04775: 
+04776:                                     current.remove(
+04777:                                         record
+04778:                                     )
+04779: 
+04780:                                     prefs.edit()
+04781:                                         .putStringSet(
+04782:                                             "finance_transactions",
+04783:                                             current
+04784:                                         )
+04785:                                         .apply()
+04786: 
+04787:                                     android.widget.Toast.makeText(
+04788:                                         this@MainActivity,
+04789:                                         "ลบรายการแล้ว",
+04790:                                         android.widget.Toast.LENGTH_SHORT
+04791:                                     ).show()
+04792: 
+04793:                                     reloadFinance()
+04794:                                 }
+04795:                                 .show()
+04796:                         }
+04797:                     }
+04798: 
+04799:                 val financeActionRow =
+04800:                     android.widget.LinearLayout(
+04801:                         this@MainActivity
+04802:                     ).apply {
+04803: 
+04804:                         orientation =
+04805:                             android.widget.LinearLayout.HORIZONTAL
+04806:                     }
+04807: 
+04808:                 financeActionRow.addView(
+04809:                     editButton,
+04810:                     android.widget.LinearLayout.LayoutParams(
+04811:                         0,
+04812:                         android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+04813:                         1f
+04814:                     )
+04815:                 )
+04816: 
+04817:                 financeActionRow.addView(
+
+===== BLOCK 5 : LINES 4947-5028 =====
+04947:                         ) {
+04948:                             "INCOME"
+04949:                         } else {
+04950:                             "EXPENSE"
+04951:                         }
+04952: 
+04953:                     val category =
+04954:                         safeText(
+04955:                             categorySpinner
+04956:                                 .selectedItem
+04957:                                 .toString()
+04958:                         )
+04959: 
+04960:                     val note =
+04961:                         safeText(
+04962:                             noteInput.text
+04963:                                 .toString()
+04964:                         )
+04965: 
+04966:                     val record =
+04967:                         listOf(
+04968:                             System.currentTimeMillis()
+04969:                                 .toString(),
+04970:                             typeCode,
+04971:                             category,
+04972:                             amount
+04973:                                 .stripTrailingZeros()
+04974:                                 .toPlainString(),
+04975:                             note
+04976:                         ).joinToString(
+04977:                             "|||"
+04978:                         )
+04979: 
+04980:                     val current =
+04981:                         prefs.getStringSet(
+04982:                             "finance_transactions",
+04983:                             emptySet()
+04984:                         )?.toMutableSet()
+04985:                             ?: mutableSetOf()
+04986: 
+04987:                     current.add(
+04988:                         record
+04989:                     )
+04990: 
+04991:                     prefs.edit()
+04992:                         .putStringSet(
+04993:                             "finance_transactions",
+04994:                             current
+04995:                         )
+04996:                         .apply()
+04997: 
+04998:                     amountInput.text.clear()
+04999:                     noteInput.text.clear()
+05000: 
+05001:                     android.widget.Toast.makeText(
+05002:                         this@MainActivity,
+05003:                         "บันทึกรายการเงินเรียบร้อย",
+05004:                         android.widget.Toast.LENGTH_SHORT
+05005:                     ).show()
+05006: 
+05007:                     reloadFinance()
+05008:                 }
+05009:             }
+05010: 
+05011:         root.addView(
+05012:             saveButton
+05013:         )
+05014: 
+05015:         root.addView(
+05016:             transactionContainer
+05017:         )
+05018: 
+05019:         reloadFinance()
+05020: 
+05021:         val scrollView =
+05022:             android.widget.ScrollView(this).apply {
+05023: 
+05024:                 addView(
+05025:                     root,
+05026:                     android.view.ViewGroup.LayoutParams(
+05027:                         android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+05028:                         android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+
+===== BLOCK 6 : LINES 5356-5447 =====
+05356:                         )
+05357:                         .replace(
+05358:                             "\n",
+05359:                             " "
+05360:                         )
+05361:                         .trim()
+05362: 
+05363:                 val note =
+05364:                     noteInput.text
+05365:                         .toString()
+05366:                         .replace(
+05367:                             "|||",
+05368:                             " "
+05369:                         )
+05370:                         .replace(
+05371:                             "\n",
+05372:                             " "
+05373:                         )
+05374:                         .trim()
+05375: 
+05376:                 val updatedRecord =
+05377:                     listOf(
+05378:                         originalTime.toString(),
+05379:                         typeCode,
+05380:                         category,
+05381:                         amount
+05382:                             .stripTrailingZeros()
+05383:                             .toPlainString(),
+05384:                         note
+05385:                     ).joinToString(
+05386:                         "|||"
+05387:                     )
+05388: 
+05389:                 val current =
+05390:                     prefs.getStringSet(
+05391:                         "finance_transactions",
+05392:                         emptySet()
+05393:                     )?.toMutableSet()
+05394:                         ?: mutableSetOf()
+05395: 
+05396:                 /*
+05397:                  * ลบรายการเดิมก่อน
+05398:                  * แล้วเพิ่มรายการที่แก้ไข
+05399:                  *
+05400:                  * จึงไม่เกิดยอดซ้ำ
+05401:                  */
+05402:                 current.remove(
+05403:                     originalRecord
+05404:                 )
+05405: 
+05406:                 current.add(
+05407:                     updatedRecord
+05408:                 )
+05409: 
+05410:                 prefs.edit()
+05411:                     .putStringSet(
+05412:                         "finance_transactions",
+05413:                         current
+05414:                     )
+05415:                     .apply()
+05416: 
+05417:                 android.widget.Toast.makeText(
+05418:                     this@MainActivity,
+05419:                     "แก้ไขรายการเงินเรียบร้อย",
+05420:                     android.widget.Toast.LENGTH_SHORT
+05421:                 ).show()
+05422: 
+05423:                 dialog.dismiss()
+05424: 
+05425:                 onSaved()
+05426:             }
+05427:         }
+05428: 
+05429:         dialog.show()
+05430:     }
+05431: 
+05432: 
+05433: 
+05434:     private fun createBackButton(): android.widget.Button {
+05435: 
+05436:         return android.widget.Button(this).apply {
+05437: 
+05438:             text = "←  ย้อนกลับ"
+05439:             textSize = 18f
+05440:             isAllCaps = false
+05441: 
+05442:             setTextColor(
+05443:                 android.graphics.Color.WHITE
+05444:             )
+05445: 
+05446:             background =
+05447:                 android.graphics.drawable.GradientDrawable().apply {

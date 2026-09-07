@@ -1,0 +1,525 @@
+]633;E;echo "===== FINANCE TRANSACTIONS =====";a86294ab-1816-4e95-a2f8-5da40f98f467]633;C===== FINANCE TRANSACTIONS =====
+116-        }
+117-
+118-        // =========================================
+119-        // คำนวณการเงิน
+120-        // =========================================
+121-
+122-        val transactions =
+123-            prefs.getStringSet(
+124:                "finance_transactions",
+125-                emptySet()
+126-            )?.toList() ?: emptyList()
+127-
+128-        var otherIncome =
+129-            java.math.BigDecimal.ZERO
+130-
+131-        var expense =
+132-            java.math.BigDecimal.ZERO
+133-
+134-        transactions.forEach { record ->
+135-
+136-            val parts =
+137-                record.split(
+138-                    "|||",
+139-                    ignoreCase = false,
+140-                    limit = 5
+141-                )
+142-
+--
+1546-                    val prefs =
+1547-                        getSharedPreferences(
+1548-                            "pc_drone_v3_data",
+1549-                            android.content.Context.MODE_PRIVATE
+1550-                        )
+1551-
+1552-                    val rawSet =
+1553-                        prefs.getStringSet(
+1554:                            "finance_transactions",
+1555-                            emptySet()
+1556-                        ) ?: emptySet()
+1557-
+1558-                    val all =
+1559-                        rawSet.mapNotNull {
+1560-                            parseTx(it)
+1561-                        }.sortedBy {
+1562-                            it.time
+1563-                        }
+1564-
+1565-                    /*
+1566-                     * คงเหลือก่อนวันเริ่มรายงาน
+1567-                     */
+1568-                    var runningBalance = 0.0
+1569-
+1570-                    all.filter {
+1571-                        it.time < fromMillis
+1572-                    }.forEach {
+--
+4532-            }
+4533-
+4534-            // =============================================
+4535-            // 2. MANUAL TRANSACTIONS
+4536-            // =============================================
+4537-
+4538-            val transactions =
+4539-                prefs.getStringSet(
+4540:                    "finance_transactions",
+4541-                    emptySet()
+4542-                )?.toList()
+4543-                    ?: emptyList()
+4544-
+4545-            val sortedTransactions =
+4546-                transactions.sortedByDescending { record ->
+4547-
+4548-                    record
+4549-                        .split(
+4550-                            "|||",
+4551-                            ignoreCase = false,
+4552-                            limit = 5
+4553-                        )
+4554-                        .getOrNull(0)
+4555-                        ?.toLongOrNull()
+4556-                        ?: 0L
+4557-                }
+4558-
+--
+4763-                                    null
+4764-                                )
+4765-                                .setPositiveButton(
+4766-                                    "ลบ"
+4767-                                ) { _, _ ->
+4768-
+4769-                                    val current =
+4770-                                        prefs.getStringSet(
+4771:                                            "finance_transactions",
+4772-                                            emptySet()
+4773-                                        )?.toMutableSet()
+4774-                                            ?: mutableSetOf()
+4775-
+4776-                                    current.remove(
+4777-                                        record
+4778-                                    )
+4779-
+4780-                                    prefs.edit()
+4781-                                        .putStringSet(
+4782:                                            "finance_transactions",
+4783-                                            current
+4784-                                        )
+4785-                                        .apply()
+4786-
+4787-                                    android.widget.Toast.makeText(
+4788-                                        this@MainActivity,
+4789-                                        "ลบรายการแล้ว",
+4790-                                        android.widget.Toast.LENGTH_SHORT
+4791-                                    ).show()
+4792-
+4793-                                    reloadFinance()
+4794-                                }
+4795-                                .show()
+4796-                        }
+4797-                    }
+4798-
+4799-                val financeActionRow =
+4800-                    android.widget.LinearLayout(
+--
+4974-                                .toPlainString(),
+4975-                            note
+4976-                        ).joinToString(
+4977-                            "|||"
+4978-                        )
+4979-
+4980-                    val current =
+4981-                        prefs.getStringSet(
+4982:                            "finance_transactions",
+4983-                            emptySet()
+4984-                        )?.toMutableSet()
+4985-                            ?: mutableSetOf()
+4986-
+4987-                    current.add(
+4988-                        record
+4989-                    )
+4990-
+4991-                    prefs.edit()
+4992-                        .putStringSet(
+4993:                            "finance_transactions",
+4994-                            current
+4995-                        )
+4996-                        .apply()
+4997-
+4998-                    amountInput.text.clear()
+4999-                    noteInput.text.clear()
+5000-
+5001-                    android.widget.Toast.makeText(
+5002-                        this@MainActivity,
+5003-                        "บันทึกรายการเงินเรียบร้อย",
+5004-                        android.widget.Toast.LENGTH_SHORT
+5005-                    ).show()
+5006-
+5007-                    reloadFinance()
+5008-                }
+5009-            }
+5010-
+5011-        root.addView(
+--
+5383-                            .toPlainString(),
+5384-                        note
+5385-                    ).joinToString(
+5386-                        "|||"
+5387-                    )
+5388-
+5389-                val current =
+5390-                    prefs.getStringSet(
+5391:                        "finance_transactions",
+5392-                        emptySet()
+5393-                    )?.toMutableSet()
+5394-                        ?: mutableSetOf()
+5395-
+5396-                /*
+5397-                 * ลบรายการเดิมก่อน
+5398-                 * แล้วเพิ่มรายการที่แก้ไข
+5399-                 *
+5400-                 * จึงไม่เกิดยอดซ้ำ
+5401-                 */
+5402-                current.remove(
+5403-                    originalRecord
+5404-                )
+5405-
+5406-                current.add(
+5407-                    updatedRecord
+5408-                )
+5409-
+5410-                prefs.edit()
+5411-                    .putStringSet(
+5412:                        "finance_transactions",
+5413-                        current
+5414-                    )
+5415-                    .apply()
+5416-
+5417-                android.widget.Toast.makeText(
+5418-                    this@MainActivity,
+5419-                    "แก้ไขรายการเงินเรียบร้อย",
+5420-                    android.widget.Toast.LENGTH_SHORT
+5421-                ).show()
+5422-
+5423-                dialog.dismiss()
+5424-
+5425-                onSaved()
+5426-            }
+5427-        }
+5428-
+5429-        dialog.show()
+5430-    }
+
+===== FINANCE PREFS =====
+35-    private fun showDashboard() {
+36-
+37-        val prefs = getSharedPreferences(
+38:            "pc_drone_v3_data",
+39-            android.content.Context.MODE_PRIVATE
+40-        )
+41-
+42-        val moneyFormat =
+43-            java.text.DecimalFormat("#,##0.00")
+44-
+--
+1545-
+1546-                    val prefs =
+1547-                        getSharedPreferences(
+1548:                            "pc_drone_v3_data",
+1549-                            android.content.Context.MODE_PRIVATE
+1550-                        )
+1551-
+1552-                    val rawSet =
+1553-                        prefs.getStringSet(
+1554-                            "finance_transactions",
+--
+2540-    private fun showCustomers() {
+2541-
+2542-        val prefs = getSharedPreferences(
+2543:            "pc_drone_v3_data",
+2544-            android.content.Context.MODE_PRIVATE
+2545-        )
+2546-
+2547-        val root = android.widget.LinearLayout(this).apply {
+2548-            orientation = android.widget.LinearLayout.VERTICAL
+2549-            setPadding(dp(20), dp(8), dp(20), dp(28))
+--
+3119-    private fun showJobs() {
+3120-
+3121-        val prefs = getSharedPreferences(
+3122:            "pc_drone_v3_data",
+3123-            android.content.Context.MODE_PRIVATE
+3124-        )
+3125-
+3126-        val root = android.widget.LinearLayout(this).apply {
+3127-            orientation = android.widget.LinearLayout.VERTICAL
+3128-            setPadding(dp(20), dp(20), dp(20), dp(28))
+--
+3455-    private fun showJobHistory() {
+3456-
+3457-        val prefs = getSharedPreferences(
+3458:            "pc_drone_v3_data",
+3459-            android.content.Context.MODE_PRIVATE
+3460-        )
+3461-
+3462-        val root = android.widget.LinearLayout(this).apply {
+3463-            orientation = android.widget.LinearLayout.VERTICAL
+3464-            setPadding(dp(18), dp(18), dp(18), dp(28))
+--
+3852-    ) {
+3853-
+3854-        val prefs = getSharedPreferences(
+3855:            "pc_drone_v3_data",
+3856-            android.content.Context.MODE_PRIVATE
+3857-        )
+3858-
+3859-        val parts =
+3860-            originalRecord.split(
+3861-                "|||",
+--
+4148-    private fun showFinance() {
+4149-
+4150-        val prefs = getSharedPreferences(
+4151:            "pc_drone_v3_data",
+4152-            android.content.Context.MODE_PRIVATE
+4153-        )
+4154-
+4155-        val moneyFormat =
+4156-            java.text.DecimalFormat("#,##0.00")
+4157-
+--
+5042-    ) {
+5043-
+5044-        val prefs = getSharedPreferences(
+5045:            "pc_drone_v3_data",
+5046-            android.content.Context.MODE_PRIVATE
+5047-        )
+5048-
+5049-        val parts =
+5050-            originalRecord.split(
+5051-                "|||",
+
+===== BALANCE / OPENING MONEY =====
+169:        val balance =
+857:        val balanceBox =
+861:                    "เงินคงเหลือ  ${moneyFormat.format(balance)} บาท"
+887:                            balance.compareTo(
+903:        val balanceParams =
+914:            balanceBox,
+915:            balanceParams
+1568:                    var runningBalance = 0.0
+1575:                            runningBalance += it.amount
+1577:                            runningBalance -= it.amount
+1611:                        runningBalance +=
+1664:                                money(runningBalance),
+1704:                            money(runningBalance),
+1730:                        money(runningBalance) +
+2044:        val includeBalance =
+2047:                text = "แสดงยอดคงเหลือ"
+2067:            includeBalance
+2225:                    "ยอดคงเหลือ       0.00 บาท"
+2340:                        "report_balance",
+2341:                        includeBalance.isChecked
+4219:                    "รายรับและรายจ่ายทั้งหมดเชื่อมกับยอดคงเหลือกลาง"
+4305:        val balanceText =
+4327:        summaryBox.addView(balanceText)
+4390:                "เงินทุนเข้า",
+4840:            val balance =
+4861:            balanceText.text =
+4863:                "${moneyFormat.format(balance)} บาท"
+4865:            balanceText.setTextColor(
+4867:                    balance.compareTo(
+5184:                "เงินทุนเข้า",
+
+===== FINANCE RECORD FORMAT =====
+2887-                                        prefs.getStringSet(
+2888-                                            "customers",
+2889-                                            emptySet()
+2890-                                        )?.toMutableSet()
+2891-                                            ?: mutableSetOf()
+2892-
+2893-                                    val updated =
+2894-                                        listOf(
+2895-                                            time.toString(),
+2896-                                            newName,
+2897-                                            newPhone,
+2898-                                            newArea
+2899:                                        ).joinToString(
+2900-                                            "|||"
+2901-                                        )
+2902-
+2903-                                    current.remove(record)
+2904-                                    current.add(updated)
+2905-
+2906-                                    prefs.edit()
+2907-                                        .putStringSet(
+2908-                                            "customers",
+2909-                                            current
+2910-                                        )
+2911-                                        .apply()
+2912-
+2913-                                    dialog.dismiss()
+2914-
+2915-                                    android.widget.Toast
+2916-                                        .makeText(
+2917-                                            this@MainActivity,
+--
+3041-                        nameInput.error =
+3042-                            "กรุณากรอกชื่อลูกค้า"
+3043-                        return@setOnClickListener
+3044-                    }
+3045-
+3046-                    val record =
+3047-                        listOf(
+3048-                            System.currentTimeMillis()
+3049-                                .toString(),
+3050-                            name,
+3051-                            phone,
+3052-                            area
+3053:                        ).joinToString(
+3054-                            "|||"
+3055-                        )
+3056-
+3057-                    val current =
+3058-                        prefs.getStringSet(
+3059-                            "customers",
+3060-                            emptySet()
+3061-                        )?.toMutableSet()
+3062-                            ?: mutableSetOf()
+3063-
+3064-                    current.add(record)
+3065-
+3066-                    prefs.edit()
+3067-                        .putStringSet(
+3068-                            "customers",
+3069-                            current
+3070-                        )
+3071-                        .apply()
+--
+3364-                     */
+3365-                    val record =
+3366-                        listOf(
+3367-                            time.toString(),
+3368-                            customer,
+3369-                            service,
+3370-                            location,
+3371-                            rai.toString(),
+3372-                            rate.toString(),
+3373-                            total.toString(),
+3374-                            status,
+3375-                            note
+3376:                        ).joinToString("|||")
+3377-
+3378-                    val oldSet =
+3379-                        prefs.getStringSet(
+3380-                            "flight_jobs",
+3381-                            emptySet()
+3382-                        )?.toMutableSet()
+3383-                            ?: mutableSetOf()
+3384-
+3385-                    oldSet.add(record)
+3386-
+3387-                    prefs.edit()
+3388-                        .putStringSet(
+3389-                            "flight_jobs",
+3390-                            oldSet
+3391-                        )
+3392-                        .apply()
+3393-
+3394-                    resultText.text =
+--
+4101-
+4102-                val updatedRecord =
+4103-                    listOf(
+4104-                        originalTime.toString(),
+4105-                        customer,
+4106-                        service,
+4107-                        location,
+4108-                        rai.toString(),
+4109-                        rate.toString(),
+4110-                        total.toString(),
+4111-                        status,
+4112-                        note
+4113:                    ).joinToString("|||")
+4114-
+4115-                val current =
+4116-                    prefs.getStringSet(
+4117-                        "flight_jobs",
+4118-                        emptySet()
+4119-                    )?.toMutableSet()
+4120-                        ?: mutableSetOf()
+4121-
+4122-                current.remove(originalRecord)
+4123-                current.add(updatedRecord)
+4124-
+4125-                prefs.edit()
+4126-                    .putStringSet(
+4127-                        "flight_jobs",
+4128-                        current
+4129-                    )
+4130-                    .apply()
+4131-
+--
+4964-                        )
+4965-
+4966-                    val record =
+4967-                        listOf(
+4968-                            System.currentTimeMillis()
+4969-                                .toString(),
+4970-                            typeCode,
+4971-                            category,
+4972-                            amount
+4973-                                .stripTrailingZeros()
+4974-                                .toPlainString(),
+4975-                            note
+4976:                        ).joinToString(
+4977-                            "|||"
+4978-                        )
+4979-
+4980-                    val current =
+4981-                        prefs.getStringSet(
+4982-                            "finance_transactions",
+4983-                            emptySet()
+4984-                        )?.toMutableSet()
+4985-                            ?: mutableSetOf()
+4986-
+4987-                    current.add(
+4988-                        record
+4989-                    )
+4990-
+4991-                    prefs.edit()
+4992-                        .putStringSet(
+4993-                            "finance_transactions",
+4994-                            current
+--
+5373-                        )
+5374-                        .trim()
+5375-
+5376-                val updatedRecord =
+5377-                    listOf(
+5378-                        originalTime.toString(),
+5379-                        typeCode,
+5380-                        category,
+5381-                        amount
+5382-                            .stripTrailingZeros()
+5383-                            .toPlainString(),
+5384-                        note
+5385:                    ).joinToString(
+5386-                        "|||"
+5387-                    )
+5388-
+5389-                val current =
+5390-                    prefs.getStringSet(
+5391-                        "finance_transactions",
+5392-                        emptySet()
+5393-                    )?.toMutableSet()
+5394-                        ?: mutableSetOf()
+5395-
+5396-                /*
+5397-                 * ลบรายการเดิมก่อน
+5398-                 * แล้วเพิ่มรายการที่แก้ไข
+5399-                 *
+5400-                 * จึงไม่เกิดยอดซ้ำ
+5401-                 */
+5402-                current.remove(
+5403-                    originalRecord

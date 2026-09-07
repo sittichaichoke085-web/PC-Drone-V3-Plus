@@ -25,6 +25,12 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name="com.pcdrone.v3plus.FinanceReportProvider"
+            android:authorities="com.pcdrone.v3plus.finance-reports"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"
             android:directBootAware="true"
