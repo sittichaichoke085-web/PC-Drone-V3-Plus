@@ -4591,6 +4591,252 @@ class MainActivity : Activity() {
     }
 
 
+    private fun scheduleJobReminder(
+        jobId: Long,
+        appointmentMillis: Long,
+        customer: String,
+        service: String,
+        location: String,
+        rai: Double
+    ) {
+
+        val settingsPrefs =
+            getSharedPreferences(
+                "pc_drone_settings",
+                android.content.Context.MODE_PRIVATE
+            )
+
+        val notificationsEnabled =
+            settingsPrefs.getBoolean(
+                "notifications_enabled",
+                true
+            )
+
+        if (!notificationsEnabled) {
+            return
+        }
+
+        /*
+         * รองรับทั้ง Int / Long / String
+         * เผื่อ Settings รุ่นก่อนบันทึกคนละชนิด
+         */
+        val advanceValue =
+            settingsPrefs.all[
+                "notify_advance_minutes"
+            ]
+
+        val advanceMinutes =
+            when (advanceValue) {
+
+                is Int ->
+                    advanceValue
+
+                is Long ->
+                    advanceValue.toInt()
+
+                is Float ->
+                    advanceValue.toInt()
+
+                is String ->
+                    advanceValue
+                        .toIntOrNull()
+                        ?: 120
+
+                else ->
+                    120
+            }.coerceAtLeast(0)
+
+        var triggerAt =
+            appointmentMillis -
+                (
+                    advanceMinutes *
+                        60_000L
+                )
+
+        val now =
+            System.currentTimeMillis()
+
+        /*
+         * ถ้าเลยเวลาเตือนล่วงหน้าแล้ว
+         * ให้เตือนภายในประมาณ 5 วินาที
+         * แทนที่จะไม่เตือนเลย
+         */
+        if (triggerAt <= now) {
+            triggerAt =
+                now + 5_000L
+        }
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            ).apply {
+
+                putExtra(
+                    "job_id",
+                    jobId
+                )
+
+                putExtra(
+                    "appointment_millis",
+                    appointmentMillis
+                )
+
+                putExtra(
+                    "customer",
+                    customer
+                )
+
+                putExtra(
+                    "service",
+                    service
+                )
+
+                putExtra(
+                    "location",
+                    location
+                )
+
+                putExtra(
+                    "rai",
+                    rai
+                )
+            }
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_UPDATE_CURRENT or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        val alarmManager =
+            getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.S
+        ) {
+
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+    }
+
+
     private fun showJobs() {
 
         val prefs = getSharedPreferences(
@@ -4715,6 +4961,182 @@ class MainActivity : Activity() {
                 statuses
             )
 
+        // ---------- APPOINTMENT ----------
+        val appointmentLabel =
+            android.widget.TextView(this).apply {
+                text = "วันและเวลานัดหมาย"
+                textSize = 17f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+                setPadding(0, dp(18), 0, dp(6))
+            }
+
+        val appointmentTz =
+            java.util.TimeZone.getTimeZone(
+                "Asia/Bangkok"
+            )
+
+        val appointmentCal =
+            java.util.Calendar
+                .getInstance(appointmentTz)
+                .apply {
+                    add(
+                        java.util.Calendar.DAY_OF_MONTH,
+                        1
+                    )
+                    set(
+                        java.util.Calendar.HOUR_OF_DAY,
+                        8
+                    )
+                    set(
+                        java.util.Calendar.MINUTE,
+                        0
+                    )
+                    set(
+                        java.util.Calendar.SECOND,
+                        0
+                    )
+                    set(
+                        java.util.Calendar.MILLISECOND,
+                        0
+                    )
+                }
+
+        var appointmentDateSelected = false
+
+        val appointmentDateButton =
+            android.widget.Button(this).apply {
+                text = "เลือกวันที่นัดหมาย"
+                textSize = 16f
+                isAllCaps = false
+            }
+
+        val appointmentTimeButton =
+            android.widget.Button(this).apply {
+                text = "เวลา 08:00 น."
+                textSize = 16f
+                isAllCaps = false
+            }
+
+        fun updateAppointmentDateText() {
+            appointmentDateButton.text =
+                "%02d/%02d/%04d".format(
+                    appointmentCal.get(
+                        java.util.Calendar.DAY_OF_MONTH
+                    ),
+                    appointmentCal.get(
+                        java.util.Calendar.MONTH
+                    ) + 1,
+                    appointmentCal.get(
+                        java.util.Calendar.YEAR
+                    ) + 543
+                )
+        }
+
+        fun updateAppointmentTimeText() {
+            appointmentTimeButton.text =
+                "เวลา %02d:%02d น.".format(
+                    appointmentCal.get(
+                        java.util.Calendar.HOUR_OF_DAY
+                    ),
+                    appointmentCal.get(
+                        java.util.Calendar.MINUTE
+                    )
+                )
+        }
+
+        appointmentDateButton.setOnClickListener {
+
+            android.app.DatePickerDialog(
+                this,
+                { _, year, month, day ->
+
+                    appointmentCal.set(
+                        java.util.Calendar.YEAR,
+                        year
+                    )
+                    appointmentCal.set(
+                        java.util.Calendar.MONTH,
+                        month
+                    )
+                    appointmentCal.set(
+                        java.util.Calendar.DAY_OF_MONTH,
+                        day
+                    )
+
+                    appointmentDateSelected = true
+                    updateAppointmentDateText()
+                },
+                appointmentCal.get(
+                    java.util.Calendar.YEAR
+                ),
+                appointmentCal.get(
+                    java.util.Calendar.MONTH
+                ),
+                appointmentCal.get(
+                    java.util.Calendar.DAY_OF_MONTH
+                )
+            ).show()
+        }
+
+        appointmentTimeButton.setOnClickListener {
+
+            android.app.TimePickerDialog(
+                this,
+                { _, hour, minute ->
+
+                    appointmentCal.set(
+                        java.util.Calendar.HOUR_OF_DAY,
+                        hour
+                    )
+                    appointmentCal.set(
+                        java.util.Calendar.MINUTE,
+                        minute
+                    )
+
+                    updateAppointmentTimeText()
+                },
+                appointmentCal.get(
+                    java.util.Calendar.HOUR_OF_DAY
+                ),
+                appointmentCal.get(
+                    java.util.Calendar.MINUTE
+                ),
+                true
+            ).show()
+        }
+
+        val reminderSwitch =
+            android.widget.Switch(this).apply {
+
+                text =
+                    "เปิดการแจ้งเตือนสำหรับงานนี้"
+
+                textSize = 16f
+
+                val settingsPrefs =
+                    getSharedPreferences(
+                        "pc_drone_settings",
+                        android.content.Context.MODE_PRIVATE
+                    )
+
+                isChecked =
+                    settingsPrefs.getBoolean(
+                        "notifications_enabled",
+                        true
+                    )
+
+                setPadding(
+                    0,
+                    dp(8),
+                    0,
+                    dp(10)
+                )
+            }
+
         // ---------- NOTES ----------
         val noteInput = android.widget.EditText(this).apply {
             hint = "หมายเหตุ เช่น ชนิดพืช ยาที่ใช้ หรือรายละเอียดเพิ่มเติม"
@@ -4818,6 +5240,17 @@ class MainActivity : Activity() {
                         return@setOnClickListener
                     }
 
+                    if (!appointmentDateSelected) {
+
+                        android.widget.Toast.makeText(
+                            this@MainActivity,
+                            "กรุณาเลือกวันที่นัดหมาย",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
                     val service =
                         serviceSpinner.selectedItem.toString()
 
@@ -4866,6 +5299,82 @@ class MainActivity : Activity() {
                         )
                         .apply()
 
+                    /*
+                     * APPOINTMENT_SCHEMA
+                     * 0 = jobId (ใช้ timestamp เดียวกับ flight_jobs)
+                     * 1 = appointmentMillis
+                     * 2 = reminderEnabled
+                     */
+                    val appointmentRecord =
+                        listOf(
+                            time.toString(),
+                            appointmentCal.timeInMillis
+                                .toString(),
+                            reminderSwitch.isChecked
+                                .toString()
+                        ).joinToString("|||")
+
+                    val appointmentSet =
+                        prefs.getStringSet(
+                            "job_appointments",
+                            emptySet()
+                        )?.toMutableSet()
+                            ?: mutableSetOf()
+
+                    appointmentSet.add(
+                        appointmentRecord
+                    )
+
+                    prefs.edit()
+                        .putStringSet(
+                            "job_appointments",
+                            appointmentSet
+                        )
+                        .apply()
+
+                    // PC_DRONE_NOTIFICATION_SCHEDULED
+                    if (
+                        reminderSwitch.isChecked &&
+                        status != "เสร็จแล้ว" &&
+                        status != "ยกเลิก"
+                    ) {
+
+                        scheduleJobReminder(
+                            jobId = time,
+                            appointmentMillis =
+                                appointmentCal.timeInMillis,
+                            customer = customer,
+                            service = service,
+                            location = location,
+                            rai = rai
+                        )
+
+                    } else {
+
+                        cancelJobReminder(
+                            time
+                        )
+                    }
+
+                    val appointmentText =
+                        "%02d/%02d/%04d %02d:%02d".format(
+                            appointmentCal.get(
+                                java.util.Calendar.DAY_OF_MONTH
+                            ),
+                            appointmentCal.get(
+                                java.util.Calendar.MONTH
+                            ) + 1,
+                            appointmentCal.get(
+                                java.util.Calendar.YEAR
+                            ) + 543,
+                            appointmentCal.get(
+                                java.util.Calendar.HOUR_OF_DAY
+                            ),
+                            appointmentCal.get(
+                                java.util.Calendar.MINUTE
+                            )
+                        )
+
                     resultText.text =
                         "บันทึกสำเร็จ\n" +
                         "ลูกค้า: $customer\n" +
@@ -4873,7 +5382,14 @@ class MainActivity : Activity() {
                         "จำนวน: %.2f ไร่\n".format(rai) +
                         "ราคา: %.2f บาท/ไร่\n".format(rate) +
                         "รวม: %.2f บาท\n".format(total) +
-                        "สถานะ: $status"
+                        "สถานะ: $status\n" +
+                        "นัดหมาย: $appointmentText\n" +
+                        "แจ้งเตือน: " +
+                        if (reminderSwitch.isChecked) {
+                            "เปิด"
+                        } else {
+                            "ปิด"
+                        }
 
                     android.widget.Toast.makeText(
                         this@MainActivity,
@@ -4903,6 +5419,39 @@ class MainActivity : Activity() {
 
         root.addView(statusLabel)
         root.addView(statusSpinner)
+
+        root.addView(appointmentLabel)
+
+        val appointmentRow =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+            }
+
+        appointmentRow.addView(
+            appointmentDateButton,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                dp(54),
+                1f
+            ).apply {
+                marginEnd = dp(5)
+            }
+        )
+
+        appointmentRow.addView(
+            appointmentTimeButton,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                dp(54),
+                1f
+            ).apply {
+                marginStart = dp(5)
+            }
+        )
+
+        root.addView(appointmentRow)
+        root.addView(reminderSwitch)
 
         root.addView(noteInput)
 
