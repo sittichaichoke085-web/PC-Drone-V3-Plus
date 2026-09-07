@@ -1,120 +1,123 @@
 package com.pcdrone.v3plus
 
-class FinanceReportProvider :
-    android.content.ContentProvider() {
+import android.content.ContentProvider
+import android.content.ContentValues
+import android.database.Cursor
+import android.database.MatrixCursor
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import android.provider.OpenableColumns
+import java.io.File
 
-    override fun onCreate():
-        Boolean = true
+class FinanceReportProvider : ContentProvider() {
 
-    private fun fileFor(
-        uri: android.net.Uri
-    ): java.io.File {
+    override fun onCreate(): Boolean = true
 
-        val raw =
+    private fun resolveFile(uri: Uri): File? {
+
+        val name =
             uri.lastPathSegment
-                ?: throw java.io.FileNotFoundException()
-
-        val safe =
-            java.io.File(raw).name
+                ?.replace("/", "")
+                ?.replace("\\", "")
+                ?: return null
 
         val dir =
-            java.io.File(
-                context!!.cacheDir,
+            File(
+                context?.cacheDir,
                 "finance_reports"
             )
 
         val file =
-            java.io.File(
-                dir,
-                safe
-            )
+            File(dir, name)
 
-        if (
-            !file.exists() ||
-            !file.isFile
+        return if (
+            file.exists() &&
+            file.isFile
         ) {
-            throw java.io.FileNotFoundException(
-                file.absolutePath
-            )
+            file
+        } else {
+            null
         }
-
-        return file
-    }
-
-    override fun openFile(
-        uri: android.net.Uri,
-        mode: String
-    ): android.os.ParcelFileDescriptor {
-
-        return android.os.ParcelFileDescriptor.open(
-            fileFor(uri),
-            android.os.ParcelFileDescriptor.MODE_READ_ONLY
-        )
     }
 
     override fun getType(
-        uri: android.net.Uri
-    ): String {
+        uri: Uri
+    ): String = "application/pdf"
 
-        val n =
-            uri.lastPathSegment
-                ?.lowercase()
-                ?: ""
+    override fun openFile(
+        uri: Uri,
+        mode: String
+    ): ParcelFileDescriptor {
 
-        return when {
+        val file =
+            resolveFile(uri)
+                ?: throw java.io.FileNotFoundException(
+                    uri.toString()
+                )
 
-            n.endsWith(".pdf") ->
-                "application/pdf"
-
-            n.endsWith(".csv") ->
-                "text/csv"
-
-            else ->
-                "application/octet-stream"
-        }
+        return ParcelFileDescriptor.open(
+            file,
+            ParcelFileDescriptor.MODE_READ_ONLY
+        )
     }
 
     override fun query(
-        uri: android.net.Uri,
+        uri: Uri,
         projection: Array<out String>?,
         selection: String?,
         selectionArgs: Array<out String>?,
         sortOrder: String?
-    ): android.database.Cursor {
+    ): Cursor? {
 
         val file =
-            fileFor(uri)
+            resolveFile(uri)
+                ?: return null
 
-        return android.database.MatrixCursor(
-            arrayOf(
-                android.provider.OpenableColumns.DISPLAY_NAME,
-                android.provider.OpenableColumns.SIZE
-            )
-        ).apply {
-
-            addRow(
-                arrayOf(
-                    file.name,
-                    file.length()
+        val columns =
+            projection
+                ?: arrayOf(
+                    OpenableColumns.DISPLAY_NAME,
+                    OpenableColumns.SIZE
                 )
-            )
+
+        val cursor =
+            MatrixCursor(columns)
+
+        val row =
+            cursor.newRow()
+
+        columns.forEach { column ->
+
+            when (column) {
+
+                OpenableColumns.DISPLAY_NAME ->
+                    row.add(file.name)
+
+                OpenableColumns.SIZE ->
+                    row.add(file.length())
+
+                else ->
+                    row.add(null)
+            }
         }
+
+        return cursor
     }
 
     override fun insert(
-        uri: android.net.Uri,
-        values: android.content.ContentValues?
-    ): android.net.Uri? = null
+        uri: Uri,
+        values: ContentValues?
+    ): Uri? = null
 
     override fun delete(
-        uri: android.net.Uri,
+        uri: Uri,
         selection: String?,
         selectionArgs: Array<out String>?
     ): Int = 0
 
     override fun update(
-        uri: android.net.Uri,
-        values: android.content.ContentValues?,
+        uri: Uri,
+        values: ContentValues?,
         selection: String?,
         selectionArgs: Array<out String>?
     ): Int = 0

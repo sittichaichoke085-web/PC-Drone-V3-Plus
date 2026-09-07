@@ -2306,21 +2306,95 @@ class MainActivity : Activity() {
                                     android.graphics.Paint.Align.CENTER
                                 )
 
-                                var item =
+                                /*
+                                 * รายการต้องแสดงครบทุกตัวอักษร
+                                 * ห้ามตัดข้อความด้วย ...
+                                 * ถ้ายาวให้ขึ้นบรรทัดใหม่ภายในช่องรายการ
+                                 */
+                                val itemText =
                                     row[2]
 
-                                if (item.length > 28) {
-                                    item =
-                                        item.take(27) + "…"
+                                val itemPaint =
+                                    android.text.TextPaint(
+                                        android.graphics.Paint.ANTI_ALIAS_FLAG
+                                    ).apply {
+                                        color =
+                                            android.graphics.Color.BLACK
+                                        textSize = 8f
+                                        typeface =
+                                            android.graphics.Typeface.DEFAULT
+                                    }
+
+                                var itemLayout =
+                                    android.text.StaticLayout.Builder
+                                        .obtain(
+                                            itemText,
+                                            0,
+                                            itemText.length,
+                                            itemPaint,
+                                            160
+                                        )
+                                        .setAlignment(
+                                            android.text.Layout.Alignment
+                                                .ALIGN_NORMAL
+                                        )
+                                        .setIncludePad(false)
+                                        .setLineSpacing(
+                                            0f,
+                                            1f
+                                        )
+                                        .build()
+
+                                /*
+                                 * ถ้าข้อความยาวมากจนเกินความสูงแถว
+                                 * ลดขนาดอักษรทีละน้อย แต่ไม่ตัดข้อความ
+                                 */
+                                var itemSize = 8f
+
+                                while (
+                                    itemLayout.height > 24 &&
+                                    itemSize > 5f
+                                ) {
+                                    itemSize -= 0.5f
+                                    itemPaint.textSize =
+                                        itemSize
+
+                                    itemLayout =
+                                        android.text.StaticLayout.Builder
+                                            .obtain(
+                                                itemText,
+                                                0,
+                                                itemText.length,
+                                                itemPaint,
+                                                160
+                                            )
+                                            .setAlignment(
+                                                android.text.Layout.Alignment
+                                                    .ALIGN_NORMAL
+                                            )
+                                            .setIncludePad(false)
+                                            .setLineSpacing(
+                                                0f,
+                                                1f
+                                            )
+                                            .build()
                                 }
 
-                                drawText(
-                                    canvas,
-                                    item,
+                                canvas.save()
+
+                                canvas.translate(
                                     170f,
-                                    y + 18f,
-                                    8f
+                                    y + (
+                                        rowHeight -
+                                            itemLayout.height
+                                        ) / 2f
                                 )
+
+                                itemLayout.draw(
+                                    canvas
+                                )
+
+                                canvas.restore()
 
                                 drawText(
                                     canvas,
