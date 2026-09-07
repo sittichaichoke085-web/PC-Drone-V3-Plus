@@ -1,0 +1,39 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkDebugAarMetadata FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:checkDebugAarMetadata'.
+> Configuration `:app:debugRuntimeClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
+  Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
+  The following AndroidX dependencies are detected:
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.room:room-common:2.8.4 -> androidx.room:room-common-jvm:2.8.4 -> androidx.annotation:annotation:1.9.1
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.room:room-common:2.8.4 -> androidx.room:room-common-jvm:2.8.4 -> androidx.annotation:annotation:1.9.1 -> androidx.annotation:annotation-jvm:1.9.1
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.annotation:annotation-experimental:1.5.0
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.arch.core:core-runtime:2.2.0
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.arch.core:core-runtime:2.2.0 -> androidx.arch.core:core-common:2.2.0
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.collection:collection:1.5.0
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.collection:collection:1.5.0 -> androidx.collection:collection-jvm:1.5.0
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.room:room-common:2.8.4
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.room:room-common:2.8.4 -> androidx.room:room-common-jvm:2.8.4
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.sqlite:sqlite:2.6.2
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.sqlite:sqlite:2.6.2 -> androidx.sqlite:sqlite-android:2.6.2
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.sqlite:sqlite-framework:2.6.2
+  :app:debugRuntimeClasspath -> androidx.room:room-runtime:2.8.4 -> androidx.room:room-runtime-android:2.8.4 -> androidx.sqlite:sqlite-framework:2.6.2 -> androidx.sqlite:sqlite-framework-android:2.6.2
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 28s
+1 actionable task: 1 executed
