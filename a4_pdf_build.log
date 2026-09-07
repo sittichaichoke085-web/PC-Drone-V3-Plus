@@ -19,10 +19,345 @@ Daemon will be stopped at the end of the build
 > Task :app:processDebugManifest UP-TO-DATE
 > Task :app:processDebugManifestForPackage UP-TO-DATE
 > Task :app:processDebugResources UP-TO-DATE
-> Task :app:kspDebugKotlin
+> Task :app:kspDebugKotlin UP-TO-DATE
 
 > Task :app:compileDebugKotlin
-e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2507:37 'val' cannot be reassigned.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2525:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2525:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2525:14 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2525:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2526:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2526:22 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:20 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:27 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:28 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:40 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:41 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2527:53 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:17 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:24 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:25 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:29 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:30 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:39 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:40 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:52 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:53 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2528:65 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2529:17 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2529:19 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2529:20 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2529:22 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2530:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2530:14 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2530:15 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2530:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2530:21 Function declaration must have a name.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2531:17 Unresolved reference 'topMargin'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2533:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2536:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2536:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2536:14 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2536:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:20 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:27 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:28 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:36 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:37 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:41 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:42 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:43 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:49 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2537:49 Function declaration must have a name.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2538:17 Unresolved reference 'text'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2539:17 Unresolved reference 'textSize'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2540:17 Unresolved reference 'setTypeface'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2541:21 Unresolved reference 'typeface'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2544:17 Unresolved reference 'setTextColor'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2547:17 Unresolved reference 'setPadding'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2549:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2551:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2551:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2551:14 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2551:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2551:22 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2551:32 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2553:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2553:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2553:14 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2553:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:13 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:20 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:21 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:27 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:28 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:36 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:37 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:41 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:42 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:43 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:49 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2554:49 Function declaration must have a name.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2556:17 Unresolved reference 'text'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2559:17 Unresolved reference 'textSize'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2560:17 Unresolved reference 'gravity'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2561:17 Unresolved reference 'setTextColor'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2562:17 Unresolved reference 'setPadding'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2564:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2570:21 Unresolved reference 'root'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2578:9 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2578:23 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2578:24 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2578:34 Syntax error: Expecting member declaration.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2585:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2607:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2619:21 Unresolved reference 'greenDark'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2632:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2655:44 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2686:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2725:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2743:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2750:21 Unresolved reference 'greenDark'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2763:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2781:36 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2785:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2799:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2813:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2827:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2863:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2898:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2919:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2942:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2984:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3002:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3033:49 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3055:42 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3075:33 Unresolved reference 'greenDark'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3103:21 Unresolved reference 'getSharedPreferences'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3125:22 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3128:21 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3153:17 Unresolved reference 'showReports'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3166:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3191:39 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3202:9 Unresolved reference 'setContentView'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3211:13 Unresolved reference 'showReports'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3240:33 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3244:32 Unresolved reference 'white'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3247:31 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3250:26 Unresolved reference 'greenDark'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3255:31 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3258:26 Unresolved reference 'black'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3263:29 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3265:26 Unresolved reference 'white'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3266:32 Unresolved reference 'green'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3268:17 Unresolved reference 'showScreen'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3272:9 Unresolved reference 'setContentView'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3279:31 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3282:26 Unresolved reference 'white'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3283:32 Unresolved reference 'green'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3287:17 Unresolved reference 'showScreen'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3301:29 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3306:34 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3309:30 Unresolved reference 'black'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3312:34 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3315:30 Unresolved reference 'greenDark'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3324:21 Unresolved reference 'getSharedPreferences'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3329:48 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3338:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3350:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3359:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3367:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3377:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3389:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3402:21 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3404:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3407:46 Cannot infer type for value parameter 'record'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3421:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3441:30 Cannot infer type for value parameter 'record'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3451:21 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3473:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3520:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3537:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3560:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3568:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3578:41 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3594:41 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3602:41 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3612:41 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3625:41 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3671:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3673:48 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3685:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3685:45 'fun <T> MutableList<T>.remove(index: Int): T' is deprecated. Use removeAt(index) instead.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3686:45 Unresolved reference 'add'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3693:42 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3699:49 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3715:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3724:37 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3743:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3745:48 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3747:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3747:45 'fun <T> MutableList<T>.remove(index: Int): T' is deprecated. Use removeAt(index) instead.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3754:42 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3758:49 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3798:35 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3842:29 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3844:32 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3846:29 Unresolved reference 'add'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3853:26 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3861:33 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3886:39 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3897:9 Unresolved reference 'setContentView'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3903:21 Unresolved reference 'getSharedPreferences'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3908:48 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3918:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3930:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3939:53 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3947:52 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3954:53 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3966:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3972:53 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3980:48 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3991:49 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4002:51 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4009:52 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4020:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4026:49 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4035:49 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4067:35 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4078:50 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4087:35 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4163:29 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4165:32 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4167:28 Unresolved reference 'add'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4174:26 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4186:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4222:39 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4233:9 Unresolved reference 'setContentView'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4239:21 Unresolved reference 'getSharedPreferences'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4244:48 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4253:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4265:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4285:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4299:21 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4301:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4304:46 Cannot infer type for value parameter 'record'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4321:37 Cannot infer type for value parameter 'record'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4331:21 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4391:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4430:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4449:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4483:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4491:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4507:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4515:37 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4532:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4534:48 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4536:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4536:45 'fun <T> MutableList<T>.remove(index: Int): T' is deprecated. Use removeAt(index) instead.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4543:42 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4546:45 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4581:42 Unresolved reference 'size'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4589:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4616:39 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4627:9 Unresolved reference 'setContentView'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4636:21 Unresolved reference 'getSharedPreferences'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4651:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4665:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4679:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4685:36 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4698:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4715:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4721:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4736:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4751:36 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4763:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4780:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4801:39 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4806:45 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4900:25 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4902:28 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4905:25 Unresolved reference 'add'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4912:22 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4915:25 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4932:21 Unresolved reference 'getSharedPreferences'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4960:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4980:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4998:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5023:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5045:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5053:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5061:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5069:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5088:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5118:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5143:36 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5153:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5159:36 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5179:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5185:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5205:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5233:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5258:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5276:21 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5278:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5285:28 Cannot infer type for value parameter 'record'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5323:21 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5325:24 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5328:51 Cannot infer type for value parameter 'record'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5347:42 Cannot infer type for value parameter 'record'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5357:21 Return type mismatch: expected '??? (Unknown type for value parameter it)', actual 'Unit'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5409:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5451:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5488:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5510:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5527:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5535:37 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5554:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5556:48 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5558:45 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5558:45 'fun <T> MutableList<T>.remove(index: Int): T' is deprecated. Use removeAt(index) instead.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5567:42 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5570:45 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5583:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5671:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5695:35 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5765:29 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5767:32 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5769:29 Unresolved reference 'add'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5778:26 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5784:29 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5804:39 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5815:9 Unresolved reference 'setContentView'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5826:21 Unresolved reference 'getSharedPreferences'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5841:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5871:41 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5889:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5908:36 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5918:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5934:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5953:36 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5973:17 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5998:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6026:37 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6057:39 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6065:45 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6174:25 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6176:28 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6188:25 Unresolved reference 'add'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6197:22 Cannot infer type for type parameter 'T'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6200:25 Unresolved label.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6218:38 'this' is not defined in this context.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6232:25 Unresolved reference 'greenDark'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6252:17 Unresolved reference 'showDashboard'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6278:13 Unresolved reference 'resources'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6285:13 Unresolved reference 'resources'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6295:25 Unresolved reference 'resources'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6297:1 Syntax error: Expecting a top level declaration.
 
 > Task :app:compileDebugKotlin FAILED
 
@@ -39,5 +374,5 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 51s
-17 actionable tasks: 2 executed, 15 up-to-date
+BUILD FAILED in 41s
+17 actionable tasks: 1 executed, 16 up-to-date
