@@ -211,9 +211,18 @@ class JobNotificationReceiver :
                 .setStyle(
                     android.app.Notification
                         .BigTextStyle()
+                        .setBigContentTitle(
+                            "PC Drone • เตือนงานบิน"
+                        )
                         .bigText(
                             detail
                         )
+                        .setSummaryText(
+                            "แตะเพื่อเปิดรายละเอียดงาน"
+                        )
+                )
+                .setPriority(
+                    android.app.Notification.PRIORITY_MAX
                 )
                 .setContentIntent(
                     contentIntent
