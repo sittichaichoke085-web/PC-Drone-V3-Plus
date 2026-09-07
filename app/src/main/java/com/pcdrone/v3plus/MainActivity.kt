@@ -2654,17 +2654,90 @@ class MainActivity : Activity() {
 
     private fun showSettings() {
 
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_settings",
+                android.content.Context.MODE_PRIVATE
+            )
+
+        val dark =
+            android.graphics.Color.rgb(17, 17, 17)
+
+        val green =
+            android.graphics.Color.rgb(0, 145, 70)
+
+        val greenDark =
+            android.graphics.Color.rgb(0, 91, 45)
+
+        val pageBg =
+            android.graphics.Color.rgb(247, 249, 248)
+
+        val lineColor =
+            android.graphics.Color.rgb(225, 229, 226)
+
+        val gray =
+            android.graphics.Color.rgb(100, 105, 102)
+
+        fun rounded(
+            color: Int,
+            radius: Int,
+            strokeColor: Int? = null
+        ): android.graphics.drawable.GradientDrawable {
+
+            return android.graphics.drawable.GradientDrawable().apply {
+
+                shape =
+                    android.graphics.drawable.GradientDrawable.RECTANGLE
+
+                setColor(color)
+
+                cornerRadius =
+                    dp(radius).toFloat()
+
+                if (strokeColor != null) {
+                    setStroke(
+                        dp(1),
+                        strokeColor
+                    )
+                }
+            }
+        }
+
+        window.statusBarColor =
+            android.graphics.Color.WHITE
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.M
+        ) {
+            window.decorView.systemUiVisibility =
+                android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+
         val root =
             android.widget.LinearLayout(this).apply {
 
                 orientation =
                     android.widget.LinearLayout.VERTICAL
 
+                setBackgroundColor(pageBg)
+            }
+
+        // =========================================
+        // HEADER
+        // =========================================
+
+        val header =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
                 setPadding(
+                    dp(16),
                     dp(18),
-                    dp(8),
-                    dp(18),
-                    dp(32)
+                    dp(16),
+                    dp(18)
                 )
 
                 setBackgroundColor(
@@ -2672,54 +2745,117 @@ class MainActivity : Activity() {
                 )
             }
 
-        root.addView(
-            createBackButton()
-        )
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.KITKAT_WATCH
+        ) {
+            header.setOnApplyWindowInsetsListener { _, insets ->
 
-        root.addView(
+                header.setPadding(
+                    dp(16),
+                    dp(18) + insets.systemWindowInsetTop,
+                    dp(16),
+                    dp(18)
+                )
+
+                insets
+            }
+
+            header.requestApplyInsets()
+        }
+
+        val backButton =
             android.widget.TextView(this).apply {
 
-                text = "ตั้งค่า"
+                text = "‹  กลับ"
 
-                textSize = 30f
+                textSize = 17f
+
+                setTextColor(greenDark)
 
                 setTypeface(
                     typeface,
                     android.graphics.Typeface.BOLD
                 )
 
-                setTextColor(
-                    greenDark
-                )
-
                 setPadding(
-                    0,
+                    dp(4),
                     dp(8),
-                    0,
-                    dp(4)
+                    dp(8),
+                    dp(8)
                 )
-            }
-        )
 
-        root.addView(
+                isClickable = true
+                isFocusable = true
+
+                setOnClickListener {
+                    showScreen(AppRoute.DASHBOARD)
+                }
+            }
+
+        header.addView(backButton)
+
+        header.addView(
             android.widget.TextView(this).apply {
 
-                text = "ศูนย์ตั้งค่ารายงาน PC DRONE"
+                text = "ตั้งค่า"
 
-                textSize = 17f
+                textSize = 28f
 
-                setTextColor(
-                    android.graphics.Color.DKGRAY
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
                 )
 
                 setPadding(
+                    dp(4),
+                    dp(8),
                     0,
-                    0,
-                    0,
-                    dp(18)
+                    0
                 )
             }
         )
+
+        header.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "ปรับการทำงานของ PC Drone"
+
+                textSize = 14f
+
+                setTextColor(gray)
+
+                setPadding(
+                    dp(4),
+                    dp(3),
+                    0,
+                    0
+                )
+            }
+        )
+
+        root.addView(header)
+
+        // =========================================
+        // CONTENT
+        // =========================================
+
+        val content =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(14),
+                    dp(16),
+                    dp(14),
+                    dp(30)
+                )
+            }
 
         fun sectionTitle(
             title: String
@@ -2729,552 +2865,933 @@ class MainActivity : Activity() {
 
                 text = title
 
-                textSize = 21f
+                textSize = 18f
+
+                setTextColor(dark)
 
                 setTypeface(
                     typeface,
                     android.graphics.Typeface.BOLD
                 )
 
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-
                 setPadding(
                     dp(4),
-                    dp(12),
-                    dp(4),
-                    dp(10)
+                    dp(14),
+                    0,
+                    dp(8)
                 )
             }
         }
 
-        root.addView(
-            sectionTitle(
-                "ตั้งค่ารายงาน"
-            )
-        )
+        fun card():
+            android.widget.LinearLayout {
 
-        val reportCard =
-            android.widget.LinearLayout(this).apply {
+            return android.widget.LinearLayout(this).apply {
 
                 orientation =
                     android.widget.LinearLayout.VERTICAL
 
                 setPadding(
                     dp(16),
+                    dp(8),
                     dp(16),
-                    dp(16),
-                    dp(16)
-                )
-
-                background =
-                    android.graphics.drawable.GradientDrawable()
-                        .apply {
-
-                            setColor(
-                                android.graphics.Color.rgb(
-                                    246,
-                                    250,
-                                    247
-                                )
-                            )
-
-                            setStroke(
-                                dp(1),
-                                android.graphics.Color.rgb(
-                                    175,
-                                    195,
-                                    180
-                                )
-                            )
-
-                            cornerRadius =
-                                dp(12).toFloat()
-                        }
-            }
-
-        reportCard.addView(
-            android.widget.TextView(this).apply {
-
-                text = "รูปแบบเอกสาร"
-
-                textSize = 16f
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-            }
-        )
-
-        reportCard.addView(
-            android.widget.TextView(this).apply {
-
-                text = "A4 • แนวตั้ง"
-
-                textSize = 17f
-
-                setTextColor(
-                    greenDark
-                )
-
-                setPadding(
-                    0,
-                    dp(5),
-                    0,
-                    dp(16)
-                )
-            }
-        )
-
-        reportCard.addView(
-            android.widget.TextView(this).apply {
-
-                text = "ช่วงเวลาสรุป"
-
-                textSize = 16f
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-            }
-        )
-
-        val periodSpinner =
-            android.widget.Spinner(this)
-
-        periodSpinner.adapter =
-            android.widget.ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                arrayOf(
-                    "รายวัน",
-                    "รายเดือน",
-                    "รายปี"
-                )
-            )
-
-        reportCard.addView(
-            periodSpinner
-        )
-
-        val includeIncome =
-            android.widget.CheckBox(this).apply {
-
-                text = "แสดงรายรับ"
-
-                isChecked = true
-
-                textSize = 16f
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-            }
-
-        val includeExpense =
-            android.widget.CheckBox(this).apply {
-
-                text = "แสดงรายจ่าย"
-
-                isChecked = true
-
-                textSize = 16f
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-            }
-
-        val includeBalance =
-            android.widget.CheckBox(this).apply {
-
-                text = "แสดงยอดคงเหลือ"
-
-                isChecked = true
-
-                textSize = 16f
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-            }
-
-        reportCard.addView(
-            includeIncome
-        )
-
-        reportCard.addView(
-            includeExpense
-        )
-
-        reportCard.addView(
-            includeBalance
-        )
-
-        root.addView(
-            reportCard
-        )
-
-        root.addView(
-            sectionTitle(
-                "รูปแบบตาราง A4"
-            )
-        )
-
-        val preview =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
-
-                setPadding(
-                    dp(12),
-                    dp(12),
-                    dp(12),
-                    dp(12)
-                )
-
-                background =
-                    android.graphics.drawable.GradientDrawable()
-                        .apply {
-
-                            setColor(
-                                android.graphics.Color.WHITE
-                            )
-
-                            setStroke(
-                                dp(2),
-                                android.graphics.Color.rgb(
-                                    210,
-                                    210,
-                                    210
-                                )
-                            )
-
-                            cornerRadius =
-                                dp(5).toFloat()
-                        }
-            }
-
-        preview.addView(
-            android.widget.TextView(this).apply {
-
-                text = "PC DRONE"
-
-                gravity =
-                    android.view.Gravity.CENTER
-
-                textSize = 20f
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-            }
-        )
-
-        preview.addView(
-            android.widget.TextView(this).apply {
-
-                text = "รายงานสรุปการเงิน"
-
-                gravity =
-                    android.view.Gravity.CENTER
-
-                textSize = 16f
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-
-                setPadding(
-                    0,
-                    dp(2),
-                    0,
-                    dp(14)
-                )
-            }
-        )
-
-        val tableHeader =
-            android.widget.TextView(this).apply {
-
-                text =
-                    "วันที่   |   รายการ   |   รายรับ   |   รายจ่าย   |   คงเหลือ"
-
-                textSize = 13f
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-
-                setPadding(
-                    dp(5),
-                    dp(9),
-                    dp(5),
-                    dp(9)
-                )
-
-                background =
-                    android.graphics.drawable.GradientDrawable()
-                        .apply {
-
-                            setColor(
-                                android.graphics.Color.rgb(
-                                    235,
-                                    240,
-                                    236
-                                )
-                            )
-                        }
-            }
-
-        preview.addView(
-            tableHeader
-        )
-
-        preview.addView(
-            android.widget.TextView(this).apply {
-
-                text =
-                    "\nรายการการเงินจริงจะถูกนำมาแสดงในตารางนี้\n" +
-                    "ตามช่วงเวลาที่เลือก\n"
-
-                gravity =
-                    android.view.Gravity.CENTER
-
-                textSize = 14f
-
-                setTextColor(
-                    android.graphics.Color.GRAY
-                )
-            }
-        )
-
-        preview.addView(
-            android.widget.TextView(this).apply {
-
-                text =
-                    "รวมรายรับ        0.00 บาท\n" +
-                    "รวมรายจ่าย       0.00 บาท\n" +
-                    "ยอดคงเหลือ       0.00 บาท"
-
-                gravity =
-                    android.view.Gravity.END
-
-                textSize = 15f
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                setTextColor(
-                    android.graphics.Color.BLACK
-                )
-
-                setPadding(
-                    dp(5),
-                    dp(12),
-                    dp(5),
                     dp(8)
                 )
-            }
-        )
 
-        val horizontal =
-            android.widget.HorizontalScrollView(this).apply {
-
-                isFillViewport = true
-
-                addView(
-                    preview,
-                    android.widget.FrameLayout.LayoutParams(
-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                background =
+                    rounded(
+                        android.graphics.Color.WHITE,
+                        16,
+                        lineColor
                     )
+
+                elevation =
+                    dp(1).toFloat()
+            }
+        }
+
+        fun divider():
+            android.view.View {
+
+            return android.view.View(this).apply {
+
+                setBackgroundColor(lineColor)
+            }
+        }
+
+        fun addDivider(
+            parent: android.widget.LinearLayout
+        ) {
+            parent.addView(
+                divider(),
+                android.widget.LinearLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    dp(1)
+                ).apply {
+                    marginStart = dp(4)
+                    marginEnd = dp(4)
+                }
+            )
+        }
+
+        fun toggleRow(
+            title: String,
+            subtitle: String,
+            key: String,
+            defaultValue: Boolean
+        ): android.widget.LinearLayout {
+
+            val row =
+                android.widget.LinearLayout(this).apply {
+
+                    orientation =
+                        android.widget.LinearLayout.HORIZONTAL
+
+                    gravity =
+                        android.view.Gravity.CENTER_VERTICAL
+
+                    setPadding(
+                        dp(2),
+                        dp(12),
+                        dp(2),
+                        dp(12)
+                    )
+                }
+
+            val texts =
+                android.widget.LinearLayout(this).apply {
+
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+                }
+
+            texts.addView(
+                android.widget.TextView(this).apply {
+
+                    text = title
+                    textSize = 16f
+
+                    setTextColor(dark)
+
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                }
+            )
+
+            if (subtitle.isNotBlank()) {
+                texts.addView(
+                    android.widget.TextView(this).apply {
+
+                        text = subtitle
+                        textSize = 12f
+
+                        setTextColor(gray)
+
+                        setPadding(
+                            0,
+                            dp(2),
+                            0,
+                            0
+                        )
+                    }
                 )
             }
 
-        root.addView(
-            horizontal
+            val switch =
+                android.widget.Switch(this).apply {
+
+                    isChecked =
+                        prefs.getBoolean(
+                            key,
+                            defaultValue
+                        )
+
+                    setOnCheckedChangeListener { _, checked ->
+
+                        prefs.edit()
+                            .putBoolean(
+                                key,
+                                checked
+                            )
+                            .apply()
+                    }
+                }
+
+            row.addView(
+                texts,
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                    1f
+                )
+            )
+
+            row.addView(switch)
+
+            return row
+        }
+
+        fun editField(
+            label: String,
+            key: String,
+            hintText: String
+        ): android.widget.LinearLayout {
+
+            val wrap =
+                android.widget.LinearLayout(this).apply {
+
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+
+                    setPadding(
+                        dp(2),
+                        dp(10),
+                        dp(2),
+                        dp(10)
+                    )
+                }
+
+            wrap.addView(
+                android.widget.TextView(this).apply {
+
+                    text = label
+
+                    textSize = 14f
+
+                    setTextColor(dark)
+
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                }
+            )
+
+            val edit =
+                android.widget.EditText(this).apply {
+
+                    setText(
+                        prefs.getString(
+                            key,
+                            ""
+                        ).orEmpty()
+                    )
+
+                    hint = hintText
+
+                    textSize = 16f
+
+                    setTextColor(dark)
+                    setHintTextColor(gray)
+
+                    setPadding(
+                        dp(12),
+                        dp(10),
+                        dp(12),
+                        dp(10)
+                    )
+
+                    background =
+                        rounded(
+                            android.graphics.Color.rgb(
+                                248,
+                                249,
+                                248
+                            ),
+                            10,
+                            lineColor
+                        )
+
+                    setSingleLine(
+                        key != "profile_address"
+                    )
+
+                    setOnFocusChangeListener { _, hasFocus ->
+
+                        if (!hasFocus) {
+                            prefs.edit()
+                                .putString(
+                                    key,
+                                    text.toString().trim()
+                                )
+                                .apply()
+                        }
+                    }
+                }
+
+            wrap.addView(
+                edit,
+                android.widget.LinearLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = dp(6)
+                }
+            )
+
+            return wrap
+        }
+
+        // =========================================
+        // GENERAL
+        // =========================================
+
+        content.addView(
+            sectionTitle("ทั่วไป")
         )
 
-        fun greenButton(
-            label: String,
-            action: () -> Unit
-        ): android.widget.Button {
+        val generalCard = card()
 
-            return android.widget.Button(this).apply {
+        val yearRow =
+            android.widget.LinearLayout(this).apply {
 
-                text = label
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
 
-                textSize = 17f
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
 
-                isAllCaps = false
+                setPadding(
+                    dp(2),
+                    dp(12),
+                    dp(2),
+                    dp(12)
+                )
+            }
+
+        yearRow.addView(
+            android.widget.TextView(this).apply {
+
+                text = "รูปแบบปี"
+
+                textSize = 16f
+
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            },
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+        )
+
+        val yearButton =
+            android.widget.Button(this).apply {
+
+                val current =
+                    prefs.getString(
+                        "year_format",
+                        "BE"
+                    ) ?: "BE"
+
+                text =
+                    if (current == "BE") {
+                        "พ.ศ."
+                    } else {
+                        "ค.ศ."
+                    }
+
+                textSize = 14f
 
                 setTextColor(
                     android.graphics.Color.WHITE
                 )
 
-                elevation =
-                    dp(5).toFloat()
-
                 background =
-                    android.graphics.drawable.GradientDrawable()
-                        .apply {
-
-                            setColor(
-                                greenDark
-                            )
-
-                            setStroke(
-                                dp(2),
-                                android.graphics.Color.rgb(
-                                    4,
-                                    75,
-                                    30
-                                )
-                            )
-
-                            cornerRadius =
-                                dp(10).toFloat()
-                        }
+                    rounded(
+                        green,
+                        10
+                    )
 
                 setOnClickListener {
-                    action()
+
+                    val newValue =
+                        if (
+                            prefs.getString(
+                                "year_format",
+                                "BE"
+                            ) == "BE"
+                        ) {
+                            "CE"
+                        } else {
+                            "BE"
+                        }
+
+                    prefs.edit()
+                        .putString(
+                            "year_format",
+                            newValue
+                        )
+                        .apply()
+
+                    text =
+                        if (newValue == "BE") {
+                            "พ.ศ."
+                        } else {
+                            "ค.ศ."
+                        }
                 }
             }
-        }
 
-        root.addView(
-            greenButton(
-                "บันทึกการตั้งค่ารายงาน"
-            ) {
-
-                val prefs =
-                    getSharedPreferences(
-                        "pc_drone_settings",
-                        android.content.Context.MODE_PRIVATE
-                    )
-
-                prefs.edit()
-                    .putInt(
-                        "report_period",
-                        periodSpinner.selectedItemPosition
-                    )
-                    .putBoolean(
-                        "report_income",
-                        includeIncome.isChecked
-                    )
-                    .putBoolean(
-                        "report_expense",
-                        includeExpense.isChecked
-                    )
-                    .putBoolean(
-                        "report_balance",
-                        includeBalance.isChecked
-                    )
-                    .apply()
-
-                android.widget.Toast.makeText(
-                    this,
-                    "บันทึกการตั้งค่ารายงานแล้ว",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
-            },
+        yearRow.addView(
+            yearButton,
             android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(58)
-            ).apply {
-
-                topMargin =
-                    dp(18)
-            }
+                dp(82),
+                dp(44)
+            )
         )
 
-        /*
-         * Phase 2.3 มี showReports() อยู่แล้ว
-         * ปุ่มนี้เรียกฟังก์ชันโดยตรง
-         * ไม่ผ่าน AppRoute จึงไม่เกิดปัญหา route เดิม
-         */
-        root.addView(
-            greenButton(
-                "เปิดตารางสรุปและแชร์เอกสาร"
-            ) {
+        generalCard.addView(yearRow)
 
-                showReports()
-            },
-            android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(62)
-            ).apply {
+        addDivider(generalCard)
 
-                topMargin =
-                    dp(10)
-            }
+        generalCard.addView(
+            toggleRow(
+                "เวลา 24 ชั่วโมง",
+                "แสดงเวลา เช่น 18:30 น.",
+                "time_24h",
+                true
+            )
         )
 
-        root.addView(
+        addDivider(generalCard)
+
+        generalCard.addView(
+            toggleRow(
+                "ยืนยันก่อนลบข้อมูล",
+                "ลดการลบข้อมูลโดยไม่ได้ตั้งใจ",
+                "confirm_delete",
+                true
+            )
+        )
+
+        content.addView(generalCard)
+
+        // =========================================
+        // NOTIFICATION
+        // =========================================
+
+        content.addView(
+            sectionTitle("การแจ้งเตือน")
+        )
+
+        val notifyCard = card()
+
+        notifyCard.addView(
+            toggleRow(
+                "เปิดการแจ้งเตือน",
+                "อนุญาตการเตือนภายใน PC Drone",
+                "notifications_enabled",
+                true
+            )
+        )
+
+        addDivider(notifyCard)
+
+        val advanceWrap =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+
+                setPadding(
+                    dp(2),
+                    dp(12),
+                    dp(2),
+                    dp(12)
+                )
+            }
+
+        advanceWrap.addView(
             android.widget.TextView(this).apply {
 
                 text =
-                    "รายงานใช้ข้อมูลจากรายการการเงินที่บันทึกอยู่ในแอป\n" +
-                    "สามารถสร้าง PDF / CSV และแชร์ไปยังแอปอื่นได้"
+                    "แจ้งเตือนงานบินล่วงหน้า"
 
-                textSize = 14f
+                textSize = 16f
 
-                gravity =
-                    android.view.Gravity.CENTER
+                setTextColor(dark)
 
-                setTextColor(
-                    android.graphics.Color.DKGRAY
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
                 )
+            },
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+        )
+
+        val advanceButton =
+            android.widget.Button(this).apply {
+
+                fun label(
+                    value: Int
+                ): String {
+
+                    return when (value) {
+                        15 -> "15 นาที"
+                        30 -> "30 นาที"
+                        60 -> "1 ชม."
+                        else -> "30 นาที"
+                    }
+                }
+
+                var current =
+                    prefs.getInt(
+                        "notify_advance_minutes",
+                        30
+                    )
+
+                text = label(current)
+
+                textSize = 13f
+
+                setOnClickListener {
+
+                    current =
+                        when (current) {
+                            15 -> 30
+                            30 -> 60
+                            else -> 15
+                        }
+
+                    prefs.edit()
+                        .putInt(
+                            "notify_advance_minutes",
+                            current
+                        )
+                        .apply()
+
+                    text = label(current)
+                }
+            }
+
+        advanceWrap.addView(
+            advanceButton,
+            android.widget.LinearLayout.LayoutParams(
+                dp(105),
+                dp(46)
+            )
+        )
+
+        notifyCard.addView(advanceWrap)
+
+        addDivider(notifyCard)
+
+        notifyCard.addView(
+            editField(
+                "เวลาแจ้งเตือนเริ่มต้น",
+                "notification_default_time",
+                "เช่น 07:00"
+            )
+        )
+
+        content.addView(notifyCard)
+
+        // =========================================
+        // SOUND
+        // =========================================
+
+        content.addView(
+            sectionTitle("เสียง")
+        )
+
+        val soundCard = card()
+
+        soundCard.addView(
+            toggleRow(
+                "เสียงในแอป",
+                "เปิดหรือปิดเสียงทั้งหมดของแอป",
+                "sound_enabled",
+                true
+            )
+        )
+
+        addDivider(soundCard)
+
+        soundCard.addView(
+            toggleRow(
+                "เสียงเมื่อบันทึกสำเร็จ",
+                "",
+                "sound_save_success",
+                true
+            )
+        )
+
+        addDivider(soundCard)
+
+        soundCard.addView(
+            toggleRow(
+                "เสียงแจ้งเตือนงาน",
+                "",
+                "sound_job_notification",
+                true
+            )
+        )
+
+        addDivider(soundCard)
+
+        val volumeWrap =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
 
                 setPadding(
-                    dp(4),
-                    dp(15),
-                    dp(4),
-                    dp(8)
+                    dp(2),
+                    dp(12),
+                    dp(2),
+                    dp(12)
                 )
             }
+
+        val volumeLabel =
+            android.widget.TextView(this).apply {
+
+                val value =
+                    prefs.getInt(
+                        "sound_volume",
+                        70
+                    )
+
+                text =
+                    "ระดับเสียงในแอป  $value%"
+
+                textSize = 16f
+
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+
+        val seek =
+            android.widget.SeekBar(this).apply {
+
+                max = 100
+
+                progress =
+                    prefs.getInt(
+                        "sound_volume",
+                        70
+                    )
+
+                setOnSeekBarChangeListener(
+                    object :
+                        android.widget.SeekBar.OnSeekBarChangeListener {
+
+                        override fun onProgressChanged(
+                            seekBar: android.widget.SeekBar?,
+                            progress: Int,
+                            fromUser: Boolean
+                        ) {
+                            volumeLabel.text =
+                                "ระดับเสียงในแอป  $progress%"
+
+                            if (fromUser) {
+                                prefs.edit()
+                                    .putInt(
+                                        "sound_volume",
+                                        progress
+                                    )
+                                    .apply()
+                            }
+                        }
+
+                        override fun onStartTrackingTouch(
+                            seekBar: android.widget.SeekBar?
+                        ) {
+                        }
+
+                        override fun onStopTrackingTouch(
+                            seekBar: android.widget.SeekBar?
+                        ) {
+                        }
+                    }
+                )
+            }
+
+        volumeWrap.addView(volumeLabel)
+
+        volumeWrap.addView(
+            seek,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(8)
+            }
         )
+
+        soundCard.addView(volumeWrap)
+
+        content.addView(soundCard)
+
+        // =========================================
+        // PROFILE
+        // =========================================
+
+        content.addView(
+            sectionTitle("ข้อมูลผู้ใช้งาน")
+        )
+
+        val profileCard = card()
+
+        profileCard.addView(
+            editField(
+                "ชื่อผู้ให้บริการ / ชื่อกิจการ",
+                "profile_name",
+                "กรอกชื่อ"
+            )
+        )
+
+        addDivider(profileCard)
+
+        profileCard.addView(
+            editField(
+                "เบอร์โทร",
+                "profile_phone",
+                "กรอกเบอร์โทร"
+            )
+        )
+
+        addDivider(profileCard)
+
+        profileCard.addView(
+            editField(
+                "พื้นที่ให้บริการ",
+                "profile_service_area",
+                "เช่น ทองผาภูมิ และพื้นที่ใกล้เคียง"
+            )
+        )
+
+        addDivider(profileCard)
+
+        profileCard.addView(
+            editField(
+                "ที่อยู่",
+                "profile_address",
+                "กรอกที่อยู่"
+            )
+        )
+
+        addDivider(profileCard)
+
+        profileCard.addView(
+            editField(
+                "เลขประจำตัวผู้เสียภาษี (ไม่บังคับ)",
+                "profile_tax_id",
+                "เว้นว่างได้"
+            )
+        )
+
+        content.addView(profileCard)
+
+        val saveButton =
+            android.widget.Button(this).apply {
+
+                text = "บันทึกการตั้งค่า"
+
+                textSize = 17f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                background =
+                    rounded(
+                        green,
+                        14
+                    )
+
+                setOnClickListener {
+
+                    val focus =
+                        currentFocus
+
+                    focus?.clearFocus()
+
+                    android.widget.Toast.makeText(
+                        this@MainActivity,
+                        "บันทึกการตั้งค่าแล้ว",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+        content.addView(
+            saveButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(54)
+            ).apply {
+                topMargin = dp(18)
+            }
+        )
+
+        // =========================================
+        // SYSTEM INFO
+        // =========================================
+
+        content.addView(
+            sectionTitle("ข้อมูลระบบ")
+        )
+
+        val systemCard = card()
+
+        fun infoRow(
+            label: String,
+            value: String
+        ): android.widget.LinearLayout {
+
+            return android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+
+                setPadding(
+                    dp(2),
+                    dp(13),
+                    dp(2),
+                    dp(13)
+                )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text = label
+
+                        textSize = 15f
+
+                        setTextColor(dark)
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                    },
+                    android.widget.LinearLayout.LayoutParams(
+                        0,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                        1f
+                    )
+                )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text = value
+
+                        textSize = 14f
+
+                        setTextColor(gray)
+
+                        gravity =
+                            android.view.Gravity.END
+                    }
+                )
+            }
+        }
+
+        val versionName =
+            try {
+                packageManager
+                    .getPackageInfo(
+                        packageName,
+                        0
+                    )
+                    .versionName ?: "-"
+            } catch (_: Exception) {
+                "-"
+            }
+
+        systemCard.addView(
+            infoRow(
+                "เขตเวลา",
+                "Asia/Bangkok"
+            )
+        )
+
+        addDivider(systemCard)
+
+        systemCard.addView(
+            infoRow(
+                "รูปแบบวันที่",
+                "DD/MM/YYYY"
+            )
+        )
+
+        addDivider(systemCard)
+
+        systemCard.addView(
+            infoRow(
+                "ชื่อแอป",
+                "PC Drone V3 Plus"
+            )
+        )
+
+        addDivider(systemCard)
+
+        systemCard.addView(
+            infoRow(
+                "เวอร์ชันแอป",
+                versionName
+            )
+        )
+
+        content.addView(systemCard)
 
         val scroll =
             android.widget.ScrollView(this).apply {
 
+                isFillViewport = true
+
                 addView(
-                    root,
-                    android.view.ViewGroup.LayoutParams(
+                    content,
+                    android.widget.ScrollView.LayoutParams(
                         android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                         android.view.ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 )
             }
 
-        setContentView(
-            scroll
+        root.addView(
+            scroll,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
         )
+
+        setContentView(root)
     }
 
 
