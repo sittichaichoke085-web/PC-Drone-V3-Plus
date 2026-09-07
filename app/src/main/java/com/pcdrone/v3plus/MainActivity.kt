@@ -3630,7 +3630,9 @@ class MainActivity : Activity() {
                                 android.media.RingtoneManager
                                     .EXTRA_RINGTONE_TYPE,
                                 android.media.RingtoneManager
-                                    .TYPE_NOTIFICATION
+                                    .TYPE_NOTIFICATION or
+                                android.media.RingtoneManager
+                                    .TYPE_RINGTONE
                             )
 
                             putExtra(
@@ -3686,6 +3688,119 @@ class MainActivity : Activity() {
                 "notification_vibration",
                 true
             )
+        )
+
+        addDivider(
+            soundCard
+        )
+
+
+
+        // =========================================
+        // REPEAT NOTIFICATION
+        // =========================================
+
+        val repeatWrap =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+
+                setPadding(
+                    dp(2),
+                    dp(12),
+                    dp(2),
+                    dp(12)
+                )
+            }
+
+        repeatWrap.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "แจ้งเตือนซ้ำ"
+
+                textSize =
+                    16f
+
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            },
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+        )
+
+        val repeatButton =
+            android.widget.Button(this).apply {
+
+                fun repeatLabel(
+                    value: Int
+                ): String {
+
+                    return when (value) {
+                        3 -> "3 นาที"
+                        5 -> "5 นาที"
+                        10 -> "10 นาที"
+                        15 -> "15 นาที"
+                        else -> "ปิด"
+                    }
+                }
+
+                var current =
+                    prefs.getInt(
+                        "notification_repeat_minutes",
+                        0
+                    )
+
+                text =
+                    repeatLabel(current)
+
+                textSize =
+                    13f
+
+                setOnClickListener {
+
+                    current =
+                        when (current) {
+                            0 -> 3
+                            3 -> 5
+                            5 -> 10
+                            10 -> 15
+                            else -> 0
+                        }
+
+                    prefs.edit()
+                        .putInt(
+                            "notification_repeat_minutes",
+                            current
+                        )
+                        .apply()
+
+                    text =
+                        repeatLabel(current)
+                }
+            }
+
+        repeatWrap.addView(
+            repeatButton,
+            android.widget.LinearLayout.LayoutParams(
+                dp(105),
+                dp(46)
+            )
+        )
+
+        soundCard.addView(
+            repeatWrap
         )
 
         addDivider(

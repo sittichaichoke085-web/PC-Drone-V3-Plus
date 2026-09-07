@@ -243,6 +243,88 @@ class JobNotificationReceiver :
             ),
             notification
         )
+
+        val isRepeat =
+            intent.getBooleanExtra(
+                "is_repeat",
+                false
+            )
+
+        if (!isRepeat) {
+
+            val repeatMinutes =
+                settings.getInt(
+                    "notification_repeat_minutes",
+                    0
+                )
+
+            if (repeatMinutes > 0) {
+
+                val repeatIntent =
+                    android.content.Intent(
+                        context,
+                        JobNotificationReceiver::class.java
+                    ).apply {
+
+                        putExtras(
+                            intent
+                        )
+
+                        putExtra(
+                            "is_repeat",
+                            true
+                        )
+                    }
+
+                val repeatPendingIntent =
+                    android.app.PendingIntent.getBroadcast(
+                        context,
+                        notificationId(jobId) + 100000,
+                        repeatIntent,
+                        android.app.PendingIntent.FLAG_UPDATE_CURRENT or
+                            android.app.PendingIntent.FLAG_IMMUTABLE
+                    )
+
+                val alarmManager =
+                    context.getSystemService(
+                        android.content.Context.ALARM_SERVICE
+                    ) as android.app.AlarmManager
+
+                val triggerAt =
+                    System.currentTimeMillis() +
+                        repeatMinutes * 60_000L
+
+                if (
+                    android.os.Build.VERSION.SDK_INT >=
+                    android.os.Build.VERSION_CODES.S
+                ) {
+
+                    if (
+                        alarmManager.canScheduleExactAlarms()
+                    ) {
+                        alarmManager.setExactAndAllowWhileIdle(
+                            android.app.AlarmManager.RTC_WAKEUP,
+                            triggerAt,
+                            repeatPendingIntent
+                        )
+                    } else {
+                        alarmManager.setAndAllowWhileIdle(
+                            android.app.AlarmManager.RTC_WAKEUP,
+                            triggerAt,
+                            repeatPendingIntent
+                        )
+                    }
+
+                } else {
+
+                    alarmManager.setExactAndAllowWhileIdle(
+                        android.app.AlarmManager.RTC_WAKEUP,
+                        triggerAt,
+                        repeatPendingIntent
+                    )
+                }
+            }
+        }
     }
 
 
