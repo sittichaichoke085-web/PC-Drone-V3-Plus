@@ -6382,10 +6382,11 @@ class MainActivity : Activity() {
         onSaved: () -> Unit
     ) {
 
-        val prefs = getSharedPreferences(
-            "pc_drone_v3_data",
-            android.content.Context.MODE_PRIVATE
-        )
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                android.content.Context.MODE_PRIVATE
+            )
 
         val parts =
             originalRecord.split(
@@ -6410,6 +6411,98 @@ class MainActivity : Activity() {
                 ?.toLongOrNull()
                 ?: System.currentTimeMillis()
 
+        // ==========================================
+        // โหลดข้อมูลนัดหมายเดิม
+        // ==========================================
+
+        val appointmentSet =
+            prefs.getStringSet(
+                "job_appointments",
+                emptySet()
+            )?.toMutableSet()
+                ?: mutableSetOf()
+
+        val oldAppointmentRecord =
+            appointmentSet.firstOrNull {
+                record ->
+
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 3
+                )
+                    .getOrNull(0)
+                    ?.toLongOrNull() ==
+                    originalTime
+            }
+
+        val appointmentParts =
+            oldAppointmentRecord
+                ?.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 3
+                )
+
+        val oldAppointmentMillis =
+            appointmentParts
+                ?.getOrNull(1)
+                ?.toLongOrNull()
+                ?: 0L
+
+        val oldReminderEnabled =
+            appointmentParts
+                ?.getOrNull(2)
+                ?.toBooleanStrictOrNull()
+                ?: false
+
+        val appointmentTz =
+            java.util.TimeZone.getTimeZone(
+                "Asia/Bangkok"
+            )
+
+        val appointmentCal =
+            java.util.Calendar
+                .getInstance(appointmentTz)
+                .apply {
+
+                    if (oldAppointmentMillis > 0L) {
+
+                        timeInMillis =
+                            oldAppointmentMillis
+
+                    } else {
+
+                        add(
+                            java.util.Calendar.DAY_OF_MONTH,
+                            1
+                        )
+
+                        set(
+                            java.util.Calendar.HOUR_OF_DAY,
+                            8
+                        )
+
+                        set(
+                            java.util.Calendar.MINUTE,
+                            0
+                        )
+
+                        set(
+                            java.util.Calendar.SECOND,
+                            0
+                        )
+
+                        set(
+                            java.util.Calendar.MILLISECOND,
+                            0
+                        )
+                    }
+                }
+
+        var appointmentDateSelected =
+            oldAppointmentMillis > 0L
+
         val form =
             android.widget.LinearLayout(this).apply {
 
@@ -6426,8 +6519,12 @@ class MainActivity : Activity() {
 
         val customerInput =
             android.widget.EditText(this).apply {
+
                 hint = "ชื่อลูกค้า"
-                setText(parts.getOrNull(1) ?: "")
+
+                setText(
+                    parts.getOrNull(1) ?: ""
+                )
             }
 
         val serviceSpinner =
@@ -6445,25 +6542,31 @@ class MainActivity : Activity() {
         serviceSpinner.adapter =
             android.widget.ArrayAdapter(
                 this,
-                android.R.layout.simple_spinner_dropdown_item,
+                android.R.layout
+                    .simple_spinner_dropdown_item,
                 services
             )
 
         val oldService =
-            parts.getOrNull(2)
-                ?: ""
+            parts.getOrNull(2) ?: ""
 
         val serviceIndex =
             services.indexOf(oldService)
 
         if (serviceIndex >= 0) {
-            serviceSpinner.setSelection(serviceIndex)
+            serviceSpinner.setSelection(
+                serviceIndex
+            )
         }
 
         val locationInput =
             android.widget.EditText(this).apply {
+
                 hint = "พื้นที่ / สวน"
-                setText(parts.getOrNull(3) ?: "")
+
+                setText(
+                    parts.getOrNull(3) ?: ""
+                )
             }
 
         val raiInput =
@@ -6472,12 +6575,13 @@ class MainActivity : Activity() {
                 hint = "จำนวนไร่"
 
                 inputType =
-                    android.text.InputType.TYPE_CLASS_NUMBER or
-                    android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                    android.text.InputType
+                        .TYPE_CLASS_NUMBER or
+                    android.text.InputType
+                        .TYPE_NUMBER_FLAG_DECIMAL
 
                 setText(
-                    parts.getOrNull(4)
-                        ?: ""
+                    parts.getOrNull(4) ?: ""
                 )
             }
 
@@ -6487,12 +6591,13 @@ class MainActivity : Activity() {
                 hint = "ราคาต่อไร่"
 
                 inputType =
-                    android.text.InputType.TYPE_CLASS_NUMBER or
-                    android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                    android.text.InputType
+                        .TYPE_CLASS_NUMBER or
+                    android.text.InputType
+                        .TYPE_NUMBER_FLAG_DECIMAL
 
                 setText(
-                    parts.getOrNull(5)
-                        ?: ""
+                    parts.getOrNull(5) ?: ""
                 )
             }
 
@@ -6510,20 +6615,233 @@ class MainActivity : Activity() {
         statusSpinner.adapter =
             android.widget.ArrayAdapter(
                 this,
-                android.R.layout.simple_spinner_dropdown_item,
+                android.R.layout
+                    .simple_spinner_dropdown_item,
                 statuses
             )
 
         val oldStatus =
-            parts.getOrNull(7)
-                ?: ""
+            parts.getOrNull(7) ?: ""
 
         val statusIndex =
             statuses.indexOf(oldStatus)
 
         if (statusIndex >= 0) {
-            statusSpinner.setSelection(statusIndex)
+
+            statusSpinner.setSelection(
+                statusIndex
+            )
         }
+
+        // ==========================================
+        // วัน / เวลา นัดหมาย
+        // ==========================================
+
+        val appointmentLabel =
+            android.widget.TextView(this).apply {
+
+                text =
+                    "วันและเวลานัดหมาย"
+
+                textSize = 17f
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    0,
+                    dp(16),
+                    0,
+                    dp(6)
+                )
+            }
+
+        val appointmentDateButton =
+            android.widget.Button(this).apply {
+
+                isAllCaps = false
+                textSize = 15f
+            }
+
+        val appointmentTimeButton =
+            android.widget.Button(this).apply {
+
+                isAllCaps = false
+                textSize = 15f
+            }
+
+        fun updateDateButton() {
+
+            appointmentDateButton.text =
+                if (appointmentDateSelected) {
+
+                    "%02d/%02d/%04d".format(
+                        appointmentCal.get(
+                            java.util.Calendar
+                                .DAY_OF_MONTH
+                        ),
+                        appointmentCal.get(
+                            java.util.Calendar.MONTH
+                        ) + 1,
+                        appointmentCal.get(
+                            java.util.Calendar.YEAR
+                        ) + 543
+                    )
+
+                } else {
+
+                    "เลือกวันที่นัดหมาย"
+                }
+        }
+
+        fun updateTimeButton() {
+
+            appointmentTimeButton.text =
+                "เวลา %02d:%02d น.".format(
+                    appointmentCal.get(
+                        java.util.Calendar
+                            .HOUR_OF_DAY
+                    ),
+                    appointmentCal.get(
+                        java.util.Calendar.MINUTE
+                    )
+                )
+        }
+
+        updateDateButton()
+        updateTimeButton()
+
+        appointmentDateButton
+            .setOnClickListener {
+
+                android.app.DatePickerDialog(
+                    this,
+                    { _, year, month, day ->
+
+                        appointmentCal.set(
+                            java.util.Calendar.YEAR,
+                            year
+                        )
+
+                        appointmentCal.set(
+                            java.util.Calendar.MONTH,
+                            month
+                        )
+
+                        appointmentCal.set(
+                            java.util.Calendar
+                                .DAY_OF_MONTH,
+                            day
+                        )
+
+                        appointmentDateSelected =
+                            true
+
+                        updateDateButton()
+                    },
+                    appointmentCal.get(
+                        java.util.Calendar.YEAR
+                    ),
+                    appointmentCal.get(
+                        java.util.Calendar.MONTH
+                    ),
+                    appointmentCal.get(
+                        java.util.Calendar
+                            .DAY_OF_MONTH
+                    )
+                ).show()
+            }
+
+        appointmentTimeButton
+            .setOnClickListener {
+
+                android.app.TimePickerDialog(
+                    this,
+                    { _, hour, minute ->
+
+                        appointmentCal.set(
+                            java.util.Calendar
+                                .HOUR_OF_DAY,
+                            hour
+                        )
+
+                        appointmentCal.set(
+                            java.util.Calendar.MINUTE,
+                            minute
+                        )
+
+                        appointmentCal.set(
+                            java.util.Calendar.SECOND,
+                            0
+                        )
+
+                        appointmentCal.set(
+                            java.util.Calendar.MILLISECOND,
+                            0
+                        )
+
+                        updateTimeButton()
+                    },
+                    appointmentCal.get(
+                        java.util.Calendar
+                            .HOUR_OF_DAY
+                    ),
+                    appointmentCal.get(
+                        java.util.Calendar.MINUTE
+                    ),
+                    true
+                ).show()
+            }
+
+        val appointmentButtonRow =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+            }
+
+        appointmentButtonRow.addView(
+            appointmentDateButton,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                dp(52),
+                1f
+            ).apply {
+                marginEnd = dp(4)
+            }
+        )
+
+        appointmentButtonRow.addView(
+            appointmentTimeButton,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                dp(52),
+                1f
+            ).apply {
+                marginStart = dp(4)
+            }
+        )
+
+        val reminderSwitch =
+            android.widget.Switch(this).apply {
+
+                text =
+                    "เปิดการแจ้งเตือนสำหรับงานนี้"
+
+                textSize = 16f
+
+                isChecked =
+                    oldReminderEnabled
+
+                setPadding(
+                    0,
+                    dp(8),
+                    0,
+                    dp(8)
+                )
+            }
 
         val noteInput =
             android.widget.EditText(this).apply {
@@ -6533,8 +6851,7 @@ class MainActivity : Activity() {
                 minLines = 2
 
                 setText(
-                    parts.getOrNull(8)
-                        ?: ""
+                    parts.getOrNull(8) ?: ""
                 )
             }
 
@@ -6544,16 +6861,34 @@ class MainActivity : Activity() {
         form.addView(raiInput)
         form.addView(rateInput)
         form.addView(statusSpinner)
-        form.addView(noteInput)
+
+        form.addView(
+            appointmentLabel
+        )
+
+        form.addView(
+            appointmentButtonRow
+        )
+
+        form.addView(
+            reminderSwitch
+        )
+
+        form.addView(
+            noteInput
+        )
 
         val scroll =
             android.widget.ScrollView(this).apply {
+
                 addView(form)
             }
 
         val dialog =
             android.app.AlertDialog.Builder(this)
-                .setTitle("แก้ไขงาน")
+                .setTitle(
+                    "แก้ไขงาน"
+                )
                 .setView(scroll)
                 .setNegativeButton(
                     "ยกเลิก",
@@ -6569,7 +6904,8 @@ class MainActivity : Activity() {
 
             val saveButton =
                 dialog.getButton(
-                    android.app.AlertDialog.BUTTON_POSITIVE
+                    android.app.AlertDialog
+                        .BUTTON_POSITIVE
                 )
 
             saveButton.setOnClickListener {
@@ -6597,29 +6933,56 @@ class MainActivity : Activity() {
                         .toDoubleOrNull()
 
                 if (customer.isEmpty()) {
+
                     customerInput.error =
                         "กรุณากรอกชื่อลูกค้า"
+
                     return@setOnClickListener
                 }
 
-                if (rai == null || rai <= 0.0) {
+                if (
+                    rai == null ||
+                    rai <= 0.0
+                ) {
+
                     raiInput.error =
                         "จำนวนไร่ไม่ถูกต้อง"
+
                     return@setOnClickListener
                 }
 
-                if (rate == null || rate < 0.0) {
+                if (
+                    rate == null ||
+                    rate < 0.0
+                ) {
+
                     rateInput.error =
                         "ราคาต่อไร่ไม่ถูกต้อง"
+
+                    return@setOnClickListener
+                }
+
+                if (!appointmentDateSelected) {
+
+                    android.widget.Toast
+                        .makeText(
+                            this@MainActivity,
+                            "กรุณาเลือกวันที่นัดหมาย",
+                            android.widget.Toast.LENGTH_SHORT
+                        )
+                        .show()
+
                     return@setOnClickListener
                 }
 
                 val service =
-                    serviceSpinner.selectedItem
+                    serviceSpinner
+                        .selectedItem
                         .toString()
 
                 val status =
-                    statusSpinner.selectedItem
+                    statusSpinner
+                        .selectedItem
                         .toString()
 
                 val note =
@@ -6641,30 +7004,120 @@ class MainActivity : Activity() {
                         total.toString(),
                         status,
                         note
-                    ).joinToString("|||")
+                    ).joinToString(
+                        "|||"
+                    )
 
-                val current =
+                val currentJobs =
                     prefs.getStringSet(
                         "flight_jobs",
                         emptySet()
                     )?.toMutableSet()
                         ?: mutableSetOf()
 
-                current.remove(originalRecord)
-                current.add(updatedRecord)
+                currentJobs.remove(
+                    originalRecord
+                )
+
+                currentJobs.add(
+                    updatedRecord
+                )
 
                 prefs.edit()
                     .putStringSet(
                         "flight_jobs",
-                        current
+                        currentJobs
                     )
                     .apply()
 
-                android.widget.Toast.makeText(
-                    this@MainActivity,
-                    "แก้ไขรายการเรียบร้อย",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
+                // ======================================
+                // อัปเดต appointment metadata
+                // ======================================
+
+                val currentAppointments =
+                    prefs.getStringSet(
+                        "job_appointments",
+                        emptySet()
+                    )?.toMutableSet()
+                        ?: mutableSetOf()
+
+                currentAppointments.removeAll {
+                    appointmentRecord ->
+
+                    appointmentRecord
+                        .split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 3
+                        )
+                        .getOrNull(0)
+                        ?.toLongOrNull() ==
+                        originalTime
+                }
+
+                val newAppointmentRecord =
+                    listOf(
+                        originalTime.toString(),
+                        appointmentCal
+                            .timeInMillis
+                            .toString(),
+                        reminderSwitch
+                            .isChecked
+                            .toString()
+                    ).joinToString(
+                        "|||"
+                    )
+
+                currentAppointments.add(
+                    newAppointmentRecord
+                )
+
+                prefs.edit()
+                    .putStringSet(
+                        "job_appointments",
+                        currentAppointments
+                    )
+                    .apply()
+
+                // ======================================
+                // ยกเลิก Alarm เก่า
+                // แล้วตั้ง Alarm ใหม่
+                // ======================================
+
+                cancelJobReminder(
+                    originalTime
+                )
+
+                if (
+                    reminderSwitch.isChecked &&
+                    status != "เสร็จแล้ว" &&
+                    status != "ยกเลิก"
+                ) {
+
+                    scheduleJobReminder(
+                        jobId =
+                            originalTime,
+                        appointmentMillis =
+                            appointmentCal
+                                .timeInMillis,
+                        customer =
+                            customer,
+                        service =
+                            service,
+                        location =
+                            location,
+                        rai =
+                            rai
+                    )
+                }
+
+                android.widget.Toast
+                    .makeText(
+                        this@MainActivity,
+                        "แก้ไขงานและนัดหมายเรียบร้อย",
+                        android.widget.Toast.LENGTH_SHORT
+                    )
+                    .show()
 
                 dialog.dismiss()
 
