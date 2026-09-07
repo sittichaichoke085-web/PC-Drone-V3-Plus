@@ -3543,6 +3543,109 @@ class MainActivity : Activity() {
         content.addView(soundCard)
 
         // =========================================
+        // REPORT & EXPORT
+        // =========================================
+
+        content.addView(
+            sectionTitle("รายงานและการส่งออก")
+        )
+
+        val reportCard = card()
+
+        reportCard.addView(
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(4),
+                    dp(14),
+                    dp(4),
+                    dp(14)
+                )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text = "สรุปรายงานการเงิน"
+
+                        textSize = 17f
+
+                        setTextColor(dark)
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                    }
+                )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text =
+                            "ประมวลผลรายรับ รายจ่าย งานบิน และแชร์รายงาน PDF"
+
+                        textSize = 13f
+
+                        setTextColor(gray)
+
+                        setPadding(
+                            0,
+                            dp(4),
+                            0,
+                            dp(12)
+                        )
+                    }
+                )
+
+                addView(
+                    android.widget.Button(
+                        this@MainActivity
+                    ).apply {
+
+                        text =
+                            "เปิดรายงานและแชร์ PDF"
+
+                        textSize = 16f
+
+                        setTextColor(
+                            android.graphics.Color.WHITE
+                        )
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+
+                        background =
+                            rounded(
+                                green,
+                                12
+                            )
+
+                        setOnClickListener {
+                            showScreen(
+                                AppRoute.REPORTS
+                            )
+                        }
+                    },
+                    android.widget.LinearLayout.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        dp(52)
+                    )
+                )
+            }
+        )
+
+        content.addView(reportCard)
+
+        // =========================================
         // PROFILE
         // =========================================
 
@@ -3775,7 +3878,7 @@ class MainActivity : Activity() {
 
                 addView(
                     content,
-                    android.widget.ScrollView.LayoutParams(
+                    android.view.ViewGroup.LayoutParams(
                         android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                         android.view.ViewGroup.LayoutParams.WRAP_CONTENT
                     )
