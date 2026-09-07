@@ -24,6 +24,63 @@ class MainActivity : Activity() {
         showScreen(AppRoute.DASHBOARD)
     }
 
+
+    // PC_DRONE_RINGTONE_PICKER_RESULT
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: android.content.Intent?
+    ) {
+
+        super.onActivityResult(
+            requestCode,
+            resultCode,
+            data
+        )
+
+        if (
+            requestCode == 7601 &&
+            resultCode ==
+                android.app.Activity.RESULT_OK
+        ) {
+
+            val uri =
+                data?.getParcelableExtra<android.net.Uri>(
+                    android.media.RingtoneManager
+                        .EXTRA_RINGTONE_PICKED_URI
+                )
+
+            if (
+                uri != null
+            ) {
+
+                getSharedPreferences(
+                    "pc_drone_settings",
+                    android.content.Context.MODE_PRIVATE
+                )
+                    .edit()
+                    .putString(
+                        "notification_sound_uri",
+                        uri.toString()
+                    )
+                    .apply()
+
+                android.widget.Toast
+                    .makeText(
+                        this,
+                        "เลือกเสียงแจ้งเตือนแล้ว",
+                        android.widget.Toast.LENGTH_SHORT
+                    )
+                    .show()
+
+                showScreen(
+                    AppRoute.SETTINGS
+                )
+            }
+        }
+    }
+
+
     private fun showScreen(route: AppRoute) {
         if (route == AppRoute.DASHBOARD) {
             showDashboard()
@@ -3443,6 +3500,197 @@ class MainActivity : Activity() {
         )
 
         addDivider(soundCard)
+
+
+        // PC_DRONE_SOUND_PICKER_SETTING
+
+        val soundPickerWrap =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(2),
+                    dp(12),
+                    dp(2),
+                    dp(12)
+                )
+            }
+
+        val savedSoundUri =
+            prefs.getString(
+                "notification_sound_uri",
+                null
+            )
+
+        val currentSoundUri =
+            if (
+                savedSoundUri.isNullOrBlank()
+            ) {
+                android.provider.Settings.System
+                    .DEFAULT_NOTIFICATION_URI
+            } else {
+                android.net.Uri.parse(
+                    savedSoundUri
+                )
+            }
+
+        val currentSoundName =
+            try {
+
+                android.media.RingtoneManager
+                    .getRingtone(
+                        this,
+                        currentSoundUri
+                    )
+                    ?.getTitle(
+                        this
+                    )
+                    ?: "เสียงแจ้งเตือนเริ่มต้น"
+
+            } catch (
+                _: Exception
+            ) {
+
+                "เสียงแจ้งเตือนเริ่มต้น"
+            }
+
+        soundPickerWrap.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "เสียงแจ้งเตือนงาน"
+
+                textSize =
+                    16f
+
+                setTextColor(
+                    dark
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        soundPickerWrap.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "เสียงปัจจุบัน: $currentSoundName"
+
+                textSize =
+                    13f
+
+                setTextColor(
+                    gray
+                )
+
+                setPadding(
+                    0,
+                    dp(4),
+                    0,
+                    dp(8)
+                )
+            }
+        )
+
+        soundPickerWrap.addView(
+            android.widget.Button(this).apply {
+
+                text =
+                    "เลือกเสียงจาก Android"
+
+                textSize =
+                    15f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                background =
+                    rounded(
+                        green,
+                        10
+                    )
+
+                setOnClickListener {
+
+                    val picker =
+                        android.content.Intent(
+                            android.media.RingtoneManager
+                                .ACTION_RINGTONE_PICKER
+                        ).apply {
+
+                            putExtra(
+                                android.media.RingtoneManager
+                                    .EXTRA_RINGTONE_TYPE,
+                                android.media.RingtoneManager
+                                    .TYPE_NOTIFICATION
+                            )
+
+                            putExtra(
+                                android.media.RingtoneManager
+                                    .EXTRA_RINGTONE_TITLE,
+                                "เลือกเสียงแจ้งเตือน PC Drone"
+                            )
+
+                            putExtra(
+                                android.media.RingtoneManager
+                                    .EXTRA_RINGTONE_SHOW_DEFAULT,
+                                true
+                            )
+
+                            putExtra(
+                                android.media.RingtoneManager
+                                    .EXTRA_RINGTONE_SHOW_SILENT,
+                                false
+                            )
+
+                            putExtra(
+                                android.media.RingtoneManager
+                                    .EXTRA_RINGTONE_EXISTING_URI,
+                                currentSoundUri
+                            )
+                        }
+
+                    startActivityForResult(
+                        picker,
+                        7601
+                    )
+                }
+            },
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup
+                    .LayoutParams.MATCH_PARENT,
+                dp(50)
+            )
+        )
+
+        soundCard.addView(
+            soundPickerWrap
+        )
+
+        addDivider(
+            soundCard
+        )
+
+        soundCard.addView(
+            toggleRow(
+                "การสั่นเมื่อแจ้งเตือน",
+                "ให้โทรศัพท์สั่นเมื่อมีการเตือนงานบิน",
+                "notification_vibration",
+                true
+            )
+        )
+
+        addDivider(
+            soundCard
+        )
+
 
         val volumeWrap =
             android.widget.LinearLayout(this).apply {
