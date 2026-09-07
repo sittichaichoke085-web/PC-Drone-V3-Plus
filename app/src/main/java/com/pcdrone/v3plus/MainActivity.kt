@@ -1575,23 +1575,167 @@ class MainActivity : Activity() {
                         }
 
                     /*
-                     * คงเหลือก่อนวันเริ่มรายงาน
+                     * รวมข้อมูลการเงิน + รายได้จากงานบิน
+                     *
+                     * flight_jobs schema:
+                     * 0 timestamp
+                     * 1 customer
+                     * 2 service
+                     * 3 location
+                     * 4 rai
+                     * 5 rate
+                     * 6 total
+                     * 7 status
+                     * 8 note
+                     */
+
+                    data class ReportRow(
+                        val time: Long,
+                        val item: String,
+                        val income: Double,
+                        val expense: Double
+                    )
+
+                    val financeRows =
+                        all.map { tx ->
+
+                            val income =
+                                if (isIncome(tx.type)) {
+                                    tx.amount
+                                } else {
+                                    0.0
+                                }
+
+                            val expense =
+                                if (isIncome(tx.type)) {
+                                    0.0
+                                } else {
+                                    tx.amount
+                                }
+
+                            val itemText =
+                                if (tx.note.isNotBlank()) {
+                                    tx.item + " - " + tx.note
+                                } else {
+                                    tx.item
+                                }
+
+                            ReportRow(
+                                time = tx.time,
+                                item = itemText.ifBlank { "-" },
+                                income = income,
+                                expense = expense
+                            )
+                        }
+
+                    val rawJobs =
+                        financePrefs.getStringSet(
+                            "flight_jobs",
+                            emptySet()
+                        )?.toSet()
+                            ?: emptySet()
+
+                    val flightRows =
+                        rawJobs.mapNotNull { record ->
+
+                            val parts =
+                                record.split(
+                                    "|||",
+                                    ignoreCase = false,
+                                    limit = 9
+                                )
+
+                            if (parts.size < 8) {
+                                null
+                            } else {
+
+                                val time =
+                                    parts.getOrNull(0)
+                                        ?.toLongOrNull()
+
+                                val customer =
+                                    parts.getOrNull(1)
+                                        ?.trim()
+                                        .orEmpty()
+
+                                val service =
+                                    parts.getOrNull(2)
+                                        ?.trim()
+                                        .orEmpty()
+
+                                val total =
+                                    parts.getOrNull(6)
+                                        ?.trim()
+                                        ?.toDoubleOrNull()
+
+                                val status =
+                                    parts.getOrNull(7)
+                                        ?.trim()
+                                        .orEmpty()
+
+                                if (
+                                    time == null ||
+                                    total == null ||
+                                    total < 0.0 ||
+                                    status != "เสร็จแล้ว"
+                                ) {
+                                    null
+                                } else {
+
+                                    val description =
+                                        buildString {
+
+                                            append("งานบิน")
+
+                                            if (customer.isNotBlank()) {
+                                                append(" - ")
+                                                append(customer)
+                                            }
+
+                                            if (service.isNotBlank()) {
+                                                append(" - ")
+                                                append(service)
+                                            }
+                                        }
+
+                                    ReportRow(
+                                        time = time,
+                                        item = description,
+                                        income = total,
+                                        expense = 0.0
+                                    )
+                                }
+                            }
+                        }
+
+                    /*
+                     * รวมทุกการเคลื่อนไหวทางการเงิน
+                     * แล้วเรียงตามเวลา
+                     */
+                    val reportRows =
+                        (financeRows + flightRows)
+                            .sortedBy { it.time }
+
+                    /*
+                     * ยอดยกมาก่อนวันเริ่มรายงาน
                      */
                     var runningBalance = 0.0
 
-                    all.filter {
-                        it.time < fromMillis
-                    }.forEach {
-
-                        if (isIncome(it.type)) {
-                            runningBalance += it.amount
-                        } else {
-                            runningBalance -= it.amount
+                    reportRows
+                        .filter {
+                            it.time < fromMillis
                         }
-                    }
+                        .forEach { row ->
 
+                            runningBalance +=
+                                row.income - row.expense
+                        }
+
+                    /*
+                     * รายการที่อยู่ในช่วงวันที่เลือก
+                     */
                     val selected =
-                        all.filter {
+                        reportRows.filter {
                             it.time in fromMillis..toMillis
                         }
 
@@ -1601,21 +1745,13 @@ class MainActivity : Activity() {
                     var totalIncome = 0.0
                     var totalExpense = 0.0
 
-                    selected.forEach { tx ->
+                    selected.forEach { reportRow ->
 
                         val income =
-                            if (isIncome(tx.type)) {
-                                tx.amount
-                            } else {
-                                0.0
-                            }
+                            reportRow.income
 
                         val expense =
-                            if (isIncome(tx.type)) {
-                                0.0
-                            } else {
-                                tx.amount
-                            }
+                            reportRow.expense
 
                         totalIncome += income
                         totalExpense += expense
@@ -1629,27 +1765,23 @@ class MainActivity : Activity() {
                             )
 
                         row.addView(
-                            cell(thaiDate(tx.time))
-                        )
-
-                        val itemText =
-                            if (tx.note.isNotBlank()) {
-                                tx.item + " - " + tx.note
-                            } else {
-                                tx.item
-                            }
-
-                        row.addView(
                             cell(
-                                itemText.ifBlank {
-                                    "-"
-                                }
+                                thaiDate(
+                                    reportRow.time
+                                )
                             )
                         )
 
                         row.addView(
                             cell(
-                                if (income > 0) {
+                                reportRow.item
+                                    .ifBlank { "-" }
+                            )
+                        )
+
+                        row.addView(
+                            cell(
+                                if (income > 0.0) {
                                     money(income)
                                 } else {
                                     "-"
@@ -1661,7 +1793,7 @@ class MainActivity : Activity() {
 
                         row.addView(
                             cell(
-                                if (expense > 0) {
+                                if (expense > 0.0) {
                                     money(expense)
                                 } else {
                                     "-"
