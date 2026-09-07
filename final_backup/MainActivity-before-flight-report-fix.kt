@@ -1673,7 +1673,7 @@ class MainActivity : Activity() {
 
                         row.addView(
                             cell(
-                                money(reportBalanceWithFlight),
+                                money(runningBalance),
                                 false,
                                 android.view.Gravity.END
                             )
@@ -1697,7 +1697,7 @@ class MainActivity : Activity() {
 
                     totalRow.addView(
                         cell(
-                            money(reportIncomeWithFlight),
+                            money(totalIncome),
                             true,
                             android.view.Gravity.END
                         )
@@ -1713,7 +1713,7 @@ class MainActivity : Activity() {
 
                     totalRow.addView(
                         cell(
-                            money(reportBalanceWithFlight),
+                            money(runningBalance),
                             true,
                             android.view.Gravity.END
                         )
@@ -1721,207 +1721,7 @@ class MainActivity : Activity() {
 
                     table.addView(totalRow)
 
-                    
-                    // ==========================================
-                    // PC_DRONE_FLIGHT_REPORT_V1
-                    // รวมรายได้งานบินที่ "เสร็จแล้ว"
-                    // เข้ากับรายงานตามช่วงวันที่
-                    // ==========================================
-
-                    var reportFlightIncome = 0.0
-                    var reportFlightCount = 0
-
-                    val reportFlightRecords =
-                        prefs.getStringSet(
-                            "flight_jobs",
-                            emptySet()
-                        )
-                            ?.toList()
-                            ?: emptyList()
-
-                    reportFlightRecords.forEach { rawJob ->
-
-                        /*
-                         * รองรับ format เก่าของแอปหลายรุ่น
-                         */
-                        val jobParts =
-                            when {
-                                rawJob.contains("|||") ->
-                                    rawJob.split(
-                                        "|||"
-                                    )
-
-                                rawJob.contains(";") ->
-                                    rawJob.split(
-                                        ";"
-                                    )
-
-                                else ->
-                                    rawJob.split(
-                                        ","
-                                    )
-                            }
-
-                        /*
-                         * งานที่จะคิดเงิน
-                         * ต้องมีสถานะ "เสร็จแล้ว"
-                         */
-                        val completed =
-                            jobParts.any {
-                                it.trim() ==
-                                    "เสร็จแล้ว"
-                            }
-
-                        if (!completed) {
-                            return@forEach
-                        }
-
-                        /*
-                         * หา timestamp
-                         * รองรับ epoch millis ที่เก็บอยู่ใน record
-                         */
-                        var jobTimestamp: Long? = null
-
-                        jobParts.forEach { value ->
-
-                            if (jobTimestamp == null) {
-
-                                val candidate =
-                                    value
-                                        .trim()
-                                        .toLongOrNull()
-
-                                if (
-                                    candidate != null &&
-                                    candidate >=
-                                        946684800000L &&
-                                    candidate <=
-                                        4102444800000L
-                                ) {
-                                    jobTimestamp =
-                                        candidate
-                                }
-                            }
-                        }
-
-                        /*
-                         * สำรอง:
-                         * ถ้า record เก่าเก็บวันที่เป็น DD/MM/YYYY
-                         */
-                        if (jobTimestamp == null) {
-
-                            jobParts.forEach { value ->
-
-                                if (jobTimestamp == null) {
-
-                                    val text =
-                                        value.trim()
-
-                                    val match =
-                                        Regex(
-                                            """^(\d{1,2})/(\d{1,2})/(\d{4})$"""
-                                        )
-                                            .matchEntire(
-                                                text
-                                            )
-
-                                    if (match != null) {
-
-                                        try {
-
-                                            val day =
-                                                match
-                                                    .groupValues[1]
-                                                    .toInt()
-
-                                            val month =
-                                                match
-                                                    .groupValues[2]
-                                                    .toInt()
-
-                                            var year =
-                                                match
-                                                    .groupValues[3]
-                                                    .toInt()
-
-                                            if (year >= 2400) {
-                                                year -= 543
-                                            }
-
-                                            val cal =
-                                                java.util.Calendar
-                                                    .getInstance(
-                                                        java.util.TimeZone
-                                                            .getTimeZone(
-                                                                "Asia/Bangkok"
-                                                            )
-                                                    )
-
-                                            cal.clear()
-
-                                            cal.set(
-                                                year,
-                                                month - 1,
-                                                day,
-                                                12,
-                                                0,
-                                                0
-                                            )
-
-                                            jobTimestamp =
-                                                cal.timeInMillis
-
-                                        } catch (
-                                            _: Exception
-                                        ) {
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        val jt =
-                            jobTimestamp
-                                ?: return@forEach
-
-                        if (
-                            jt < fromMillis ||
-                            jt > toMillis
-                        ) {
-                            return@forEach
-                        }
-
-                        val jobAmount =
-                            jobParts
-                                .getOrNull(
-                                    7
-                                )
-                                ?.trim()
-                                ?.replace(
-                                    ",",
-                                    ""
-                                )
-                                ?.toDoubleOrNull()
-                                ?: 0.0
-
-                        if (jobAmount > 0.0) {
-
-                            reportFlightIncome +=
-                                jobAmount
-
-                            reportFlightCount++
-                        }
-                    }
-
-                    val reportIncomeWithFlight =
-                        totalIncome +
-                        reportFlightIncome
-
-                    val reportBalanceWithFlight =
-                        reportIncomeWithFlight -
-                        totalExpense
-
-summaryText.text =
+                    summaryText.text =
                         "รายงาน " +
                         thaiDate(fromMillis) +
                         " ถึง " +
@@ -1930,8 +1730,8 @@ summaryText.text =
                         "จำนวนรายการ: " +
                         selected.size +
                         "\n" +
-                        "รายได้งานบิน: " + money(reportFlightIncome) + " บาท\n" + "รายรับรวม: " +
-                        money(reportIncomeWithFlight) +
+                        "รายรับ: " +
+                        money(totalIncome) +
                         " บาท" +
                         "\n" +
                         "รายจ่าย: " +
@@ -1939,7 +1739,7 @@ summaryText.text =
                         " บาท" +
                         "\n" +
                         "คงเหลือ: " +
-                        money(reportBalanceWithFlight) +
+                        money(runningBalance) +
                         " บาท"
 
                     if (selected.isEmpty()) {
