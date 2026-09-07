@@ -1497,6 +1497,17 @@ class MainActivity : Activity() {
                 }
                 .format(v)
 
+        /*
+         * ข้อมูลรายงานล่าสุดสำหรับสร้าง PDF
+         * เก็บเฉพาะผลที่ผ่านการคำนวณจากหน้ารายงานแล้ว
+         */
+        var pdfFromMillis: Long? = null
+        var pdfToMillis: Long? = null
+        var pdfRows: List<Array<String>> = emptyList()
+        var pdfTotalIncome = 0.0
+        var pdfTotalExpense = 0.0
+        var pdfEndingBalance = 0.0
+
         val searchButton =
             android.widget.Button(this).apply {
 
@@ -1851,6 +1862,65 @@ class MainActivity : Activity() {
                         )
                     )
 
+                    /*
+                     * ส่งผลรายงานชุดเดียวกับหน้าจอไปให้ PDF
+                     */
+                    var pdfRunningBalance = 0.0
+
+                    reportRows
+                        .filter { it.time < fromMillis }
+                        .forEach { row ->
+                            pdfRunningBalance +=
+                                row.income - row.expense
+                        }
+
+                    val preparedPdfRows =
+                        mutableListOf<Array<String>>()
+
+                    selected.forEachIndexed { index, reportRow ->
+
+                        pdfRunningBalance +=
+                            reportRow.income -
+                                reportRow.expense
+
+                        preparedPdfRows.add(
+                            arrayOf(
+                                (index + 1).toString(),
+                                thaiDate(reportRow.time) + " " +
+                                    java.text.SimpleDateFormat(
+                                        "HH:mm",
+                                        java.util.Locale("th", "TH")
+                                    ).apply {
+                                        timeZone =
+                                            java.util.TimeZone.getTimeZone(
+                                                "Asia/Bangkok"
+                                            )
+                                    }.format(
+                                        java.util.Date(reportRow.time)
+                                    ),
+                                reportRow.item.ifBlank { "-" },
+                                if (reportRow.income > 0.0) {
+                                    money(reportRow.income)
+                                } else {
+                                    "-"
+                                },
+                                if (reportRow.expense > 0.0) {
+                                    money(reportRow.expense)
+                                } else {
+                                    "-"
+                                },
+                                money(pdfRunningBalance)
+                            )
+                        )
+                    }
+
+                    pdfFromMillis = fromMillis
+                    pdfToMillis = toMillis
+                    pdfRows = preparedPdfRows.toList()
+                    pdfTotalIncome = totalIncome
+                    pdfTotalExpense = totalExpense
+                    pdfEndingBalance = runningBalance
+
                     table.addView(totalRow)
 
                     summaryText.text =
@@ -1904,6 +1974,22 @@ class MainActivity : Activity() {
 
                 setOnClickListener {
 
+                    val fromMillis = pdfFromMillis
+                    val toMillis = pdfToMillis
+
+                    if (
+                        fromMillis == null ||
+                        toMillis == null
+                    ) {
+                        android.widget.Toast.makeText(
+                            this@MainActivity,
+                            "กรุณากดค้นหาและประมวลผลรายงานก่อน",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
                     try {
                         val reportDir =
                             java.io.File(
@@ -1922,48 +2008,460 @@ class MainActivity : Activity() {
                         val document =
                             android.graphics.pdf.PdfDocument()
 
-                        val pageInfo =
-                            android.graphics.pdf.PdfDocument.PageInfo
-                                .Builder(
-                                    595,
-                                    842,
-                                    1
-                                )
-                                .create()
+                        val pageWidth = 595
+                        val pageHeight = 842
 
-                        val page =
-                            document.startPage(pageInfo)
+                        val rowsPerPage = 17
 
-                        val canvas =
-                            page.canvas
+                        val pageCount =
+                            maxOf(
+                                1,
+                                (pdfRows.size + rowsPerPage - 1) /
+                                    rowsPerPage
+                            )
+
+                        val now =
+                            java.util.Date()
+
+                        val printDate =
+                            java.text.SimpleDateFormat(
+                                "dd/MM/yyyy",
+                                java.util.Locale("th", "TH")
+                            ).apply {
+                                timeZone =
+                                    java.util.TimeZone.getTimeZone(
+                                        "Asia/Bangkok"
+                                    )
+                            }.format(now)
+
+                        val printTime =
+                            java.text.SimpleDateFormat(
+                                "HH:mm",
+                                java.util.Locale("th", "TH")
+                            ).apply {
+                                timeZone =
+                                    java.util.TimeZone.getTimeZone(
+                                        "Asia/Bangkok"
+                                    )
+                            }.format(now)
 
                         val paint =
-                            android.graphics.Paint().apply {
+                            android.graphics.Paint(
+                                android.graphics.Paint.ANTI_ALIAS_FLAG
+                            ).apply {
                                 color =
                                     android.graphics.Color.BLACK
-                                textSize = 18f
-                                isAntiAlias = true
-                                typeface =
-                                    android.graphics.Typeface.DEFAULT_BOLD
                             }
 
-                        canvas.drawText(
-                            "PC DRONE",
-                            48f,
-                            60f,
-                            paint
-                        )
+                        fun drawText(
+                            canvas: android.graphics.Canvas,
+                            text: String,
+                            x: Float,
+                            y: Float,
+                            size: Float,
+                            bold: Boolean = false,
+                            align: android.graphics.Paint.Align =
+                                android.graphics.Paint.Align.LEFT
+                        ) {
+                            paint.textSize = size
+                            paint.textAlign = align
+                            paint.style =
+                                android.graphics.Paint.Style.FILL
+                            paint.typeface =
+                                if (bold) {
+                                    android.graphics.Typeface.DEFAULT_BOLD
+                                } else {
+                                    android.graphics.Typeface.DEFAULT
+                                }
 
-                        paint.textSize = 22f
+                            canvas.drawText(
+                                text,
+                                x,
+                                y,
+                                paint
+                            )
+                        }
 
-                        canvas.drawText(
-                            "Finance Report",
-                            210f,
-                            115f,
-                            paint
-                        )
+                        fun line(
+                            canvas: android.graphics.Canvas,
+                            x1: Float,
+                            y1: Float,
+                            x2: Float,
+                            y2: Float
+                        ) {
+                            paint.style =
+                                android.graphics.Paint.Style.STROKE
+                            paint.strokeWidth = 0.8f
 
-                        document.finishPage(page)
+                            canvas.drawLine(
+                                x1,
+                                y1,
+                                x2,
+                                y2,
+                                paint
+                            )
+                        }
+
+                        for (pageNumber in 1..pageCount) {
+
+                            val pageInfo =
+                                android.graphics.pdf.PdfDocument.PageInfo
+                                    .Builder(
+                                        pageWidth,
+                                        pageHeight,
+                                        pageNumber
+                                    )
+                                    .create()
+
+                            val page =
+                                document.startPage(pageInfo)
+
+                            val canvas =
+                                page.canvas
+
+                            drawText(
+                                canvas,
+                                "PC DRONE",
+                                42f,
+                                45f,
+                                13f,
+                                true
+                            )
+
+                            drawText(
+                                canvas,
+                                "วันที่พิมพ์รายงาน : $printDate",
+                                553f,
+                                35f,
+                                9f,
+                                false,
+                                android.graphics.Paint.Align.RIGHT
+                            )
+
+                            drawText(
+                                canvas,
+                                "เวลา : $printTime น.",
+                                553f,
+                                49f,
+                                9f,
+                                false,
+                                android.graphics.Paint.Align.RIGHT
+                            )
+
+                            drawText(
+                                canvas,
+                                "หน้า : $pageNumber / $pageCount",
+                                553f,
+                                63f,
+                                9f,
+                                false,
+                                android.graphics.Paint.Align.RIGHT
+                            )
+
+                            drawText(
+                                canvas,
+                                "รายงานสรุปการเงิน",
+                                297.5f,
+                                92f,
+                                17f,
+                                true,
+                                android.graphics.Paint.Align.CENTER
+                            )
+
+                            drawText(
+                                canvas,
+                                "ประจำวันที่ " +
+                                    thaiDate(fromMillis) +
+                                    " ถึง " +
+                                    thaiDate(toMillis),
+                                297.5f,
+                                111f,
+                                10f,
+                                false,
+                                android.graphics.Paint.Align.CENTER
+                            )
+
+                            val left = 35f
+                            val top = 132f
+                            val rowHeight = 28f
+
+                            val xs =
+                                floatArrayOf(
+                                    35f,
+                                    70f,
+                                    165f,
+                                    335f,
+                                    405f,
+                                    475f,
+                                    560f
+                                )
+
+                            val headers =
+                                arrayOf(
+                                    "ลำดับ",
+                                    "วันที่ / เวลา",
+                                    "รายการ",
+                                    "รายรับ",
+                                    "รายจ่าย",
+                                    "คงเหลือ"
+                                )
+
+                            val headerBottom =
+                                top + rowHeight
+
+                            for (x in xs) {
+                                line(
+                                    canvas,
+                                    x,
+                                    top,
+                                    x,
+                                    headerBottom
+                                )
+                            }
+
+                            line(
+                                canvas,
+                                left,
+                                top,
+                                560f,
+                                top
+                            )
+
+                            line(
+                                canvas,
+                                left,
+                                headerBottom,
+                                560f,
+                                headerBottom
+                            )
+
+                            headers.forEachIndexed { i, title ->
+
+                                drawText(
+                                    canvas,
+                                    title,
+                                    (xs[i] + xs[i + 1]) / 2f,
+                                    top + 18f,
+                                    8.5f,
+                                    true,
+                                    android.graphics.Paint.Align.CENTER
+                                )
+                            }
+
+                            val startIndex =
+                                (pageNumber - 1) * rowsPerPage
+
+                            val endIndex =
+                                minOf(
+                                    startIndex + rowsPerPage,
+                                    pdfRows.size
+                                )
+
+                            var y =
+                                headerBottom
+
+                            for (i in startIndex until endIndex) {
+
+                                val row =
+                                    pdfRows[i]
+
+                                val bottom =
+                                    y + rowHeight
+
+                                for (x in xs) {
+                                    line(
+                                        canvas,
+                                        x,
+                                        y,
+                                        x,
+                                        bottom
+                                    )
+                                }
+
+                                line(
+                                    canvas,
+                                    left,
+                                    bottom,
+                                    560f,
+                                    bottom
+                                )
+
+                                drawText(
+                                    canvas,
+                                    row[0],
+                                    52.5f,
+                                    y + 18f,
+                                    8f,
+                                    false,
+                                    android.graphics.Paint.Align.CENTER
+                                )
+
+                                drawText(
+                                    canvas,
+                                    row[1],
+                                    117.5f,
+                                    y + 18f,
+                                    7.5f,
+                                    false,
+                                    android.graphics.Paint.Align.CENTER
+                                )
+
+                                var item =
+                                    row[2]
+
+                                if (item.length > 28) {
+                                    item =
+                                        item.take(27) + "…"
+                                }
+
+                                drawText(
+                                    canvas,
+                                    item,
+                                    170f,
+                                    y + 18f,
+                                    8f
+                                )
+
+                                drawText(
+                                    canvas,
+                                    row[3],
+                                    400f,
+                                    y + 18f,
+                                    8f,
+                                    false,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                drawText(
+                                    canvas,
+                                    row[4],
+                                    470f,
+                                    y + 18f,
+                                    8f,
+                                    false,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                drawText(
+                                    canvas,
+                                    row[5],
+                                    555f,
+                                    y + 18f,
+                                    8f,
+                                    false,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                y = bottom
+                            }
+
+                            if (pageNumber == pageCount) {
+
+                                val totalTop =
+                                    y
+
+                                val totalBottom =
+                                    totalTop + 30f
+
+                                line(
+                                    canvas,
+                                    35f,
+                                    totalTop,
+                                    560f,
+                                    totalTop
+                                )
+
+                                line(
+                                    canvas,
+                                    35f,
+                                    totalBottom,
+                                    560f,
+                                    totalBottom
+                                )
+
+                                for (x in xs) {
+                                    line(
+                                        canvas,
+                                        x,
+                                        totalTop,
+                                        x,
+                                        totalBottom
+                                    )
+                                }
+
+                                drawText(
+                                    canvas,
+                                    "รวมทั้งหมด",
+                                    250f,
+                                    totalTop + 20f,
+                                    9f,
+                                    true,
+                                    android.graphics.Paint.Align.CENTER
+                                )
+
+                                drawText(
+                                    canvas,
+                                    money(pdfTotalIncome),
+                                    400f,
+                                    totalTop + 20f,
+                                    9f,
+                                    true,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                drawText(
+                                    canvas,
+                                    money(pdfTotalExpense),
+                                    470f,
+                                    totalTop + 20f,
+                                    9f,
+                                    true,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                drawText(
+                                    canvas,
+                                    money(pdfEndingBalance),
+                                    555f,
+                                    totalTop + 20f,
+                                    9f,
+                                    true,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                drawText(
+                                    canvas,
+                                    "ลงชื่อ ........................................",
+                                    540f,
+                                    710f,
+                                    10f,
+                                    false,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                drawText(
+                                    canvas,
+                                    "( ........................................ )",
+                                    540f,
+                                    730f,
+                                    10f,
+                                    false,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+
+                                drawText(
+                                    canvas,
+                                    "วันที่ ........................................",
+                                    540f,
+                                    750f,
+                                    10f,
+                                    false,
+                                    android.graphics.Paint.Align.RIGHT
+                                )
+                            }
+
+                            document.finishPage(page)
+                        }
 
                         java.io.FileOutputStream(pdfFile).use {
                             document.writeTo(it)
@@ -1974,7 +2472,8 @@ class MainActivity : Activity() {
                         val uri =
                             android.net.Uri.Builder()
                                 .scheme(
-                                    android.content.ContentResolver.SCHEME_CONTENT
+                                    android.content.ContentResolver
+                                        .SCHEME_CONTENT
                                 )
                                 .authority(
                                     packageName +
@@ -1998,7 +2497,8 @@ class MainActivity : Activity() {
                                 )
 
                                 addFlags(
-                                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                    android.content.Intent
+                                        .FLAG_GRANT_READ_URI_PERMISSION
                                 )
                             }
 
