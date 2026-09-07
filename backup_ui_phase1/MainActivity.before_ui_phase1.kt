@@ -43,33 +43,38 @@ class MainActivity : Activity() {
             java.text.DecimalFormat("#,##0.00")
 
         fun money(value: String?): java.math.BigDecimal {
+
             return try {
+
                 if (value.isNullOrBlank()) {
                     java.math.BigDecimal.ZERO
                 } else {
                     java.math.BigDecimal(value.trim())
                 }
+
             } catch (_: Exception) {
+
                 java.math.BigDecimal.ZERO
             }
         }
 
-        // =========================================
-        // คำนวณข้อมูลงานบิน
-        // =========================================
+        // =================================================
+        // JOB DATA
+        // =================================================
 
         val jobs =
             prefs.getStringSet(
                 "flight_jobs",
                 emptySet()
-            )?.toList() ?: emptyList()
+            )?.toList()
+                ?: emptyList()
+
+        var completedJobIncome =
+            java.math.BigDecimal.ZERO
 
         var completedJobs = 0
         var waitingJobs = 0
-        var totalRai = 0.0
-
-        var jobIncome =
-            java.math.BigDecimal.ZERO
+        var cancelledJobs = 0
 
         jobs.forEach { record ->
 
@@ -82,10 +87,6 @@ class MainActivity : Activity() {
 
             if (parts.size >= 8) {
 
-                val rai =
-                    parts.getOrNull(4)
-                        ?.toDoubleOrNull() ?: 0.0
-
                 val total =
                     money(
                         parts.getOrNull(6)
@@ -93,19 +94,23 @@ class MainActivity : Activity() {
 
                 val status =
                     parts.getOrNull(7)
-                        ?.trim() ?: ""
+                        ?.trim()
+                        ?: ""
 
                 when (status) {
 
                     "เสร็จแล้ว" -> {
+
                         completedJobs++
-                        totalRai += rai
-                        jobIncome =
-                            jobIncome.add(total)
+
+                        completedJobIncome =
+                            completedJobIncome.add(
+                                total
+                            )
                     }
 
                     "ยกเลิก" -> {
-                        // ไม่นับ
+                        cancelledJobs++
                     }
 
                     else -> {
@@ -115,20 +120,21 @@ class MainActivity : Activity() {
             }
         }
 
-        // =========================================
-        // คำนวณการเงิน
-        // =========================================
+        // =================================================
+        // FINANCE DATA
+        // =================================================
 
         val transactions =
             prefs.getStringSet(
                 "finance_transactions",
                 emptySet()
-            )?.toList() ?: emptyList()
+            )?.toList()
+                ?: emptyList()
 
         var otherIncome =
             java.math.BigDecimal.ZERO
 
-        var expense =
+        var expenses =
             java.math.BigDecimal.ZERO
 
         transactions.forEach { record ->
@@ -144,347 +150,46 @@ class MainActivity : Activity() {
 
                 val type =
                     parts.getOrNull(1)
-                        ?.trim() ?: ""
+                        ?.trim()
+                        ?: ""
 
                 val amount =
                     money(
                         parts.getOrNull(3)
                     )
 
-                if (type == "INCOME") {
-                    otherIncome =
-                        otherIncome.add(amount)
-                }
+                when (type) {
 
-                if (type == "EXPENSE") {
-                    expense =
-                        expense.add(amount)
+                    "INCOME" -> {
+                        otherIncome =
+                            otherIncome.add(
+                                amount
+                            )
+                    }
+
+                    "EXPENSE" -> {
+                        expenses =
+                            expenses.add(
+                                amount
+                            )
+                    }
                 }
             }
         }
 
         val totalIncome =
-            jobIncome.add(otherIncome)
+            completedJobIncome.add(
+                otherIncome
+            )
 
         val balance =
-            totalIncome.subtract(expense)
-
-        // =========================================
-        // สีหลัก
-        // =========================================
-
-        val dark =
-            android.graphics.Color.rgb(
-                12, 18, 14
+            totalIncome.subtract(
+                expenses
             )
 
-        val deepGreen =
-            android.graphics.Color.rgb(
-                0, 91, 45
-            )
-
-        val green =
-            android.graphics.Color.rgb(
-                0, 145, 70
-            )
-
-        val softGreen =
-            android.graphics.Color.rgb(
-                235, 247, 239
-            )
-
-        val lightGray =
-            android.graphics.Color.rgb(
-                245, 247, 246
-            )
-
-        window.statusBarColor =
-            dark
-
-        if (
-            android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.M
-        ) {
-            window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and
-                android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        }
-
-        fun rounded(
-            color: Int,
-            radius: Float
-        ): android.graphics.drawable.GradientDrawable {
-
-            return android.graphics.drawable.GradientDrawable().apply {
-                shape =
-                    android.graphics.drawable.GradientDrawable.RECTANGLE
-
-                setColor(color)
-
-                cornerRadius =
-                    dp(radius.toInt()).toFloat()
-            }
-        }
-
-        // =========================================
-        // ROOT
-        // =========================================
-
-        val root =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
-
-                setBackgroundColor(
-                    softGreen
-                )
-            }
-
-        // =========================================
-        // HEADER
-        // =========================================
-
-        val header =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
-
-                setPadding(
-                    dp(20),
-                    dp(22),
-                    dp(20),
-                    dp(20)
-                )
-
-                background =
-                    rounded(
-                        dark,
-                        0f
-                    )
-            }
-
-        if (
-            android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.KITKAT_WATCH
-        ) {
-
-            header.setOnApplyWindowInsetsListener { _, insets ->
-
-                header.setPadding(
-                    dp(20),
-                    dp(22) + insets.systemWindowInsetTop,
-                    dp(20),
-                    dp(20)
-                )
-
-                insets
-            }
-
-            header.requestApplyInsets()
-        }
-
-        val brandRow =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.HORIZONTAL
-
-                gravity =
-                    android.view.Gravity.CENTER_VERTICAL
-            }
-
-        val logoText =
-            android.widget.TextView(this).apply {
-
-                text = "PC"
-
-                textSize = 26f
-
-                gravity =
-                    android.view.Gravity.CENTER
-
-                setTextColor(
-                    android.graphics.Color.WHITE
-                )
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                background =
-                    rounded(
-                        green,
-                        16f
-                    )
-
-                setPadding(
-                    dp(12),
-                    dp(8),
-                    dp(12),
-                    dp(8)
-                )
-            }
-
-        val brandText =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
-
-                setPadding(
-                    dp(14),
-                    0,
-                    0,
-                    0
-                )
-            }
-
-        brandText.addView(
-            android.widget.TextView(this).apply {
-
-                text = "PC-Drone V3 Plus"
-
-                textSize = 24f
-
-                setTextColor(
-                    android.graphics.Color.WHITE
-                )
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-            }
-        )
-
-        brandText.addView(
-            android.widget.TextView(this).apply {
-
-                text =
-                    "จัดการงานโดรนเกษตร ครบ จบ ในแอปเดียว"
-
-                textSize = 13f
-
-                setTextColor(
-                    android.graphics.Color.LTGRAY
-                )
-            }
-        )
-
-        brandRow.addView(
-            logoText
-        )
-
-        brandRow.addView(
-            brandText,
-            android.widget.LinearLayout.LayoutParams(
-                0,
-                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-                1f
-            )
-        )
-
-        header.addView(
-            brandRow
-        )
-
-        // =========================================
-        // HERO
-        // =========================================
-
-        val hero =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
-
-                gravity =
-                    android.view.Gravity.CENTER
-
-                setPadding(
-                    dp(16),
-                    dp(18),
-                    dp(16),
-                    dp(18)
-                )
-
-                background =
-                    rounded(
-                        deepGreen,
-                        20f
-                    )
-            }
-
-        hero.addView(
-            android.widget.TextView(this).apply {
-
-                text = "✦  PC DRONE  ✦"
-
-                textSize = 27f
-
-                gravity =
-                    android.view.Gravity.CENTER
-
-                setTextColor(
-                    android.graphics.Color.WHITE
-                )
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-            }
-        )
-
-        hero.addView(
-            android.widget.TextView(this).apply {
-
-                text =
-                    "พ่นยา • หว่านปุ๋ย • พืชไร่ • พืชสวน"
-
-                textSize = 15f
-
-                gravity =
-                    android.view.Gravity.CENTER
-
-                setTextColor(
-                    android.graphics.Color.WHITE
-                )
-
-                setPadding(
-                    0,
-                    dp(6),
-                    0,
-                    0
-                )
-            }
-        )
-
-        val heroParams =
-            android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-
-                topMargin =
-                    dp(18)
-            }
-
-        header.addView(
-            hero,
-            heroParams
-        )
-
-        root.addView(
-            header
-        )
-
-        // =========================================
-        // CONTENT
-        // =========================================
+        // =================================================
+        // UI
+        // =================================================
 
         val content =
             android.widget.LinearLayout(this).apply {
@@ -493,469 +198,217 @@ class MainActivity : Activity() {
                     android.widget.LinearLayout.VERTICAL
 
                 setPadding(
-                    dp(16),
-                    dp(18),
-                    dp(16),
-                    dp(30)
+                    dp(20),
+                    dp(24),
+                    dp(20),
+                    dp(28)
                 )
 
                 setBackgroundColor(
-                    softGreen
+                    android.graphics.Color.WHITE
                 )
             }
 
         content.addView(
             android.widget.TextView(this).apply {
 
-                text = "เมนูหลัก"
+                text = "PC DRONE"
 
-                textSize = 20f
+                textSize = 32f
 
                 setTextColor(
-                    dark
+                    greenDark
                 )
+
+                gravity =
+                    android.view.Gravity.CENTER
 
                 setTypeface(
                     typeface,
                     android.graphics.Typeface.BOLD
                 )
-
-                setPadding(
-                    dp(2),
-                    0,
-                    0,
-                    dp(10)
-                )
             }
         )
 
-        fun menuCard(
-            icon: String,
-            title: String,
-            subtitle: String,
-            route: AppRoute
-        ): android.widget.LinearLayout {
+        content.addView(
+            android.widget.TextView(this).apply {
 
-            return android.widget.LinearLayout(this).apply {
+                text = "PC Drone V3 Plus"
 
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
+                textSize = 18f
+
+                setTextColor(
+                    black
+                )
 
                 gravity =
                     android.view.Gravity.CENTER
 
                 setPadding(
-                    dp(8),
-                    dp(14),
-                    dp(8),
-                    dp(14)
+                    0,
+                    dp(4),
+                    0,
+                    dp(20)
                 )
-
-                background =
-                    rounded(
-                        android.graphics.Color.WHITE,
-                        16f
-                    )
-
-                elevation =
-                    dp(3).toFloat()
-
-                isClickable = true
-                isFocusable = true
-
-                addView(
-                    android.widget.TextView(
-                        this@MainActivity
-                    ).apply {
-
-                        text = icon
-
-                        textSize = 30f
-
-                        gravity =
-                            android.view.Gravity.CENTER
-                    }
-                )
-
-                addView(
-                    android.widget.TextView(
-                        this@MainActivity
-                    ).apply {
-
-                        text = title
-
-                        textSize = 17f
-
-                        gravity =
-                            android.view.Gravity.CENTER
-
-                        setTextColor(
-                            dark
-                        )
-
-                        setTypeface(
-                            typeface,
-                            android.graphics.Typeface.BOLD
-                        )
-
-                        setPadding(
-                            0,
-                            dp(5),
-                            0,
-                            dp(2)
-                        )
-                    }
-                )
-
-                addView(
-                    android.widget.TextView(
-                        this@MainActivity
-                    ).apply {
-
-                        text = subtitle
-
-                        textSize = 12f
-
-                        gravity =
-                            android.view.Gravity.CENTER
-
-                        setTextColor(
-                            android.graphics.Color.DKGRAY
-                        )
-                    }
-                )
-
-                setOnClickListener {
-                    showScreen(route)
-                }
             }
-        }
+        )
 
-        fun menuRow(
-            left: android.view.View,
-            right: android.view.View
-        ): android.widget.LinearLayout {
+        // =================================================
+        // BALANCE
+        // =================================================
 
-            return android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.HORIZONTAL
-
-                val lp1 =
-                    android.widget.LinearLayout.LayoutParams(
-                        0,
-                        dp(145),
-                        1f
-                    ).apply {
-                        marginEnd =
-                            dp(6)
-                    }
-
-                val lp2 =
-                    android.widget.LinearLayout.LayoutParams(
-                        0,
-                        dp(145),
-                        1f
-                    ).apply {
-                        marginStart =
-                            dp(6)
-                    }
-
-                addView(left, lp1)
-                addView(right, lp2)
-            }
-        }
+        val balanceCard =
+            summaryCard(
+                "เงินคงเหลือ",
+                "${moneyFormat.format(balance)} บาท"
+            )
 
         content.addView(
-            menuRow(
-                menuCard(
-                    "✈",
-                    "งานของฉัน",
-                    "จัดการงานบิน",
-                    AppRoute.JOBS
-                ),
-                menuCard(
-                    "👤",
-                    "ลูกค้า",
-                    "ข้อมูลลูกค้า",
-                    AppRoute.CUSTOMERS
-                )
+            balanceCard
+        )
+
+        // =================================================
+        // JOB INCOME
+        // =================================================
+
+        content.addView(
+            summaryCard(
+                "รายรับจากงานที่เสร็จแล้ว",
+                "${moneyFormat.format(completedJobIncome)} บาท"
             )
         )
 
-        val row2 =
-            menuRow(
-                menuCard(
-                    "฿",
-                    "การเงิน",
-                    "รายรับ–รายจ่าย",
-                    AppRoute.FINANCE
-                ),
-                menuCard(
-                    "☰",
-                    "ประวัติงาน",
-                    "ดูงานที่ผ่านมา",
-                    AppRoute.HISTORY
-                )
-            )
-
-        row2.setPadding(
-            0,
-            dp(12),
-            0,
-            0
-        )
+        // =================================================
+        // EXPENSE
+        // =================================================
 
         content.addView(
-            row2
-        )
-
-        val row3 =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.HORIZONTAL
-
-                setPadding(
-                    0,
-                    dp(12),
-                    0,
-                    0
-                )
-
-                val settingsCard =
-                    menuCard(
-                        "⚙",
-                        "ตั้งค่า",
-                        "ข้อมูลและระบบ",
-                        AppRoute.SETTINGS
-                    )
-
-                addView(
-                    settingsCard,
-                    android.widget.LinearLayout.LayoutParams(
-                        0,
-                        dp(145),
-                        1f
-                    )
-                )
-            }
-
-        content.addView(
-            row3
-        )
-
-        // =========================================
-        // TODAY SUMMARY
-        // =========================================
-
-        content.addView(
-            android.widget.TextView(this).apply {
-
-                text = "สรุปภาพรวม"
-
-                textSize = 20f
-
-                setTextColor(
-                    dark
-                )
-
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                setPadding(
-                    dp(2),
-                    dp(22),
-                    0,
-                    dp(10)
-                )
-            }
-        )
-
-        val summary =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
-
-                setPadding(
-                    dp(16),
-                    dp(16),
-                    dp(16),
-                    dp(16)
-                )
-
-                background =
-                    rounded(
-                        lightGray,
-                        18f
-                    )
-            }
-
-        fun summaryRow(
-            label: String,
-            value: String
-        ): android.widget.TextView {
-
-            return android.widget.TextView(this).apply {
-
-                text =
-                    "$label     $value"
-
-                textSize = 16f
-
-                setTextColor(
-                    dark
-                )
-
-                setPadding(
-                    0,
-                    dp(5),
-                    0,
-                    dp(5)
-                )
-            }
-        }
-
-        summary.addView(
-            summaryRow(
-                "พื้นที่บิน",
-                "%.2f ไร่".format(totalRai)
+            summaryCard(
+                "รายจ่ายรวม",
+                "${moneyFormat.format(expenses)} บาท"
             )
         )
 
-        summary.addView(
-            summaryRow(
-                "งานเสร็จแล้ว",
-                "$completedJobs งาน"
+        // =================================================
+        // OTHER INCOME
+        // =================================================
+
+        content.addView(
+            summaryCard(
+                "รายรับอื่น",
+                "${moneyFormat.format(otherIncome)} บาท"
             )
         )
 
-        summary.addView(
-            summaryRow(
+        // =================================================
+        // JOB STATUS
+        // =================================================
+
+        content.addView(
+            summaryCard(
                 "งานรอดำเนินการ",
                 "$waitingJobs งาน"
             )
         )
 
-        summary.addView(
-            summaryRow(
-                "รายรับรวม",
-                "${moneyFormat.format(totalIncome)} บาท"
+        content.addView(
+            summaryCard(
+                "งานเสร็จแล้ว",
+                "$completedJobs งาน"
             )
         )
 
-        summary.addView(
-            summaryRow(
-                "รายจ่ายรวม",
-                "${moneyFormat.format(expense)} บาท"
+        content.addView(
+            summaryCard(
+                "งานทั้งหมด",
+                "${jobs.size} งาน"
             )
         )
 
-        val balanceBox =
-            android.widget.TextView(this).apply {
+        if (cancelledJobs > 0) {
 
-                text =
-                    "เงินคงเหลือ  ${moneyFormat.format(balance)} บาท"
+            content.addView(
+                android.widget.TextView(this).apply {
 
-                textSize = 20f
+                    text =
+                        "งานยกเลิก: $cancelledJobs งาน"
 
-                gravity =
-                    android.view.Gravity.CENTER
+                    textSize = 14f
 
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
-
-                setTextColor(
-                    android.graphics.Color.WHITE
-                )
-
-                setPadding(
-                    dp(12),
-                    dp(13),
-                    dp(12),
-                    dp(13)
-                )
-
-                background =
-                    rounded(
-                        if (
-                            balance.compareTo(
-                                java.math.BigDecimal.ZERO
-                            ) >= 0
-                        ) {
-                            green
-                        } else {
-                            android.graphics.Color.rgb(
-                                180,
-                                35,
-                                35
-                            )
-                        },
-                        14f
+                    setTextColor(
+                        android.graphics.Color.DKGRAY
                     )
-            }
 
-        val balanceParams =
-            android.widget.LinearLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
+                    setPadding(
+                        dp(4),
+                        dp(8),
+                        dp(4),
+                        dp(4)
+                    )
+                }
+            )
+        }
 
-                topMargin =
-                    dp(12)
-            }
-
-        summary.addView(
-            balanceBox,
-            balanceParams
-        )
-
-        content.addView(
-            summary
-        )
+        // =================================================
+        // SYSTEM RELATION INFO
+        // =================================================
 
         content.addView(
             android.widget.TextView(this).apply {
 
                 text =
-                    "PC Drone • Agriculture Drone Service"
+                    "รายรับรวม = งานที่เสร็จแล้ว + รายรับอื่น\n" +
+                    "เงินคงเหลือ = รายรับรวม - รายจ่าย"
 
-                textSize = 12f
-
-                gravity =
-                    android.view.Gravity.CENTER
+                textSize = 14f
 
                 setTextColor(
-                    android.graphics.Color.GRAY
+                    android.graphics.Color.DKGRAY
                 )
 
                 setPadding(
-                    0,
-                    dp(24),
-                    0,
-                    0
+                    dp(4),
+                    dp(14),
+                    dp(4),
+                    dp(8)
                 )
             }
         )
 
-        root.addView(
-            content
+        // =================================================
+        // MENU
+        // =================================================
+
+        addMenuButton(
+            content,
+            AppRoute.JOBS
         )
 
-        val scroll =
+        addMenuButton(
+            content,
+            AppRoute.CUSTOMERS
+        )
+
+        addMenuButton(
+            content,
+            AppRoute.FINANCE
+        )
+
+        addMenuButton(
+            content,
+            AppRoute.HISTORY
+        )
+
+        addMenuButton(
+            content,
+            AppRoute.SETTINGS
+        )
+
+        val scrollView =
             android.widget.ScrollView(this).apply {
 
-                setBackgroundColor(
-                    softGreen
-                )
-
                 addView(
-                    root,
+                    content,
                     android.view.ViewGroup.LayoutParams(
                         android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                         android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -964,7 +417,7 @@ class MainActivity : Activity() {
             }
 
         setContentView(
-            scroll
+            scrollView
         )
     }
 

@@ -198,18 +198,6 @@ class MainActivity : Activity() {
                 245, 247, 246
             )
 
-        window.statusBarColor =
-            dark
-
-        if (
-            android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.M
-        ) {
-            window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and
-                android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        }
-
         fun rounded(
             color: Int,
             radius: Float
@@ -237,7 +225,7 @@ class MainActivity : Activity() {
                     android.widget.LinearLayout.VERTICAL
 
                 setBackgroundColor(
-                    softGreen
+                    android.graphics.Color.WHITE
                 )
             }
 
@@ -264,26 +252,6 @@ class MainActivity : Activity() {
                         0f
                     )
             }
-
-        if (
-            android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.KITKAT_WATCH
-        ) {
-
-            header.setOnApplyWindowInsetsListener { _, insets ->
-
-                header.setPadding(
-                    dp(20),
-                    dp(22) + insets.systemWindowInsetTop,
-                    dp(20),
-                    dp(20)
-                )
-
-                insets
-            }
-
-            header.requestApplyInsets()
-        }
 
         val brandRow =
             android.widget.LinearLayout(this).apply {
@@ -497,10 +465,6 @@ class MainActivity : Activity() {
                     dp(18),
                     dp(16),
                     dp(30)
-                )
-
-                setBackgroundColor(
-                    softGreen
                 )
             }
 
