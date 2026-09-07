@@ -44,11 +44,12 @@ class MainActivity : Activity() {
                 android.app.Activity.RESULT_OK
         ) {
 
+            @Suppress("DEPRECATION")
             val uri =
-                data?.getParcelableExtra<android.net.Uri>(
+                data?.getParcelableExtra(
                     android.media.RingtoneManager
                         .EXTRA_RINGTONE_PICKED_URI
-                )
+                ) as? android.net.Uri
 
             if (
                 uri != null
