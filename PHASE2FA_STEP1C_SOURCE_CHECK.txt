@@ -1,0 +1,5 @@
+2088:        // PC_DRONE_PHASE_2FA_STEP1C
+2094:        var auditUnlinkedCompletedJobCount = 0
+2095:        var auditUnlinkedCompletedJobAmount = java.math.BigDecimal.ZERO
+2104:                auditUnlinkedCompletedJobCount++
+2105:                auditUnlinkedCompletedJobAmount = auditUnlinkedCompletedJobAmount.add(amount)
