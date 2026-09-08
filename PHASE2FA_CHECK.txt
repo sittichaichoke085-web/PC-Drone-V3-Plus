@@ -1,0 +1,17 @@
+]633;E;echo "===== PHASE 2F-A CHECK =====";4d5bddd0-4eac-435b-adac-dcc8b973517d]633;C===== PHASE 2F-A CHECK =====
+
+CURRENT COMMIT:
+750fe48 PC Drone v3.0.1 Money Manager Phase 2E stable
+
+MARKERS:
+292:        // PC_DRONE_PHASE_2FA_CENTRAL_AUDIT
+1907:                        "ยังลบกระเป๋านี้ไม่ได้"
+2682:                    "ศูนย์ตรวจสอบการเงิน"
+
+SOURCE STATUS:
+ M app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+
+APK:
+APK_NOT_FOUND
+
+===== END =====
