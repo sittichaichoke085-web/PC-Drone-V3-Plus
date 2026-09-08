@@ -1,0 +1,191 @@
+                transactionId.isEmpty() ||
+                walletId.isEmpty() ||
+                transactionId !in auditFinanceTransactionIds ||
+                walletId !in auditValidWalletIds
+            ) {
+                auditOrphanFinanceLinkCount++
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1E
+        val auditFlightJobStatusById =
+            prefs.getStringSet("flight_jobs", emptySet()).orEmpty().mapNotNull { record ->
+                val p = record.split("|||", ignoreCase = false, limit = 9)
+                val id = p.getOrNull(0)?.trim().orEmpty()
+                if (id.isNotEmpty()) id to p.getOrNull(7)?.trim().orEmpty() else null
+            }.toMap()
+
+        var auditOrphanJobLinkCount = 0
+        val auditJobLinkCounts = mutableMapOf<String, Int>()
+
+        auditJobLinks.forEach { link ->
+            val p = link.split("|||", ignoreCase = false, limit = 2)
+            val jobId = p.getOrNull(0)?.trim().orEmpty()
+            val walletId = p.getOrNull(1)?.trim().orEmpty()
+
+            if (jobId.isNotEmpty()) {
+                auditJobLinkCounts[jobId] = (auditJobLinkCounts[jobId] ?: 0) + 1
+            }
+
+            if (
+                jobId.isEmpty() ||
+                walletId.isEmpty() ||
+                jobId !in auditFlightJobStatusById ||
+                walletId !in auditValidWalletIds ||
+                auditFlightJobStatusById[jobId] != "เสร็จแล้ว"
+            ) {
+                auditOrphanJobLinkCount++
+            }
+        }
+
+        val auditDuplicateJobLinkCount =
+            auditJobLinkCounts.values.count { it > 1 }
+
+        val auditFinanceLinkCounts = mutableMapOf<String, Int>()
+        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+            val id = link.split("|||", ignoreCase = false, limit = 2)
+                .getOrNull(0)?.trim().orEmpty()
+            if (id.isNotEmpty()) {
+                auditFinanceLinkCounts[id] = (auditFinanceLinkCounts[id] ?: 0) + 1
+            }
+        }
+
+        val auditDuplicateFinanceLinkCount =
+            auditFinanceLinkCounts.values.count { it > 1 }
+
+        var auditInvalidTransferCount = 0
+
+        prefs.getStringSet("money_manager_transfers", emptySet()).orEmpty().forEach { record ->
+            val p = record.split("|||", ignoreCase = false, limit = 5)
+            val transferId = p.getOrNull(0)?.trim().orEmpty()
+            val fromWalletId = p.getOrNull(1)?.trim().orEmpty()
+            val toWalletId = p.getOrNull(2)?.trim().orEmpty()
+            val amount = parseMoney(p.getOrNull(3) ?: "0")
+
+            if (
+                transferId.isEmpty() ||
+                fromWalletId.isEmpty() ||
+                toWalletId.isEmpty() ||
+                fromWalletId !in auditValidWalletIds ||
+                toWalletId !in auditValidWalletIds ||
+                fromWalletId == toWalletId ||
+                amount <= java.math.BigDecimal.ZERO
+            ) {
+                auditInvalidTransferCount++
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1F
+        val auditDifference =
+            auditBusinessNet.subtract(totalBalance)
+
+        val auditAnomalyCount =
+            auditOrphanFinanceLinkCount +
+            auditOrphanJobLinkCount +
+            auditDuplicateFinanceLinkCount +
+            auditDuplicateJobLinkCount +
+            auditInvalidTransferCount
+
+        val auditPass =
+            auditOpeningTotal.compareTo(java.math.BigDecimal.ZERO) == 0 &&
+            auditUnlinkedIncomeCount == 0 &&
+            auditUnlinkedExpenseCount == 0 &&
+            auditUnlinkedCompletedJobCount == 0 &&
+            auditAnomalyCount == 0 &&
+            auditDifference.compareTo(java.math.BigDecimal.ZERO) == 0
+
+        val root =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(16),
+                    dp(18),
+                    dp(16),
+                    dp(32)
+                )
+
+                setBackgroundColor(pageBg)
+            }
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "‹  กลับ"
+                textSize = 17f
+                setTextColor(greenDark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(4),
+                    dp(8),
+                    dp(8),
+                    dp(12)
+                )
+
+                isClickable = true
+                isFocusable = true
+
+                setOnClickListener {
+                    showScreen(
+                        AppRoute.DASHBOARD
+                    )
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บริหารเงิน"
+                textSize = 28f
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text =
+                    "จัดการกระเป๋าเงินและเงินทุนของธุรกิจ"
+
+                textSize = 14f
+                setTextColor(gray)
+
+                setPadding(
+                    0,
+                    dp(4),
+                    0,
+                    dp(16)
+                )
+            }
+        )
+
+        val totalBox =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(18),
+                    dp(18),
+                    dp(18),
+                    dp(18)
+                )
+
+                background =
+                    rounded(
+                        if (
+                            totalBalance.compareTo(
+                                java.math.BigDecimal.ZERO
+                            ) >= 0
+                        ) {
+                            greenDark
+                        } else {
