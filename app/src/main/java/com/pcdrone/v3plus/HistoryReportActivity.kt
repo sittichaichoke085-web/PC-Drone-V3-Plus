@@ -280,50 +280,102 @@ class HistoryReportActivity : Activity() {
                 }
         })
 
-        rows.forEachIndexed { index, r ->
+        val horizontal = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = true
+        }
 
-            val card = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(dp(12), dp(10), dp(12), dp(10))
+        val table = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(0, dp(10), 0, dp(10))
+        }
 
-                background =
-                    android.graphics.drawable.GradientDrawable().apply {
-                        setColor(Color.WHITE)
-                        cornerRadius = dp(10).toFloat()
-                        setStroke(dp(1), Color.LTGRAY)
-                    }
+        fun cell(
+            value: String,
+            width: Int,
+            header: Boolean = false,
+            alignRight: Boolean = false
+        ): TextView =
+            TextView(this).apply {
+                text = value
+                textSize = if (header) 14f else 13f
+                setTextColor(
+                    if (header) Color.WHITE else Color.BLACK
+                )
+                gravity =
+                    if (alignRight)
+                        Gravity.CENTER_VERTICAL or Gravity.END
+                    else
+                        Gravity.CENTER_VERTICAL
+                setPadding(dp(7), dp(8), dp(7), dp(8))
+                layoutParams =
+                    LinearLayout.LayoutParams(
+                        dp(width),
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
             }
 
-            card.addView(TextView(this).apply {
-                text = "${index + 1}. ${df.format(Date(r.date))}"
-                textSize = 17f
-                setTextColor(Color.rgb(0,105,55))
-            })
+        val header = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setBackgroundColor(Color.rgb(0, 105, 55))
+        }
 
-            card.addView(TextView(this).apply {
-                text =
-                    "ลูกค้า: ${r.customer}\n" +
-                    "งาน: ${r.service}\n" +
-                    "พื้นที่: ${r.location}\n" +
-                    "จำนวน: ${nf.format(r.rai)} ไร่\n" +
-                    "ราคา/ไร่: ${nf.format(r.rate)} บาท\n" +
-                    "รวม: ${nf.format(r.total)} บาท\n" +
-                    "สถานะ: ${r.status}"
+        header.addView(cell("วันที่", 90, true))
+        header.addView(cell("ลูกค้า", 125, true))
+        header.addView(cell("งาน", 120, true))
+        header.addView(cell("พื้นที่", 140, true))
+        header.addView(cell("ไร่", 70, true, true))
+        header.addView(cell("ราคา/ไร่", 90, true, true))
+        header.addView(cell("รวม", 100, true, true))
+        header.addView(cell("สถานะ", 110, true))
 
-                textSize = 15f
-                setTextColor(Color.BLACK)
-                setPadding(0, dp(5), 0, 0)
-            })
+        table.addView(header)
 
-            resultBox.addView(
-                card,
-                LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    topMargin = dp(10)
+        rows.forEachIndexed { index, r ->
+
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+
+                setBackgroundColor(
+                    if (index % 2 == 0)
+                        Color.WHITE
+                    else
+                        Color.rgb(245, 245, 245)
+                )
+            }
+
+            row.addView(cell(df.format(Date(r.date)), 90))
+            row.addView(cell(r.customer, 125))
+            row.addView(cell(r.service, 120))
+            row.addView(cell(r.location, 140))
+            row.addView(cell(nf.format(r.rai), 70, alignRight = true))
+            row.addView(cell(nf.format(r.rate), 90, alignRight = true))
+            row.addView(cell(nf.format(r.total), 100, alignRight = true))
+            row.addView(cell(r.status, 110))
+
+            table.addView(row)
+
+            table.addView(
+                android.view.View(this).apply {
+                    setBackgroundColor(Color.rgb(220,220,220))
+                    layoutParams =
+                        LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            dp(1)
+                        )
                 }
             )
         }
+
+        horizontal.addView(table)
+
+        resultBox.addView(
+            horizontal,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(8)
+            }
+        )
     }
 }
