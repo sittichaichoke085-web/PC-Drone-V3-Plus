@@ -4620,6 +4620,121 @@ class MainActivity : Activity() {
                             android.widget.LinearLayout.HORIZONTAL
                     }
 
+                val completeButton =
+                    android.widget.Button(
+                        this@MainActivity
+                    ).apply {
+
+                        text = "เสร็จแล้ว"
+                        isAllCaps = false
+
+                        setTextColor(
+                            android.graphics.Color.WHITE
+                        )
+
+                        background =
+                            android.graphics.drawable.GradientDrawable().apply {
+
+                                setColor(
+                                    android.graphics.Color.rgb(
+                                        0,
+                                        145,
+                                        70
+                                    )
+                                )
+
+                                cornerRadius =
+                                    dp(10).toFloat()
+                            }
+
+                        setOnClickListener {
+
+                            val current =
+                                prefs.getStringSet(
+                                    "flight_jobs",
+                                    emptySet()
+                                )?.toMutableSet()
+                                    ?: mutableSetOf()
+
+                            val updatedParts =
+                                parts.toMutableList()
+
+                            if (updatedParts.size >= 8) {
+
+                                updatedParts[7] =
+                                    "เสร็จแล้ว"
+
+                                val completedRecord =
+                                    updatedParts.joinToString(
+                                        "|||"
+                                    )
+
+                                current.remove(record)
+                                current.add(completedRecord)
+
+                                prefs.edit()
+                                    .putStringSet(
+                                        "flight_jobs",
+                                        current
+                                    )
+                                    .apply()
+
+                                /*
+                                 * ปิดสถานะแจ้งเตือนของงานนี้
+                                 * แต่ยังเก็บวัน/เวลานัดหมายไว้
+                                 */
+                                val appointmentCurrent =
+                                    prefs.getStringSet(
+                                        "job_appointments",
+                                        emptySet()
+                                    )?.toMutableSet()
+                                        ?: mutableSetOf()
+
+                                appointmentCurrent.removeAll {
+                                    appointmentRecord ->
+
+                                    appointmentRecord
+                                        .split(
+                                            "|||",
+                                            ignoreCase = false,
+                                            limit = 3
+                                        )
+                                        .getOrNull(0)
+                                        ?.toLongOrNull() ==
+                                        time
+                                }
+
+                                if (appointmentMillis > 0L) {
+
+                                    appointmentCurrent.add(
+                                        listOf(
+                                            time.toString(),
+                                            appointmentMillis.toString(),
+                                            "false"
+                                        ).joinToString("|||")
+                                    )
+                                }
+
+                                prefs.edit()
+                                    .putStringSet(
+                                        "job_appointments",
+                                        appointmentCurrent
+                                    )
+                                    .apply()
+
+                                cancelJobReminder(time)
+
+                                android.widget.Toast.makeText(
+                                    this@MainActivity,
+                                    "บันทึกงานเป็นเสร็จแล้ว",
+                                    android.widget.Toast.LENGTH_SHORT
+                                ).show()
+
+                                reloadHistory()
+                            }
+                        }
+                    }
+
                 val editButton =
                     android.widget.Button(
                         this@MainActivity
@@ -6302,6 +6417,22 @@ class MainActivity : Activity() {
                                 .show()
                         }
                     }
+
+                if (
+                    status != "เสร็จแล้ว" &&
+                    status != "ยกเลิก"
+                ) {
+                    buttonRow.addView(
+                        completeButton,
+                        android.widget.LinearLayout.LayoutParams(
+                            0,
+                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                            1f
+                        ).apply {
+                            marginEnd = dp(4)
+                        }
+                    )
+                }
 
                 buttonRow.addView(
                     editButton,
