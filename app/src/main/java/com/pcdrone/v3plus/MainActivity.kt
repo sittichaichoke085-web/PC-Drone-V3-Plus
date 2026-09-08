@@ -2056,6 +2056,56 @@ class MainActivity : Activity() {
                 }
             )
 
+            // PC_DRONE_PHASE_2D_WALLET_DETAIL
+            rightBox.addView(
+                android.widget.TextView(this).apply {
+
+                    text = "รายละเอียด"
+                    textSize = 12f
+                    gravity =
+                        android.view.Gravity.CENTER
+
+                    setTextColor(
+                        android.graphics.Color.WHITE
+                    )
+
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+
+                    setPadding(
+                        dp(10),
+                        dp(6),
+                        dp(10),
+                        dp(6)
+                    )
+
+                    background =
+                        rounded(
+                            greenDark,
+                            10
+                        )
+
+                    isClickable = true
+                    isFocusable = true
+
+                    setOnClickListener {
+                        showWalletDetail(
+                            walletId = id,
+                            walletName = name,
+                            openingBalance = openingBalance
+                        )
+                    }
+                },
+                android.widget.LinearLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = dp(7)
+                }
+            )
+
             card.addView(rightBox)
 
             root.addView(
@@ -2159,6 +2209,850 @@ class MainActivity : Activity() {
             }
 
         root.addView(phaseNote)
+
+        val scroll =
+            android.widget.ScrollView(this).apply {
+
+                isFillViewport = true
+
+                addView(
+                    root,
+                    android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                )
+            }
+
+        setContentView(scroll)
+    }
+
+
+
+    // =====================================================
+    // PHASE 2D - WALLET DETAIL / WALLET HISTORY
+    // =====================================================
+    private fun showWalletDetail(
+        walletId: String,
+        walletName: String,
+        openingBalance: java.math.BigDecimal
+    ) {
+
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val greenDark =
+            android.graphics.Color.rgb(
+                0, 105, 50
+            )
+
+        val green =
+            android.graphics.Color.rgb(
+                46, 125, 50
+            )
+
+        val red =
+            android.graphics.Color.rgb(
+                198, 40, 40
+            )
+
+        val dark =
+            android.graphics.Color.rgb(
+                35, 35, 35
+            )
+
+        val gray =
+            android.graphics.Color.rgb(
+                100, 100, 100
+            )
+
+        val pageBg =
+            android.graphics.Color.rgb(
+                247, 249, 247
+            )
+
+        val moneyFormat =
+            java.text.DecimalFormat(
+                "#,##0.00"
+            )
+
+        fun rounded(
+            color: Int,
+            radiusDp: Int
+        ): android.graphics.drawable.GradientDrawable {
+
+            return android.graphics.drawable.GradientDrawable().apply {
+                setColor(color)
+                cornerRadius =
+                    dp(radiusDp).toFloat()
+            }
+        }
+
+        fun parseMoney(
+            value: String
+        ): java.math.BigDecimal {
+
+            return try {
+                java.math.BigDecimal(
+                    value.trim()
+                )
+            } catch (_: Exception) {
+                java.math.BigDecimal.ZERO
+            }
+        }
+
+        data class WalletHistoryRow(
+            val time: Long,
+            val title: String,
+            val detail: String,
+            val amount: java.math.BigDecimal,
+            val isIncome: Boolean
+        )
+
+        val history =
+            mutableListOf<WalletHistoryRow>()
+
+        var totalIncome =
+            java.math.BigDecimal.ZERO
+
+        var totalExpense =
+            java.math.BigDecimal.ZERO
+
+        // ==========================================
+        // MANUAL FINANCE LINKS
+        // ==========================================
+
+        val financeLinks =
+            prefs.getStringSet(
+                "money_manager_links",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        val linkedTransactionIds =
+            financeLinks.mapNotNull { link ->
+
+                val p =
+                    link.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 2
+                    )
+
+                val transactionId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                val linkedWalletId =
+                    p.getOrNull(1)
+                        ?.trim()
+                        .orEmpty()
+
+                if (
+                    transactionId.isNotBlank() &&
+                    linkedWalletId == walletId
+                ) {
+                    transactionId
+                } else {
+                    null
+                }
+
+            }.toSet()
+
+        val financeTransactions =
+            prefs.getStringSet(
+                "finance_transactions",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        financeTransactions.forEach { record ->
+
+            val p =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 5
+                )
+
+            val transactionId =
+                p.getOrNull(0)
+                    ?.trim()
+                    .orEmpty()
+
+            if (
+                transactionId !in linkedTransactionIds
+            ) {
+                return@forEach
+            }
+
+            val time =
+                transactionId.toLongOrNull()
+                    ?: 0L
+
+            val type =
+                p.getOrNull(1)
+                    ?.trim()
+                    .orEmpty()
+
+            val category =
+                p.getOrNull(2)
+                    ?.trim()
+                    .orEmpty()
+
+            val amount =
+                parseMoney(
+                    p.getOrNull(3)
+                        ?: "0"
+                )
+
+            val note =
+                p.getOrNull(4)
+                    ?.trim()
+                    .orEmpty()
+
+            if (type == "INCOME") {
+
+                totalIncome =
+                    totalIncome.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            if (category.isBlank()) {
+                                "รายรับ"
+                            } else {
+                                category
+                            },
+                        detail = note,
+                        amount = amount,
+                        isIncome = true
+                    )
+                )
+
+            } else if (
+                type == "EXPENSE"
+            ) {
+
+                totalExpense =
+                    totalExpense.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            if (category.isBlank()) {
+                                "รายจ่าย"
+                            } else {
+                                category
+                            },
+                        detail = note,
+                        amount = amount,
+                        isIncome = false
+                    )
+                )
+            }
+        }
+
+        // ==========================================
+        // FLIGHT JOB LINKS
+        // ==========================================
+
+        val jobLinks =
+            prefs.getStringSet(
+                "money_manager_job_links",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        val linkedJobIds =
+            jobLinks.mapNotNull { link ->
+
+                val p =
+                    link.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 2
+                    )
+
+                val jobId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                val linkedWalletId =
+                    p.getOrNull(1)
+                        ?.trim()
+                        .orEmpty()
+
+                if (
+                    jobId.isNotBlank() &&
+                    linkedWalletId == walletId
+                ) {
+                    jobId
+                } else {
+                    null
+                }
+
+            }.toSet()
+
+        val jobs =
+            prefs.getStringSet(
+                "flight_jobs",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        jobs.forEach { record ->
+
+            val p =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 9
+                )
+
+            val jobId =
+                p.getOrNull(0)
+                    ?.trim()
+                    .orEmpty()
+
+            if (
+                jobId !in linkedJobIds
+            ) {
+                return@forEach
+            }
+
+            val status =
+                p.getOrNull(7)
+                    ?.trim()
+                    .orEmpty()
+
+            if (
+                status != "เสร็จแล้ว"
+            ) {
+                return@forEach
+            }
+
+            val time =
+                jobId.toLongOrNull()
+                    ?: 0L
+
+            val customer =
+                p.getOrNull(1)
+                    ?.trim()
+                    .orEmpty()
+
+            val service =
+                p.getOrNull(2)
+                    ?.trim()
+                    .orEmpty()
+
+            val amount =
+                parseMoney(
+                    p.getOrNull(6)
+                        ?: "0"
+                )
+
+            totalIncome =
+                totalIncome.add(
+                    amount
+                )
+
+            val description =
+                buildString {
+
+                    append("งานบิน")
+
+                    if (
+                        customer.isNotBlank()
+                    ) {
+                        append(" - ")
+                        append(customer)
+                    }
+
+                    if (
+                        service.isNotBlank()
+                    ) {
+                        append(" • ")
+                        append(service)
+                    }
+                }
+
+            history.add(
+                WalletHistoryRow(
+                    time = time,
+                    title = description,
+                    detail = "",
+                    amount = amount,
+                    isIncome = true
+                )
+            )
+        }
+
+        history.sortByDescending {
+            it.time
+        }
+
+        val currentBalance =
+            openingBalance
+                .add(totalIncome)
+                .subtract(totalExpense)
+
+        // ==========================================
+        // UI
+        // ==========================================
+
+        val root =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(16),
+                    dp(18),
+                    dp(16),
+                    dp(32)
+                )
+
+                setBackgroundColor(
+                    pageBg
+                )
+            }
+
+        root.addView(
+            android.widget.TextView(this).apply {
+
+                text = "‹  กลับ"
+                textSize = 17f
+                setTextColor(
+                    greenDark
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(4),
+                    dp(8),
+                    dp(8),
+                    dp(12)
+                )
+
+                isClickable = true
+
+                setOnClickListener {
+                    showMoneyManager()
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+
+                text = walletName
+                textSize = 27f
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "รายละเอียดและประวัติกระเป๋า"
+
+                textSize = 14f
+                setTextColor(gray)
+
+                setPadding(
+                    0,
+                    dp(3),
+                    0,
+                    dp(15)
+                )
+            }
+        )
+
+        val balanceBox =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(18),
+                    dp(16),
+                    dp(18),
+                    dp(16)
+                )
+
+                background =
+                    rounded(
+                        if (
+                            currentBalance.compareTo(
+                                java.math.BigDecimal.ZERO
+                            ) >= 0
+                        ) {
+                            greenDark
+                        } else {
+                            red
+                        },
+                        16
+                    )
+            }
+
+        balanceBox.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "ยอดคงเหลือปัจจุบัน"
+
+                textSize = 14f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+            }
+        )
+
+        balanceBox.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "${moneyFormat.format(currentBalance)} บาท"
+
+                textSize = 27f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(balanceBox)
+
+        val summary =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                setPadding(
+                    0,
+                    dp(12),
+                    0,
+                    dp(14)
+                )
+            }
+
+        fun summaryBox(
+            title: String,
+            amount: java.math.BigDecimal,
+            textColor: Int
+        ): android.widget.LinearLayout {
+
+            return android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setPadding(
+                    dp(8),
+                    dp(12),
+                    dp(8),
+                    dp(12)
+                )
+
+                background =
+                    rounded(
+                        android.graphics.Color.WHITE,
+                        14
+                    )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text = title
+                        textSize = 12f
+                        setTextColor(gray)
+                    }
+                )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text =
+                            "${moneyFormat.format(amount)} บาท"
+
+                        textSize = 17f
+                        setTextColor(
+                            textColor
+                        )
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                    }
+                )
+            }
+        }
+
+        summary.addView(
+            summaryBox(
+                "รับเข้ารวม",
+                totalIncome,
+                green
+            ),
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+            ).apply {
+                rightMargin = dp(5)
+            }
+        )
+
+        summary.addView(
+            summaryBox(
+                "จ่ายออกรวม",
+                totalExpense,
+                red
+            ),
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+            ).apply {
+                leftMargin = dp(5)
+            }
+        )
+
+        root.addView(summary)
+
+        root.addView(
+            android.widget.TextView(this).apply {
+
+                text = "ประวัติรายการ"
+                textSize = 19f
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(2),
+                    dp(5),
+                    0,
+                    dp(10)
+                )
+            }
+        )
+
+        if (
+            history.isEmpty()
+        ) {
+
+            root.addView(
+                android.widget.TextView(this).apply {
+
+                    text =
+                        "ยังไม่มีรายการรับ-จ่ายในกระเป๋านี้"
+
+                    textSize = 14f
+
+                    gravity =
+                        android.view.Gravity.CENTER
+
+                    setTextColor(gray)
+
+                    setPadding(
+                        dp(10),
+                        dp(24),
+                        dp(10),
+                        dp(24)
+                    )
+                }
+            )
+
+        } else {
+
+            val dateFormat =
+                java.text.SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm",
+                    java.util.Locale.getDefault()
+                )
+
+            history.forEach { row ->
+
+                val card =
+                    android.widget.LinearLayout(this).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.HORIZONTAL
+
+                        gravity =
+                            android.view.Gravity.CENTER_VERTICAL
+
+                        setPadding(
+                            dp(14),
+                            dp(12),
+                            dp(14),
+                            dp(12)
+                        )
+
+                        background =
+                            rounded(
+                                android.graphics.Color.WHITE,
+                                14
+                            )
+                    }
+
+                val left =
+                    android.widget.LinearLayout(this).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+                    }
+
+                left.addView(
+                    android.widget.TextView(this).apply {
+
+                        text = row.title
+                        textSize = 15f
+                        setTextColor(dark)
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                    }
+                )
+
+                if (
+                    row.detail.isNotBlank()
+                ) {
+
+                    left.addView(
+                        android.widget.TextView(this).apply {
+
+                            text = row.detail
+                            textSize = 12f
+                            setTextColor(gray)
+                        }
+                    )
+                }
+
+                left.addView(
+                    android.widget.TextView(this).apply {
+
+                        text =
+                            if (
+                                row.time > 0L
+                            ) {
+                                dateFormat.format(
+                                    java.util.Date(
+                                        row.time
+                                    )
+                                )
+                            } else {
+                                "-"
+                            }
+
+                        textSize = 11f
+                        setTextColor(gray)
+                    }
+                )
+
+                card.addView(
+                    left,
+                    android.widget.LinearLayout.LayoutParams(
+                        0,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                        1f
+                    )
+                )
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+
+                        text =
+                            (
+                                if (
+                                    row.isIncome
+                                ) {
+                                    "+"
+                                } else {
+                                    "-"
+                                }
+                            ) +
+                            moneyFormat.format(
+                                row.amount
+                            )
+
+                        textSize = 16f
+
+                        setTextColor(
+                            if (
+                                row.isIncome
+                            ) {
+                                green
+                            } else {
+                                red
+                            }
+                        )
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                    }
+                )
+
+                root.addView(
+                    card,
+                    android.widget.LinearLayout.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin =
+                            dp(8)
+                    }
+                )
+            }
+        }
 
         val scroll =
             android.widget.ScrollView(this).apply {
