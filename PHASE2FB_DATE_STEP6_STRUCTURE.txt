@@ -1,0 +1,203 @@
+// PC_DRONE_MONTHLY_DATE_RANGE_STEP3
+        fun addDateInputRow(
+            label: String,
+            day: android.widget.EditText,
+            month: android.widget.EditText,
+            year: android.widget.EditText
+        ) {
+            val row = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setPadding(0, dp(4), 0, dp(4))
+            }
+
+            row.addView(
+                android.widget.TextView(this).apply {
+                    text = label
+                    textSize = 15f
+                    setTextColor(dark)
+                },
+                android.widget.LinearLayout.LayoutParams(
+                    dp(80),
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            )
+
+            row.addView(
+                day,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1f)
+            )
+            row.addView(
+                month,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1f)
+            )
+            row.addView(
+                year,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1.4f)
+            )
+
+            root.addView(row)
+        }
+
+        addDateInputRow(
+            "จากวันที่",
+            fromDay,
+            fromMonth,
+            fromYear
+        )
+
+        addDateInputRow(
+            "ถึงวันที่",
+            toDay,
+            toMonth,
+            toYear
+        )
+
+        var total = java.math.BigDecimal.ZERO
+        var count = 0
+
+        val rows =
+            prefs.getStringSet(
+                "finance_transactions",
+                emptySet()
+            ).orEmpty()
+                .mapNotNull { record ->
+
+                    val parts =
+                        record.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 5
+                        )
+
+                    val time =
+                        parts.getOrNull(0)
+                            ?.trim()
+                            ?.toLongOrNull()
+                            ?: return@mapNotNull null
+
+                    val type =
+                        parts.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    if (type != "EXPENSE") {
+                        return@mapNotNull null
+                    }
+
+                    if (
+                        time < firstDay.timeInMillis ||
+                        time > lastDay.timeInMillis
+                    ) {
+                        return@mapNotNull null
+                    }
+
+                    val category =
+                        parts.getOrNull(2)
+                            ?.trim()
+                            .orEmpty()
+
+                    val amount =
+                        java.math.BigDecimal(
+                            parts.getOrNull(3)
+                                ?.replace(",", "")
+                                ?.trim()
+                                ?.ifEmpty { "0" }
+                                ?: "0"
+                        )
+
+                    Triple(time, category, amount)
+                }
+                .sortedByDescending { it.first }
+
+        rows.forEach {
+            total = total.add(it.third)
+            count++
+        }
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text =
+                    "รายจ่ายรวม ${monthlyMoneyFormat.format(total)} บาท   •   ${count} รายการ"
+                textSize = 18f
+                setTextColor(red)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, 0, 0, dp(14))
+            }
+        )
+
+        val table =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                background = rounded(android.graphics.Color.WHITE, 14)
+                setPadding(dp(12), dp(12), dp(12), dp(12))
+            }
+
+        table.addView(
+            android.widget.TextView(this).apply {
+                text = "วันที่ / เวลา        รายการ        จำนวนเงิน"
+                textSize = 14f
+                setTextColor(dark)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, 0, 0, dp(8))
+            }
+        )
+
+        val fullDate =
+            java.text.SimpleDateFormat(
+                "dd/MM/yyyy HH:mm",
+                java.util.Locale.getDefault()
+            )
+
+        if (rows.isEmpty()) {
+
+            table.addView(
+                android.widget.TextView(this).apply {
+                    text = "ไม่พบรายการรายจ่ายในช่วงนี้"
+                    textSize = 14f
+                    setTextColor(android.graphics.Color.GRAY)
+                    setPadding(0, dp(12), 0, dp(12))
+                }
+            )
+
+        } else {
+
+            rows.forEach { row ->
+
+                table.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            "${fullDate.format(java.util.Date(row.first))}   ${row.second}   ${monthlyMoneyFormat.format(row.third)} บาท"
+                        textSize = 14f
+                        setTextColor(dark)
+                        setPadding(0, dp(8), 0, dp(8))
+                    }
+                )
+            }
+        }
+
+        root.addView(table)
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "รวมทั้งหมด ${monthlyMoneyFormat.format(total)} บาท"
+                textSize = 18f
+                setTextColor(red)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, dp(14), 0, dp(8))
+            }
+        )
+
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "ย้อนกลับ"
+                isAllCaps = false
+                setTextColor(android.graphics.Color.WHITE)
+                background = rounded(orange, 12)
+                setOnClickListener {
+                    showMoneyManager()
+                }
+            }
+        )
+
+        
