@@ -123,7 +123,7 @@ object HistoryPdfExporter {
 
             val normal = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.BLACK
-                textSize = 9f
+                textSize = 8f
                 typeface = Typeface.create(
                     "sans-serif",
                     Typeface.NORMAL
@@ -141,7 +141,7 @@ object HistoryPdfExporter {
 
             val titlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.rgb(0, 90, 45)
-                textSize = 18f
+                textSize = 9f
                 typeface = Typeface.create(
                     "sans-serif",
                     Typeface.BOLD
@@ -149,11 +149,11 @@ object HistoryPdfExporter {
             }
 
             val whiteBold = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.WHITE
-                textSize = 9f
+                color = Color.BLACK
+                textSize = 8f
                 typeface = Typeface.create(
                     "sans-serif",
-                    Typeface.BOLD
+                    Typeface.NORMAL
                 )
             }
 
@@ -164,7 +164,7 @@ object HistoryPdfExporter {
             }
 
             val headerFill = Paint().apply {
-                color = Color.rgb(0, 105, 55)
+                color = Color.WHITE
                 style = Paint.Style.FILL
             }
 
@@ -277,51 +277,42 @@ object HistoryPdfExporter {
                 y = 38f
 
                 canvas.drawText(
-                    "รายงานประวัติงาน PC-Drone-V3-Plus",
+                    "PC Drone",
                     left,
                     y,
                     titlePaint
                 )
 
-                y += 24f
+                y += 22f
 
-                if (firstPage) {
-                    bold.textSize = 10f
+                val reportTitlePaint =
+                    Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                        color = Color.BLACK
+                        textSize = 17f
+                        typeface = Typeface.create(
+                            "sans-serif",
+                            Typeface.NORMAL
+                        )
+                        textAlign = Paint.Align.CENTER
+                    }
 
-                    canvas.drawText(
-                        "ช่วงวันที่ ${df.format(Date(start))} - ${df.format(Date(end))}",
-                        left,
-                        y,
-                        bold
-                    )
+                canvas.drawText(
+                    "รายงานประวัติงาน",
+                    pageWidth / 2f,
+                    y,
+                    reportTitlePaint
+                )
 
-                    y += 18f
+                y += 22f
 
-                    val totalRai =
-                        rows.sumOf { it.rai }
+                canvas.drawText(
+                    "ช่วงวันที่ ${df.format(Date(start))} - ${df.format(Date(end))}",
+                    left,
+                    y,
+                    normal
+                )
 
-                    val totalValue =
-                        rows.sumOf { it.total }
-
-                    canvas.drawText(
-                        "จำนวน ${rows.size} งาน    รวม ${nf.format(totalRai)} ไร่    มูลค่างานรวม ${nf.format(totalValue)} บาท",
-                        left,
-                        y,
-                        bold
-                    )
-
-                    bold.textSize = 9f
-                    y += 22f
-                } else {
-                    canvas.drawText(
-                        "ช่วงวันที่ ${df.format(Date(start))} - ${df.format(Date(end))}",
-                        left,
-                        y,
-                        normal
-                    )
-
-                    y += 20f
-                }
+                y += 20f
 
                 drawTableHeader()
             }
@@ -339,15 +330,7 @@ object HistoryPdfExporter {
 
                 val canvas = page!!.canvas
 
-                if (index % 2 == 1) {
-                    canvas.drawRect(
-                        left,
-                        y,
-                        right,
-                        y + rowHeight,
-                        altFill
-                    )
-                }
+                // ตารางขาวดำ ไม่มีสีพื้นสลับ
 
                 val values = arrayOf(
                     df.format(Date(r.date)),
@@ -398,6 +381,35 @@ object HistoryPdfExporter {
 
                 y += rowHeight
             }
+
+            val totalRai = rows.sumOf { it.rai }
+            val totalValue = rows.sumOf { it.total }
+
+            if (y + 42f > bottomLimit) {
+                finishCurrentPage()
+                startPage(false)
+            }
+
+            y += 12f
+
+            val summaryCanvas = page!!.canvas
+
+            summaryCanvas.drawLine(
+                left,
+                y,
+                right,
+                y,
+                linePaint
+            )
+
+            y += 18f
+
+            summaryCanvas.drawText(
+                "สรุป  จำนวน ${rows.size} งาน   รวม ${nf.format(totalRai)} ไร่   มูลค่ารวม ${nf.format(totalValue)} บาท",
+                left,
+                y,
+                normal
+            )
 
             finishCurrentPage()
 
