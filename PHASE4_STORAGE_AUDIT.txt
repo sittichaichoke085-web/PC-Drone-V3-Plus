@@ -1,0 +1,98 @@
+===== PC DRONE PHASE 4 STORAGE AUDIT =====
+Tue Sep  8 06:05:23 UTC 2026
+
+===== SHARED PREFERENCES =====
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt:193:            getSharedPreferences("pc_drone_v3_data", MODE_PRIVATE)
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt:35:            val prefs = context.getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt:36:                "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:12:            context.getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:13:                "pc_drone_settings",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:58:                getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:59:                    "pc_drone_settings",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:95:        val prefs = getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:96:            "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:1620:                        getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:1621:                            "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2716:            getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2717:                "pc_drone_settings",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4381:        val prefs = getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4382:            "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4968:            getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4969:                "pc_drone_settings",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5229:        val prefs = getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5230:            "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5508:                    getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5509:                        "pc_drone_settings",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5868:        val prefs = getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5869:            "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7242:            getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7243:                "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7990:        val prefs = getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7991:            "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8884:        val prefs = getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8885:            "pc_drone_v3_data",
+
+===== IMPORTANT DATA KEYS =====
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt:196:            prefs.getStringSet("flight_jobs", emptySet())
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt:201:            prefs.getStringSet("job_appointments", emptySet())
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt:41:                .getStringSet("flight_jobs", emptySet())
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt:46:                .getStringSet("job_appointments", emptySet())
+app/src/main/java/com/pcdrone/v3plus/data/local/CustomerEntity.kt:6:@Entity(tableName = "customers")
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:121:                "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:182:                "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:1634:                            "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:1702:                            "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4458:                    "customers",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4727:                                            "customers",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4747:                                            "customers",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4799:                                            "customers",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4808:                                            "customers",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4898:                            "customers",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:4907:                            "customers",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5675:                            "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5684:                            "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5706:                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5717:                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6320:                    "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6327:                    "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6778:                                    "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6801:                                        "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6808:                                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6839:                                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6899:                                            "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6908:                                            "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6915:                                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6936:                                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7276:                "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7869:                        "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7884:                        "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7895:                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7933:                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8333:                    "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8380:                    "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8611:                                            "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8622:                                            "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8822:                            "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8833:                            "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:9231:                        "finance_transactions",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:9252:                        "finance_transactions",
+
+===== ROOM / DATABASE =====
+app/src/main/java/com/pcdrone/v3plus/data/local/AppDatabase.kt:4:import androidx.room.RoomDatabase
+app/src/main/java/com/pcdrone/v3plus/data/local/AppDatabase.kt:6:@Database(
+app/src/main/java/com/pcdrone/v3plus/data/local/AppDatabase.kt:14:abstract class AppDatabase : RoomDatabase() {
+
+===== DATA FILES =====
+app/src/main/java/com/pcdrone/v3plus/FinanceReportProvider.kt
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt
+app/src/main/java/com/pcdrone/v3plus/HistoryReportProvider.kt
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+app/src/main/java/com/pcdrone/v3plus/ReportFileProvider.kt
+app/src/main/java/com/pcdrone/v3plus/data/local/AppDatabase.kt
+app/src/main/java/com/pcdrone/v3plus/data/local/AppMetaDao.kt
+app/src/main/java/com/pcdrone/v3plus/data/local/AppMetaEntity.kt
+app/src/main/java/com/pcdrone/v3plus/data/local/CustomerDao.kt
+app/src/main/java/com/pcdrone/v3plus/data/local/CustomerEntity.kt
+app/src/main/java/com/pcdrone/v3plus/navigation/AppRoute.kt
