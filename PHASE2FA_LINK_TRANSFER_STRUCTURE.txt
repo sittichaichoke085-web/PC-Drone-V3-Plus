@@ -1,0 +1,468 @@
+1563-                                movement.add(amount)
+1564-
+1565-                        "EXPENSE" ->
+1566-                            movement =
+1567-                                movement.subtract(amount)
+1568-                    }
+1569-                }
+1570-            }
+1571-
+1572-            // =============================================
+1573-            // PHASE 2C - JOB INCOME LINKED TO WALLET
+1574-            // =============================================
+1575-
+1576-            val jobLinks =
+1577-                prefs.getStringSet(
+1578:                    "money_manager_job_links",
+1579-                    emptySet()
+1580-                )?.toList()
+1581-                    ?: emptyList()
+1582-
+1583-            val linkedJobIds =
+1584-                jobLinks.mapNotNull { link ->
+1585-
+1586-                    val p =
+1587-                        link.split(
+1588-                            "|||",
+1589-                            ignoreCase = false,
+1590-                            limit = 2
+1591-                        )
+1592-
+1593-                    val jobId =
+1594-                        p.getOrNull(0)
+1595-                            ?.trim()
+1596-                            .orEmpty()
+1597-
+1598-                    val linkedWalletId =
+1599-                        p.getOrNull(1)
+1600-                            ?.trim()
+1601-                            .orEmpty()
+1602-
+1603-                    if (
+1604-                        jobId.isNotBlank() &&
+1605-                        linkedWalletId == walletId
+1606-                    ) {
+1607-                        jobId
+1608-                    } else {
+1609-                        null
+1610-                    }
+1611-
+1612-                }.toSet()
+1613-
+--
+1656-                        )
+1657-                }
+1658-            }
+1659-
+1660-            // =============================================
+1661-            // PC_DRONE_PHASE_2E_WALLET_TRANSFER
+1662-            // Transfer = movement between wallets only.
+1663-            // It must NOT become business income/expense.
+1664-            // =============================================
+1665-
+1666-            var transferMovement =
+1667-                java.math.BigDecimal.ZERO
+1668-
+1669-            val transfers =
+1670-                prefs.getStringSet(
+1671:                    "money_manager_transfers",
+1672-                    emptySet()
+1673-                )?.toList()
+1674-                    ?: emptyList()
+1675-
+1676-            transfers.forEach { record ->
+1677-
+1678-                val p =
+1679-                    record.split(
+1680-                        "|||",
+1681-                        ignoreCase = false,
+1682-                        limit = 5
+1683-                    )
+1684-
+1685-                val fromWalletId =
+1686-                    p.getOrNull(1)
+1687-                        ?.trim()
+1688-                        .orEmpty()
+1689-
+1690-                val toWalletId =
+1691-                    p.getOrNull(2)
+1692-                        ?.trim()
+1693-                        .orEmpty()
+1694-
+1695-                val amount =
+1696-                    parseMoney(
+1697-                        p.getOrNull(3)
+1698-                            ?: "0"
+1699-                    )
+1700-
+1701-                if (
+1702-                    fromWalletId == walletId
+1703-                ) {
+1704-                    transferMovement =
+1705-                        transferMovement.subtract(
+1706-                            amount
+--
+1975-                            .orEmpty()
+1976-
+1977-                    val transferRecord =
+1978-                        listOf(
+1979-                            transferId,
+1980-                            fromWalletId,
+1981-                            toWalletId,
+1982-                            amount
+1983-                                .stripTrailingZeros()
+1984-                                .toPlainString(),
+1985-                            note
+1986-                        ).joinToString("|||")
+1987-
+1988-                    val current =
+1989-                        prefs.getStringSet(
+1990:                            "money_manager_transfers",
+1991-                            emptySet()
+1992-                        )?.toMutableSet()
+1993-                            ?: mutableSetOf()
+1994-
+1995-                    current.add(
+1996-                        transferRecord
+1997-                    )
+1998-
+1999-                    prefs.edit()
+2000-                        .putStringSet(
+2001:                            "money_manager_transfers",
+2002-                            current
+2003-                        )
+2004-                        .apply()
+2005-
+2006-                    dialog.dismiss()
+2007-
+2008-                    showMoneyManager()
+2009-                }
+2010-            }
+2011-
+2012-            dialog.show()
+2013-        }
+2014-
+2015-        val totalBalance =
+2016-            wallets.fold(
+2017-                java.math.BigDecimal.ZERO
+2018-            ) { total, wallet ->
+2019-
+2020-                val openingBalance =
+2021-                    parseMoney(
+2022-                        wallet.getOrNull(3)
+2023-                            ?: "0"
+2024-                    )
+2025-
+2026-                val walletId =
+2027-                    wallet.getOrNull(0)
+2028-                        .orEmpty()
+2029-
+2030-                total.add(
+2031-                    computedWalletBalance(
+2032-                        walletId,
+2033-                        openingBalance
+2034-                    )
+2035-                )
+2036-            }
+--
+2074-            val type = parts.getOrNull(1)?.trim().orEmpty()
+2075-            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+2076-            if (transactionId.isNotEmpty() && transactionId !in auditLinkedFinanceIds) {
+2077-                if (type == "INCOME") {
+2078-                    auditUnlinkedIncomeCount++
+2079-                    auditUnlinkedIncomeAmount = auditUnlinkedIncomeAmount.add(amount)
+2080-                }
+2081-                if (type == "EXPENSE") {
+2082-                    auditUnlinkedExpenseCount++
+2083-                    auditUnlinkedExpenseAmount = auditUnlinkedExpenseAmount.add(amount)
+2084-                }
+2085-            }
+2086-        }
+2087-
+2088-        // PC_DRONE_PHASE_2FA_STEP1C
+2089:        val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+2090-        val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+2091-            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+2092-        }.toSet()
+2093-
+2094-        var auditUnlinkedCompletedJobCount = 0
+2095-        var auditUnlinkedCompletedJobAmount = java.math.BigDecimal.ZERO
+2096-
+2097-        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+2098-            val parts = record.split("|||", ignoreCase = false, limit = 9)
+2099-            val jobId = parts.getOrNull(0)?.trim().orEmpty()
+2100-            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+2101-            val status = parts.getOrNull(7)?.trim().orEmpty()
+2102-
+2103-            if (status == "เสร็จแล้ว" && jobId.isNotEmpty() && jobId !in auditLinkedJobIds) {
+2104-                auditUnlinkedCompletedJobCount++
+2105-                auditUnlinkedCompletedJobAmount = auditUnlinkedCompletedJobAmount.add(amount)
+2106-            }
+2107-        }
+2108-
+2109-        // PC_DRONE_PHASE_2FA_STEP1D
+2110-        val auditValidWalletIds = wallets.map { it[0] }.toSet()
+2111-
+2112-        val auditOpeningTotal = wallets.fold(java.math.BigDecimal.ZERO) { sum, wallet ->
+2113-            sum.add(parseMoney(wallet[3]))
+2114-        }
+2115-
+2116-        val auditFinanceTransactionIds =
+2117-            prefs.getStringSet("finance_transactions", emptySet()).orEmpty().mapNotNull { record ->
+2118-                record.split("|||", ignoreCase = false, limit = 5)
+2119-                    .getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+2120-            }.toSet()
+2121-
+2122-        var auditOrphanFinanceLinkCount = 0
+2123-
+2124-        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+--
+2968-                            },
+2969-                        detail = note,
+2970-                        amount = amount,
+2971-                        isIncome = false
+2972-                    )
+2973-                )
+2974-            }
+2975-        }
+2976-
+2977-        // ==========================================
+2978-        // FLIGHT JOB LINKS
+2979-        // ==========================================
+2980-
+2981-        val jobLinks =
+2982-            prefs.getStringSet(
+2983:                "money_manager_job_links",
+2984-                emptySet()
+2985-            )?.toList()
+2986-                ?: emptyList()
+2987-
+2988-        val linkedJobIds =
+2989-            jobLinks.mapNotNull { link ->
+2990-
+2991-                val p =
+2992-                    link.split(
+2993-                        "|||",
+2994-                        ignoreCase = false,
+2995-                        limit = 2
+2996-                    )
+2997-
+2998-                val jobId =
+2999-                    p.getOrNull(0)
+3000-                        ?.trim()
+3001-                        .orEmpty()
+3002-
+3003-                val linkedWalletId =
+3004-                    p.getOrNull(1)
+3005-                        ?.trim()
+3006-                        .orEmpty()
+3007-
+3008-                if (
+3009-                    jobId.isNotBlank() &&
+3010-                    linkedWalletId == walletId
+3011-                ) {
+3012-                    jobId
+3013-                } else {
+3014-                    null
+3015-                }
+3016-
+3017-            }.toSet()
+3018-
+--
+3106-                    detail = "",
+3107-                    amount = amount,
+3108-                    isIncome = true
+3109-                )
+3110-            )
+3111-        }
+3112-
+3113-        // ==========================================
+3114-        // PHASE 2E - TRANSFER HISTORY
+3115-        // Transfer appears in wallet history but is NOT
+3116-        // business income/expense in Finance/Reports.
+3117-        // ==========================================
+3118-
+3119-        val transfers =
+3120-            prefs.getStringSet(
+3121:                "money_manager_transfers",
+3122-                emptySet()
+3123-            )?.toList()
+3124-                ?: emptyList()
+3125-
+3126-        val walletRecords =
+3127-            prefs.getStringSet(
+3128-                "money_manager_wallets",
+3129-                emptySet()
+3130-            )?.toList()
+3131-                ?: emptyList()
+3132-
+3133-        fun walletNameById(
+3134-            id: String
+3135-        ): String {
+3136-
+3137-            walletRecords.forEach { record ->
+3138-
+3139-                val p =
+3140-                    record.split(
+3141-                        "|||",
+3142-                        ignoreCase = false,
+3143-                        limit = 5
+3144-                    )
+3145-
+3146-                if (
+3147-                    p.getOrNull(0)
+3148-                        ?.trim() == id
+3149-                ) {
+3150-
+3151-                    return p.getOrNull(1)
+3152-                        ?.trim()
+3153-                        .orEmpty()
+3154-                }
+3155-            }
+3156-
+--
+9681-                                            walletNames
+9682-                                        ) { _, which ->
+9683-
+9684-                                            val selectedWalletId =
+9685-                                                walletPairs
+9686-                                                    .getOrNull(which)
+9687-                                                    ?.first
+9688-                                                    .orEmpty()
+9689-
+9690-                                            if (
+9691-                                                selectedWalletId.isNotBlank()
+9692-                                            ) {
+9693-
+9694-                                                val links =
+9695-                                                    prefs.getStringSet(
+9696:                                                        "money_manager_job_links",
+9697-                                                        emptySet()
+9698-                                                    )?.toMutableSet()
+9699-                                                        ?: mutableSetOf()
+9700-
+9701-                                                links.removeAll { link ->
+9702-
+9703-                                                    link.split(
+9704-                                                        "|||",
+9705-                                                        ignoreCase = false,
+9706-                                                        limit = 2
+9707-                                                    ).getOrNull(0)
+9708-                                                        ?.trim() ==
+9709-                                                        completedJobId
+9710-                                                }
+9711-
+9712-                                                links.add(
+9713-                                                    completedJobId +
+9714-                                                        "|||" +
+9715-                                                        selectedWalletId
+9716-                                                )
+9717-
+9718-                                                prefs.edit()
+9719-                                                    .putStringSet(
+9720:                                                        "money_manager_job_links",
+9721-                                                        links.toSet()
+9722-                                                    )
+9723-                                                    .apply()
+9724-
+9725-                                                android.widget.Toast
+9726-                                                    .makeText(
+9727-                                                        this@MainActivity,
+9728-                                                        "เชื่อมรายรับงานบินเข้ากระเป๋าแล้ว",
+9729-                                                        android.widget.Toast.LENGTH_SHORT
+9730-                                                    )
+9731-                                                    .show()
+9732-                                            }
+9733-                                        }
+9734-                                        .setNegativeButton(
+9735-                                            "ยังไม่เลือก",
+9736-                                            null
+9737-                                        )
+9738-                                        .show()
+9739-                                }
+9740-
+9741-                                val appointmentCurrent =
+9742-                                    prefs.getStringSet(
+9743-                                        "job_appointments",
+9744-                                        emptySet()
+9745-                                    )?.toMutableSet()
+9746-                                        ?: mutableSetOf()
+9747-
+9748-                                appointmentCurrent.removeAll {
+9749-                                    appointmentRecord ->
+9750-
+9751-                                    appointmentRecord
+9752-                                        .split(
+9753-                                            "|||",
+9754-                                            ignoreCase = false,
+9755-                                            limit = 3
+--
+9845-                                        )
+9846-                                        .apply()
+9847-
+9848-                                    // PHASE 2C - remove wallet link
+9849-                                    val deletedJobId =
+9850-                                        parts.getOrNull(0)
+9851-                                            ?.trim()
+9852-                                            .orEmpty()
+9853-
+9854-                                    if (
+9855-                                        deletedJobId.isNotBlank()
+9856-                                    ) {
+9857-
+9858-                                        val jobLinks =
+9859-                                            prefs.getStringSet(
+9860:                                                "money_manager_job_links",
+9861-                                                emptySet()
+9862-                                            )?.toMutableSet()
+9863-                                                ?: mutableSetOf()
+9864-
+9865-                                        jobLinks.removeAll { link ->
+9866-
+9867-                                            link.split(
+9868-                                                "|||",
+9869-                                                ignoreCase = false,
+9870-                                                limit = 2
+9871-                                            ).getOrNull(0)
+9872-                                                ?.trim() ==
+9873-                                                deletedJobId
+9874-                                        }
+9875-
+9876-                                        prefs.edit()
+9877-                                            .putStringSet(
+9878:                                                "money_manager_job_links",
+9879-                                                jobLinks.toSet()
+9880-                                            )
+9881-                                            .apply()
+9882-                                    }
+9883-
+9884-                                    val appointmentCurrent =
+9885-                                        prefs.getStringSet(
+9886-                                            "job_appointments",
+9887-                                            emptySet()
+9888-                                        )?.toMutableSet()
+9889-                                            ?: mutableSetOf()
+9890-
+9891-                                    appointmentCurrent.removeAll {
+9892-                                        appointmentRecord ->
+9893-
+9894-                                        appointmentRecord
+9895-                                            .split(
+9896-                                                "|||",
+9897-                                                ignoreCase = false,
+9898-                                                limit = 3
+9899-                                            )
+9900-                                            .getOrNull(0)
+9901-                                            ?.toLongOrNull() ==
+9902-                                            time
+9903-                                    }
+9904-
+9905-                                    prefs.edit()
+9906-                                        .putStringSet(
+9907-                                            "job_appointments",
+9908-                                            appointmentCurrent
+9909-                                        )
+9910-                                        .apply()
+9911-
+9912-                                    cancelJobReminder(time)
+9913-
