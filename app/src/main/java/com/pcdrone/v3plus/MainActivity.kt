@@ -1657,9 +1657,359 @@ class MainActivity : Activity() {
                 }
             }
 
+            // =============================================
+            // PC_DRONE_PHASE_2E_WALLET_TRANSFER
+            // Transfer = movement between wallets only.
+            // It must NOT become business income/expense.
+            // =============================================
+
+            var transferMovement =
+                java.math.BigDecimal.ZERO
+
+            val transfers =
+                prefs.getStringSet(
+                    "money_manager_transfers",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            transfers.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                val fromWalletId =
+                    p.getOrNull(1)
+                        ?.trim()
+                        .orEmpty()
+
+                val toWalletId =
+                    p.getOrNull(2)
+                        ?.trim()
+                        .orEmpty()
+
+                val amount =
+                    parseMoney(
+                        p.getOrNull(3)
+                            ?: "0"
+                    )
+
+                if (
+                    fromWalletId == walletId
+                ) {
+                    transferMovement =
+                        transferMovement.subtract(
+                            amount
+                        )
+                }
+
+                if (
+                    toWalletId == walletId
+                ) {
+                    transferMovement =
+                        transferMovement.add(
+                            amount
+                        )
+                }
+            }
+
             return openingBalance
                 .add(movement)
                 .add(jobIncomeMovement)
+                .add(transferMovement)
+        }
+
+        // ------------------------------------------------------------
+        // PHASE 2E - TRANSFER BETWEEN WALLETS
+        // ------------------------------------------------------------
+
+        fun showWalletTransferDialog() {
+
+            if (wallets.size < 2) {
+
+                android.widget.Toast.makeText(
+                    this,
+                    "ต้องมีกระเป๋าอย่างน้อย 2 ใบจึงจะโอนเงินได้",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+
+                return
+            }
+
+            val walletNames =
+                wallets.map {
+                    it.getOrNull(1)
+                        ?: "ไม่ระบุชื่อ"
+                }
+
+            val container =
+                android.widget.LinearLayout(this).apply {
+
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+
+                    setPadding(
+                        dp(20),
+                        dp(8),
+                        dp(20),
+                        0
+                    )
+                }
+
+            container.addView(
+                android.widget.TextView(this).apply {
+                    text = "จากกระเป๋า"
+                    textSize = 13f
+                    setTextColor(gray)
+                    setPadding(
+                        0,
+                        dp(5),
+                        0,
+                        dp(4)
+                    )
+                }
+            )
+
+            val fromSpinner =
+                android.widget.Spinner(this).apply {
+
+                    adapter =
+                        android.widget.ArrayAdapter(
+                            this@MainActivity,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            walletNames
+                        )
+                }
+
+            container.addView(fromSpinner)
+
+            container.addView(
+                android.widget.TextView(this).apply {
+                    text = "ไปยังกระเป๋า"
+                    textSize = 13f
+                    setTextColor(gray)
+                    setPadding(
+                        0,
+                        dp(14),
+                        0,
+                        dp(4)
+                    )
+                }
+            )
+
+            val toSpinner =
+                android.widget.Spinner(this).apply {
+
+                    adapter =
+                        android.widget.ArrayAdapter(
+                            this@MainActivity,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            walletNames
+                        )
+
+                    if (wallets.size > 1) {
+                        setSelection(1)
+                    }
+                }
+
+            container.addView(toSpinner)
+
+            val amountInput =
+                android.widget.EditText(this).apply {
+
+                    hint = "จำนวนเงิน"
+
+                    inputType =
+                        android.text.InputType.TYPE_CLASS_NUMBER or
+                        android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+
+                    setPadding(
+                        0,
+                        dp(16),
+                        0,
+                        dp(8)
+                    )
+                }
+
+            container.addView(amountInput)
+
+            val noteInput =
+                android.widget.EditText(this).apply {
+
+                    hint = "หมายเหตุ เช่น ฝากเข้าธนาคาร"
+
+                    setPadding(
+                        0,
+                        dp(8),
+                        0,
+                        dp(8)
+                    )
+                }
+
+            container.addView(noteInput)
+
+            val dialog =
+                android.app.AlertDialog.Builder(this)
+                    .setTitle("โอนเงินระหว่างกระเป๋า")
+                    .setView(container)
+                    .setNegativeButton(
+                        "ยกเลิก",
+                        null
+                    )
+                    .setPositiveButton(
+                        "โอนเงิน",
+                        null
+                    )
+                    .create()
+
+            dialog.setOnShowListener {
+
+                val saveButton =
+                    dialog.getButton(
+                        android.app.AlertDialog.BUTTON_POSITIVE
+                    )
+
+                saveButton.setOnClickListener {
+
+                    val fromIndex =
+                        fromSpinner.selectedItemPosition
+
+                    val toIndex =
+                        toSpinner.selectedItemPosition
+
+                    if (
+                        fromIndex !in wallets.indices ||
+                        toIndex !in wallets.indices
+                    ) {
+                        return@setOnClickListener
+                    }
+
+                    if (
+                        fromIndex == toIndex
+                    ) {
+
+                        android.widget.Toast.makeText(
+                            this,
+                            "กระเป๋าต้นทางและปลายทางต้องไม่ใช่ใบเดียวกัน",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
+                    val amount =
+                        parseMoney(
+                            amountInput.text
+                                ?.toString()
+                                .orEmpty()
+                        )
+
+                    if (
+                        amount.compareTo(
+                            java.math.BigDecimal.ZERO
+                        ) <= 0
+                    ) {
+
+                        android.widget.Toast.makeText(
+                            this,
+                            "กรุณาใส่จำนวนเงินมากกว่า 0",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
+                    val fromWallet =
+                        wallets[fromIndex]
+
+                    val toWallet =
+                        wallets[toIndex]
+
+                    val fromWalletId =
+                        fromWallet.getOrNull(0)
+                            .orEmpty()
+
+                    val toWalletId =
+                        toWallet.getOrNull(0)
+                            .orEmpty()
+
+                    val fromOpening =
+                        parseMoney(
+                            fromWallet.getOrNull(3)
+                                ?: "0"
+                        )
+
+                    val sourceBalance =
+                        computedWalletBalance(
+                            fromWalletId,
+                            fromOpening
+                        )
+
+                    if (
+                        sourceBalance.compareTo(
+                            amount
+                        ) < 0
+                    ) {
+
+                        android.widget.Toast.makeText(
+                            this,
+                            "ยอดเงินในกระเป๋าต้นทางไม่เพียงพอ",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
+                    val transferId =
+                        System.currentTimeMillis()
+                            .toString()
+
+                    val note =
+                        noteInput.text
+                            ?.toString()
+                            ?.trim()
+                            .orEmpty()
+
+                    val transferRecord =
+                        listOf(
+                            transferId,
+                            fromWalletId,
+                            toWalletId,
+                            amount
+                                .stripTrailingZeros()
+                                .toPlainString(),
+                            note
+                        ).joinToString("|||")
+
+                    val current =
+                        prefs.getStringSet(
+                            "money_manager_transfers",
+                            emptySet()
+                        )?.toMutableSet()
+                            ?: mutableSetOf()
+
+                    current.add(
+                        transferRecord
+                    )
+
+                    prefs.edit()
+                        .putStringSet(
+                            "money_manager_transfers",
+                            current
+                        )
+                        .apply()
+
+                    dialog.dismiss()
+
+                    showMoneyManager()
+                }
+            }
+
+            dialog.show()
         }
 
         val totalBalance =
@@ -2187,6 +2537,58 @@ class MainActivity : Activity() {
             )
         )
 
+        val transferWallet =
+            android.widget.TextView(this).apply {
+
+                text = "⇄  โอนเงินระหว่างกระเป๋า"
+                textSize = 16f
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(
+                    greenDark
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(12),
+                    dp(14),
+                    dp(12),
+                    dp(14)
+                )
+
+                background =
+                    rounded(
+                        android.graphics.Color.WHITE,
+                        14
+                    )
+
+                elevation =
+                    dp(1).toFloat()
+
+                isClickable = true
+                isFocusable = true
+
+                setOnClickListener {
+                    showWalletTransferDialog()
+                }
+            }
+
+        root.addView(
+            transferWallet,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(10)
+            }
+        )
+
         val phaseNote =
             android.widget.TextView(this).apply {
 
@@ -2319,6 +2721,14 @@ class MainActivity : Activity() {
             java.math.BigDecimal.ZERO
 
         var totalExpense =
+            java.math.BigDecimal.ZERO
+
+        // PC_DRONE_PHASE_2E_FIX1_NET_TRANSFER
+        // แยกการโอนออกจากรายรับ/รายจ่ายจริงของธุรกิจ
+        var transferIn =
+            java.math.BigDecimal.ZERO
+
+        var transferOut =
             java.math.BigDecimal.ZERO
 
         // ==========================================
@@ -2599,14 +3009,187 @@ class MainActivity : Activity() {
             )
         }
 
+        // ==========================================
+        // PHASE 2E - TRANSFER HISTORY
+        // Transfer appears in wallet history but is NOT
+        // business income/expense in Finance/Reports.
+        // ==========================================
+
+        val transfers =
+            prefs.getStringSet(
+                "money_manager_transfers",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        val walletRecords =
+            prefs.getStringSet(
+                "money_manager_wallets",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        fun walletNameById(
+            id: String
+        ): String {
+
+            walletRecords.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                if (
+                    p.getOrNull(0)
+                        ?.trim() == id
+                ) {
+
+                    return p.getOrNull(1)
+                        ?.trim()
+                        .orEmpty()
+                }
+            }
+
+            return "กระเป๋า"
+        }
+
+        transfers.forEach { record ->
+
+            val p =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 5
+                )
+
+            val transferId =
+                p.getOrNull(0)
+                    ?.trim()
+                    .orEmpty()
+
+            val fromWalletId =
+                p.getOrNull(1)
+                    ?.trim()
+                    .orEmpty()
+
+            val toWalletId =
+                p.getOrNull(2)
+                    ?.trim()
+                    .orEmpty()
+
+            val amount =
+                parseMoney(
+                    p.getOrNull(3)
+                        ?: "0"
+                )
+
+            val note =
+                p.getOrNull(4)
+                    ?.trim()
+                    .orEmpty()
+
+            val time =
+                transferId.toLongOrNull()
+                    ?: 0L
+
+            if (
+                toWalletId == walletId
+            ) {
+
+                transferIn =
+                    transferIn.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            "รับโอนจาก ${walletNameById(fromWalletId)}",
+                        detail = note,
+                        amount = amount,
+                        isIncome = true
+                    )
+                )
+            }
+
+            if (
+                fromWalletId == walletId
+            ) {
+
+                transferOut =
+                    transferOut.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            "โอนไป ${walletNameById(toWalletId)}",
+                        detail = note,
+                        amount = amount,
+                        isIncome = false
+                    )
+                )
+            }
+        }
+
         history.sortByDescending {
             it.time
         }
+
+        // การโอนต้องสรุปแบบสุทธิ ณ ตอนนั้น
+        //
+        // ตัวอย่าง:
+        // ออก 200 + ออก 200 + รับกลับ 200
+        // = โอนออกสุทธิ 200
+        val netTransfer =
+            transferIn.subtract(
+                transferOut
+            )
+
+        val netTransferIn =
+            if (
+                netTransfer.compareTo(
+                    java.math.BigDecimal.ZERO
+                ) > 0
+            ) {
+                netTransfer
+            } else {
+                java.math.BigDecimal.ZERO
+            }
+
+        val netTransferOut =
+            if (
+                netTransfer.compareTo(
+                    java.math.BigDecimal.ZERO
+                ) < 0
+            ) {
+                netTransfer.abs()
+            } else {
+                java.math.BigDecimal.ZERO
+            }
+
+        val summarizedMoneyIn =
+            totalIncome.add(
+                netTransferIn
+            )
+
+        val summarizedMoneyOut =
+            totalExpense.add(
+                netTransferOut
+            )
 
         val currentBalance =
             openingBalance
                 .add(totalIncome)
                 .subtract(totalExpense)
+                .add(transferIn)
+                .subtract(transferOut)
 
         // ==========================================
         // UI
@@ -2830,8 +3413,8 @@ class MainActivity : Activity() {
 
         summary.addView(
             summaryBox(
-                "รับเข้ารวม",
-                totalIncome,
+                "เงินเข้าสุทธิ",
+                summarizedMoneyIn,
                 green
             ),
             android.widget.LinearLayout.LayoutParams(
@@ -2845,8 +3428,8 @@ class MainActivity : Activity() {
 
         summary.addView(
             summaryBox(
-                "จ่ายออกรวม",
-                totalExpense,
+                "เงินออกสุทธิ",
+                summarizedMoneyOut,
                 red
             ),
             android.widget.LinearLayout.LayoutParams(
