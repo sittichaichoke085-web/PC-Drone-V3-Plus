@@ -5980,6 +5980,128 @@ class MainActivity : Activity() {
                     )
             }
 
+        // Auto jump: วัน -> เดือน -> ปี
+        daySearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        monthSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        monthSearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        yearSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        // ถ้ากรอกวัน/เดือนหลักเดียวแล้วกด Next
+        // เติม 0 ด้านหน้าให้อัตโนมัติ
+        daySearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        monthSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        yearSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
+
+        daySearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    daySearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    daySearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                monthSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
+        monthSearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    monthSearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    monthSearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                yearSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
         val searchButton =
             android.widget.Button(this).apply {
 
