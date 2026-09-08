@@ -1,0 +1,241 @@
+
+                )
+
+                isClickable = true
+                isFocusable = true
+
+                setOnClickListener {
+                    showScreen(
+                        AppRoute.DASHBOARD
+                    )
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บริหารเงิน"
+                textSize = 28f
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text =
+                    "จัดการกระเป๋าเงินและเงินทุนของธุรกิจ"
+
+                textSize = 14f
+                setTextColor(gray)
+
+                setPadding(
+                    0,
+                    dp(4),
+                    0,
+                    dp(16)
+                )
+            }
+        )
+
+        // PC_DRONE_PHASE_2FB_SUMMARY_CARDS
+        val summaryContainer =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+            }
+
+        fun addSummaryRow(
+            leftTitle: String,
+            leftValue: String,
+            rightTitle: String,
+            rightValue: String
+        ) {
+            val row =
+                android.widget.LinearLayout(this).apply {
+                    orientation = android.widget.LinearLayout.HORIZONTAL
+                    weightSum = 2f
+                }
+
+            fun card(title: String, value: String) =
+                android.widget.LinearLayout(this).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                    setPadding(dp(14), dp(14), dp(14), dp(14))
+                    background = rounded(greenDark, dp(16))
+
+                    addView(
+                        android.widget.TextView(this@MainActivity).apply {
+                            text = title
+                            textSize = 13f
+                            setTextColor(android.graphics.Color.WHITE)
+                        }
+                    )
+
+                    addView(
+                        android.widget.TextView(this@MainActivity).apply {
+                            text = value
+                            textSize = 20f
+                            setTextColor(android.graphics.Color.WHITE)
+                            setTypeface(
+                                typeface,
+                                android.graphics.Typeface.BOLD
+                            )
+                            setPadding(0, dp(6), 0, 0)
+                        }
+                    )
+                }
+
+            row.addView(
+                card(leftTitle, leftValue),
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+                ).apply {
+                    rightMargin = dp(5)
+                }
+            )
+
+            row.addView(
+                card(rightTitle, rightValue),
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+                ).apply {
+                    leftMargin = dp(5)
+                }
+            )
+
+            summaryContainer.addView(
+                row,
+                android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = dp(10)
+                }
+            )
+        }
+
+        addSummaryRow(
+            "ธุรกิจมีเงินเท่าไร",
+            "${moneyFormat.format(auditBusinessNet)} บาท",
+            "เงินอยู่ที่ไหน",
+            "${moneyFormat.format(totalBalance)} บาท"
+        )
+
+        addSummaryRow(
+            "เงินพร้อมใช้จริง",
+            "${moneyFormat.format(totalBalance)} บาท",
+            "กำไรจริง",
+            "กำลังคำนวณ"
+        )
+
+        root.addView(
+            summaryContainer,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                bottomMargin = dp(6)
+            }
+        )
+
+        // PC_DRONE_PHASE_2FA_STEP2_AUDIT_UI
+        val auditBox =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                setPadding(dp(16), dp(16), dp(16), dp(16))
+                background = rounded(
+                    if (auditPass) android.graphics.Color.rgb(232, 245, 233)
+                    else android.graphics.Color.rgb(255, 243, 224),
+                    dp(16)
+                )
+            }
+
+        auditBox.addView(
+            android.widget.TextView(this).apply {
+                text = "ศูนย์ตรวจสอบการเงิน"
+                textSize = 20f
+                setTextColor(dark)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+            }
+        )
+
+        auditBox.addView(
+            android.widget.TextView(this).apply {
+                text =
+                    if (auditPass) "✓ บัญชีและกระเป๋าเงินตรงกัน"
+                    else "⚠ พบรายการที่ต้องตรวจสอบ"
+                textSize = 16f
+                setTextColor(if (auditPass) greenDark else red)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, dp(6), 0, dp(10))
+            }
+        )
+
+        val auditSummary =
+            buildString {
+                append("ยอดตามบัญชี: ฿")
+                append(moneyFormat.format(auditBusinessNet))
+                append("\nยอดรวมทุกกระเป๋า: ฿")
+                append(moneyFormat.format(totalBalance))
+                append("\nผลต่างบัญชี-กระเป๋า: ฿")
+                append(moneyFormat.format(auditDifference))
+
+                append("\n\nรายรับยังไม่ระบุกระเป๋า: ")
+                append(auditUnlinkedIncomeCount)
+                append(" รายการ  ฿")
+                append(moneyFormat.format(auditUnlinkedIncomeAmount))
+
+                append("\nรายจ่ายยังไม่ระบุกระเป๋าที่จ่าย: ")
+                append(auditUnlinkedExpenseCount)
+                append(" รายการ  ฿")
+                append(moneyFormat.format(auditUnlinkedExpenseAmount))
+
+                append("\nงานบินเสร็จแล้วยังไม่ระบุกระเป๋ารับเงิน: ")
+                append(auditUnlinkedCompletedJobCount)
+                append(" รายการ  ฿")
+                append(moneyFormat.format(auditUnlinkedCompletedJobAmount))
+
+                append("\nรายการเชื่อมโยง/โอนเงินผิดปกติ: ")
+                append(auditAnomalyCount)
+                append(" รายการ")
+
+                if (auditOpeningTotal.compareTo(java.math.BigDecimal.ZERO) != 0) {
+                    append("\nยอดตั้งต้นกระเป๋า: ฿")
+                    append(moneyFormat.format(auditOpeningTotal))
+                    append("  (ต้องตรวจสอบ)")
+                }
+            }
+
+        auditBox.addView(
+            android.widget.TextView(this).apply {
+                text = auditSummary
+                textSize = 14f
+                setTextColor(dark)
+                setLineSpacing(0f, 1.18f)
+            }
+        )
+
+        root.addView(
+            auditBox,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                bottomMargin = dp(16)
+            }
+        )
+
+        val totalBox =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    d
