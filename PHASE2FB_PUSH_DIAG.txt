@@ -1,0 +1,108 @@
+ M .gradle/8.13/executionHistory/executionHistory.bin
+ M .gradle/8.13/executionHistory/executionHistory.lock
+ M .gradle/8.13/fileHashes/fileHashes.bin
+ M .gradle/8.13/fileHashes/fileHashes.lock
+ M .gradle/8.13/fileHashes/resourceHashesCache.bin
+ M .gradle/buildOutputCleanup/buildOutputCleanup.lock
+ M app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources/R.jar
+ M app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+ M app/build/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex
+ M app/build/intermediates/dex_archive_input_jar_hashes/debug/dexBuilderDebug/out
+ M app/build/intermediates/incremental/debug/mergeDebugResources/compile-file-map.properties
+ D app/build/intermediates/incremental/debug/mergeDebugResources/merged.dir/values/values.xml
+ M app/build/intermediates/incremental/debug/mergeDebugResources/merger.xml
+ M app/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+ D app/build/intermediates/incremental/debug/packageDebugResources/merged.dir/values/values.xml
+ M app/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/zip-cache/androidResources
+ M app/build/intermediates/linked_resources_binary_format/debug/processDebugResources/linked-resources-binary-format-debug.ap_
+ M app/build/intermediates/linked_resources_binary_format/debug/processDebugResources/output-metadata.json
+ M app/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+ M app/build/intermediates/manifest_merge_blame_file/debug/processDebugMainManifest/manifest-merger-blame-debug-report.txt
+ M app/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml
+ M app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
+ M app/build/intermediates/merged_manifests/debug/processDebugManifest/output-metadata.json
+ M app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/AndroidManifest.xml
+ M app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/output-metadata.json
+ M app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/pcdrone/v3plus/MainActivity.dex
+ M app/build/intermediates/runtime_symbol_list/debug/processDebugResources/R.txt
+ M app/build/intermediates/stable_resource_ids_file/debug/processDebugResources/stableIds.txt
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/counters.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/last-build.bin
+ M app/build/kotlin/compileDebugKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin
+ M app/build/outputs/apk/debug/app-debug.apk
+ M app/build/outputs/apk/debug/output-metadata.json
+ M app/build/outputs/logs/manifest-merger-debug-report.txt
+ M app/build/tmp/kotlin-classes/debug/com/pcdrone/v3plus/MainActivity.class
+ M app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+?? PHASE2E_BASELINE_BUILD.txt
+?? PHASE2FA_BUILD2.txt
+?? PHASE2FA_PRECHECK.txt
+?? PHASE2FB_PUSH_DIAG.txt
+?? PHASE2FB_SUMMARY_BUILD.txt
+?? app/build.gradle.kts.before_v301
+?? app/src/main/AndroidManifest.xml.before_icon
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.before_v301
+?? app/src/main/java/com/pcdrone/v3plus/navigation/AppRoute.kt.before_v301
+?? backup_before_app_icon/
+?? final_build/FINAL.apk
+?? final_build/P4D.apk
+?? final_build/PC-Drone-V3-Plus-APP-ICON.apk
+?? final_build/PC-Drone-V3-Plus-FINAL.apk
+?? final_build/PC-Drone-V3-Plus-SOURCE-FINAL.zip
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2A.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2B-FIX1.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2C.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2D-FIX1.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2E-FIX1.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2E.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2F-A.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-UI-PHASE1.apk
+?? final_build/SOURCE.zip
+?? phase_backup_v301_2a/
+?? phase_backup_v301_2b/
+?? phase_backup_v301_2c/
+?? phase_backup_v301_2d/
+?? phase_backup_v301_2e/
+?? phase_backup_v301_2e_fix1/
+?? phase_backup_v301_2fa/
+ls: cannot access 'PHASE2FB_SUMMARY_CHECK.txt': No such file or directory
+-rw-rw-rw- 1 codespace codespace 4.7K Sep  8 15:28 PHASE2FB_SUMMARY_BUILD.txt
