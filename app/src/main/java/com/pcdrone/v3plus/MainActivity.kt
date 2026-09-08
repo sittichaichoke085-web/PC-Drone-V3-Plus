@@ -6543,32 +6543,41 @@ class MainActivity : Activity() {
                         val cardColor =
                             when (status) {
                                 "เสร็จแล้ว" ->
-                                    android.graphics.Color.rgb(
-                                        183,
-                                        230,
-                                        196
-                                    )
+                                    android.graphics.Color.rgb(76, 175, 80)
 
                                 "รอทำงาน" ->
-                                    android.graphics.Color.rgb(
-                                        255,
-                                        226,
-                                        128
-                                    )
+                                    android.graphics.Color.rgb(255, 193, 7)
 
                                 "กำลังดำเนินงาน" ->
-                                    android.graphics.Color.rgb(
-                                        255,
-                                        183,
-                                        183
-                                    )
+                                    android.graphics.Color.rgb(239, 83, 80)
 
                                 else ->
-                                    android.graphics.Color.rgb(
-                                        245,
-                                        247,
-                                        245
-                                    )
+                                    android.graphics.Color.rgb(224, 224, 224)
+                            }
+
+                        val cardBorderColor =
+                            when (status) {
+                                "เสร็จแล้ว" ->
+                                    android.graphics.Color.rgb(27, 94, 32)
+
+                                "รอทำงาน" ->
+                                    android.graphics.Color.rgb(245, 127, 23)
+
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.rgb(183, 28, 28)
+
+                                else ->
+                                    android.graphics.Color.rgb(97, 97, 97)
+                            }
+
+                        val cardTextColor =
+                            when (status) {
+                                "เสร็จแล้ว",
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.WHITE
+
+                                else ->
+                                    android.graphics.Color.BLACK
                             }
 
                         background =
@@ -6579,16 +6588,12 @@ class MainActivity : Activity() {
                                     dp(14).toFloat()
 
                                 setStroke(
-                                    dp(1),
-                                    android.graphics.Color.rgb(
-                                        215,
-                                        220,
-                                        215
-                                    )
+                                    dp(2),
+                                    cardBorderColor
                                 )
                             }
 
-                        elevation = dp(3).toFloat()
+                        elevation = dp(6).toFloat()
 
                         val params =
                             android.widget.LinearLayout.LayoutParams(
@@ -6615,7 +6620,7 @@ class MainActivity : Activity() {
                         textSize = 20f
 
                         setTextColor(
-                            android.graphics.Color.BLACK
+                            cardTextColor
                         )
 
                         setTypeface(
@@ -6649,7 +6654,7 @@ class MainActivity : Activity() {
                         textSize = 16f
 
                         setTextColor(
-                            android.graphics.Color.DKGRAY
+                            cardTextColor
                         )
 
                         setPadding(
