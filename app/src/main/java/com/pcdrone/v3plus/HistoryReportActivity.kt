@@ -377,5 +377,43 @@ class HistoryReportActivity : Activity() {
                 topMargin = dp(8)
             }
         )
+
+        val sharePdfButton = Button(this).apply {
+            text = "แชร์ PDF A4"
+            isAllCaps = false
+            textSize = 17f
+            setTextColor(Color.WHITE)
+
+            background =
+                android.graphics.drawable.GradientDrawable().apply {
+                    setColor(Color.rgb(0, 105, 55))
+                    cornerRadius = dp(12).toFloat()
+                    setStroke(
+                        dp(2),
+                        Color.rgb(0, 70, 35)
+                    )
+                }
+
+            elevation = dp(5).toFloat()
+
+            setOnClickListener {
+                HistoryPdfExporter.createAndShare(
+                    this@HistoryReportActivity,
+                    start,
+                    end
+                )
+            }
+        }
+
+        resultBox.addView(
+            sharePdfButton,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(14)
+                bottomMargin = dp(20)
+            }
+        )
     }
 }
