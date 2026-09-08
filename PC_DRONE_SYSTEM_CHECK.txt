@@ -1,0 +1,41 @@
+]633;E;echo "===== MEMORY =====";57a00c8f-0c59-4cce-9b49-8bc64376f202]633;C===== MEMORY =====
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       6.3Gi       444Mi        67Mi       1.4Gi       1.5Gi
+Swap:             0B          0B          0B
+
+===== DISK =====
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          32G   12G   18G  40% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M     0   64M   0% /dev/shm
+/dev/root        29G   16G   14G  54% /vscode
+/dev/sdb1        44G  2.8G   40G   7% /tmp
+/dev/loop4       32G   12G   18G  40% /workspaces
+
+===== JAVA =====
+openjdk version "25.0.2" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13053558 (build 25.0.2+10-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13053558 (build 25.0.2+10-LTS, mixed mode, sharing)
+
+===== GRADLE PROCESSES =====
+
+===== GRADLE PROPERTIES =====
+android.useAndroidX=true
+android.enableJetifier=true
+
+org.gradle.jvmargs=-Xmx1024m -XX:MaxMetaspaceSize=384m -Dfile.encoding=UTF-8
+org.gradle.workers.max=1
+org.gradle.parallel=false
+org.gradle.caching=false
+org.gradle.daemon=false
+
+kotlin.compiler.execution.strategy=in-process
+
+===== MAIN ACTIVITY SIZE =====
+9313 app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+276K	app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+
+===== BUILD DIR SIZE =====
+444K	.gradle
+1.8M	app/build
+1.1G	/home/codespace/.gradle
