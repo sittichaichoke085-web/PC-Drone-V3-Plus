@@ -1,0 +1,11 @@
+monthly_report_marker=True
+dynamic_header_marker=True
+header_uses_from=True
+header_uses_to=True
+expense_filter=True
+render_current_month=True
+search_button=True
+detail_read_only=True
+build_return_code=1
+build_successful=False
+apk_created=False
