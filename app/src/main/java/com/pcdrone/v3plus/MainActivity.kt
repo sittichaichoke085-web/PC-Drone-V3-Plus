@@ -1023,11 +1023,37 @@ class MainActivity : Activity() {
 
     private fun showMoneyManager() {
 
+        // ============================================================
+        // PC DRONE V3.0.1 - MONEY MANAGER PHASE 2A
+        //
+        // IMPORTANT:
+        // - Wallet data is stored separately in money_manager_wallets
+        // - finance_transactions is NOT modified in Phase 2A
+        // - Wallet balances here are opening/manual wallet balances only
+        // ============================================================
+
         val dark = android.graphics.Color.rgb(17, 17, 17)
         val green = android.graphics.Color.rgb(0, 145, 70)
         val greenDark = android.graphics.Color.rgb(0, 91, 45)
         val pageBg = android.graphics.Color.rgb(245, 248, 246)
         val gray = android.graphics.Color.rgb(100, 105, 102)
+        val red = android.graphics.Color.rgb(180, 35, 35)
+
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val walletKey = "money_manager_wallets"
+        val delimiter = "|||"
+
+        fun clean(value: String): String {
+            return value
+                .replace(delimiter, " ")
+                .replace("\n", " ")
+                .trim()
+        }
 
         fun rounded(
             color: Int,
@@ -1041,6 +1067,428 @@ class MainActivity : Activity() {
                 cornerRadius = dp(radius).toFloat()
             }
         }
+
+        // ------------------------------------------------------------
+        // SEED DEFAULT WALLETS ONLY ON FIRST USE
+        // ------------------------------------------------------------
+
+        if (!prefs.contains(walletKey)) {
+
+            val defaults =
+                linkedSetOf(
+                    "001${delimiter}เงินสด${delimiter}เงินสด${delimiter}0${delimiter}เงินสดที่ถืออยู่",
+                    "002${delimiter}บัญชีธนาคาร${delimiter}ธนาคาร${delimiter}0${delimiter}เงินในบัญชี",
+                    "003${delimiter}ค่าน้ำมัน${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}งบเชื้อเพลิง",
+                    "004${delimiter}ซ่อมบำรุง${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}โดรน รถ และอุปกรณ์",
+                    "005${delimiter}ค่าแรง${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}ลูกน้องและทีมงาน",
+                    "006${delimiter}เงินงานลูกค้า${delimiter}รายรับ${delimiter}0${delimiter}เงินจากงานบิน",
+                    "007${delimiter}เงินเก็บ / ลงทุน${delimiter}เงินสำรอง${delimiter}0${delimiter}เงินสำรองธุรกิจ",
+                    "008${delimiter}อื่น ๆ${delimiter}อื่น ๆ${delimiter}0${delimiter}ค่าใช้จ่ายหรือเงินกองอื่น"
+                )
+
+            prefs.edit()
+                .putStringSet(
+                    walletKey,
+                    defaults
+                )
+                .apply()
+        }
+
+        fun loadWallets(): MutableList<List<String>> {
+
+            return prefs
+                .getStringSet(
+                    walletKey,
+                    emptySet()
+                )
+                .orEmpty()
+                .mapNotNull { record ->
+
+                    val parts =
+                        record.split(
+                            delimiter
+                        )
+
+                    if (parts.size >= 5) {
+                        listOf(
+                            parts[0],
+                            parts[1],
+                            parts[2],
+                            parts[3],
+                            parts.subList(
+                                4,
+                                parts.size
+                            ).joinToString(" ")
+                        )
+                    } else {
+                        null
+                    }
+                }
+                .sortedBy { it[0] }
+                .toMutableList()
+        }
+
+        fun saveWallets(
+            wallets: List<List<String>>
+        ) {
+
+            val encoded =
+                wallets.map { item ->
+                    listOf(
+                        clean(item[0]),
+                        clean(item[1]),
+                        clean(item[2]),
+                        clean(item[3]),
+                        clean(item[4])
+                    ).joinToString(delimiter)
+                }.toSet()
+
+            prefs.edit()
+                .putStringSet(
+                    walletKey,
+                    encoded
+                )
+                .apply()
+        }
+
+        fun parseMoney(
+            text: String
+        ): java.math.BigDecimal {
+
+            return try {
+                java.math.BigDecimal(
+                    text
+                        .replace(",", "")
+                        .trim()
+                        .ifBlank { "0" }
+                )
+            } catch (_: Exception) {
+                java.math.BigDecimal.ZERO
+            }
+        }
+
+        val moneyFormat =
+            java.text.DecimalFormat(
+                "#,##0.00"
+            )
+
+        val walletTypes =
+            arrayOf(
+                "เงินสด",
+                "ธนาคาร",
+                "รายรับ",
+                "ค่าใช้จ่าย",
+                "เงินสำรอง",
+                "อื่น ๆ"
+            )
+
+        // ------------------------------------------------------------
+        // ADD / EDIT WALLET DIALOG
+        // ------------------------------------------------------------
+
+        fun showWalletEditor(
+            existingId: String? = null
+        ) {
+
+            val currentWallets =
+                loadWallets()
+
+            val current =
+                existingId?.let { id ->
+                    currentWallets.firstOrNull {
+                        it[0] == id
+                    }
+                }
+
+            val form =
+                android.widget.LinearLayout(this).apply {
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+
+                    setPadding(
+                        dp(20),
+                        dp(8),
+                        dp(20),
+                        0
+                    )
+                }
+
+            val nameInput =
+                android.widget.EditText(this).apply {
+                    hint = "ชื่อกระเป๋า"
+                    setText(
+                        current?.getOrNull(1)
+                            ?: ""
+                    )
+                }
+
+            form.addView(nameInput)
+
+            val typeLabel =
+                android.widget.TextView(this).apply {
+                    text = "ประเภทกระเป๋า"
+                    textSize = 14f
+                    setTextColor(gray)
+
+                    setPadding(
+                        0,
+                        dp(14),
+                        0,
+                        dp(4)
+                    )
+                }
+
+            form.addView(typeLabel)
+
+            val typeSpinner =
+                android.widget.Spinner(this)
+
+            val typeAdapter =
+                android.widget.ArrayAdapter(
+                    this,
+                    android.R.layout.simple_spinner_item,
+                    walletTypes
+                ).apply {
+                    setDropDownViewResource(
+                        android.R.layout.simple_spinner_dropdown_item
+                    )
+                }
+
+            typeSpinner.adapter =
+                typeAdapter
+
+            val currentType =
+                current?.getOrNull(2)
+
+            val currentTypeIndex =
+                walletTypes.indexOf(
+                    currentType
+                )
+
+            if (currentTypeIndex >= 0) {
+                typeSpinner.setSelection(
+                    currentTypeIndex
+                )
+            }
+
+            form.addView(typeSpinner)
+
+            val balanceInput =
+                android.widget.EditText(this).apply {
+                    hint = "ยอดตั้งต้น เช่น 5000"
+
+                    inputType =
+                        android.text.InputType.TYPE_CLASS_NUMBER or
+                        android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or
+                        android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
+
+                    setText(
+                        current?.getOrNull(3)
+                            ?: "0"
+                    )
+                }
+
+            form.addView(balanceInput)
+
+            val noteInput =
+                android.widget.EditText(this).apply {
+                    hint = "รายละเอียดเพิ่มเติม (ไม่บังคับ)"
+
+                    setText(
+                        current?.getOrNull(4)
+                            ?: ""
+                    )
+                }
+
+            form.addView(noteInput)
+
+            val dialog =
+                android.app.AlertDialog.Builder(this)
+                    .setTitle(
+                        if (current == null) {
+                            "เพิ่มกระเป๋า"
+                        } else {
+                            "แก้ไขกระเป๋า"
+                        }
+                    )
+                    .setView(form)
+                    .setNegativeButton(
+                        "ยกเลิก",
+                        null
+                    )
+                    .setPositiveButton(
+                        "บันทึก",
+                        null
+                    )
+                    .create()
+
+            dialog.setOnShowListener {
+
+                dialog
+                    .getButton(
+                        android.app.AlertDialog.BUTTON_POSITIVE
+                    )
+                    .setOnClickListener {
+
+                        val walletName =
+                            clean(
+                                nameInput.text
+                                    .toString()
+                            )
+
+                        if (walletName.isBlank()) {
+
+                            nameInput.error =
+                                "กรุณาใส่ชื่อกระเป๋า"
+
+                            return@setOnClickListener
+                        }
+
+                        val rawBalance =
+                            balanceInput.text
+                                .toString()
+                                .replace(",", "")
+                                .trim()
+
+                        val balance =
+                            try {
+                                java.math.BigDecimal(
+                                    rawBalance.ifBlank {
+                                        "0"
+                                    }
+                                )
+                            } catch (_: Exception) {
+
+                                balanceInput.error =
+                                    "ยอดเงินไม่ถูกต้อง"
+
+                                return@setOnClickListener
+                            }
+
+                        val type =
+                            clean(
+                                typeSpinner.selectedItem
+                                    ?.toString()
+                                    ?: "อื่น ๆ"
+                            )
+
+                        val note =
+                            clean(
+                                noteInput.text
+                                    .toString()
+                            )
+
+                        val id =
+                            current?.getOrNull(0)
+                                ?: System.currentTimeMillis()
+                                    .toString()
+
+                        val duplicateName =
+                            currentWallets.any {
+                                it[0] != id &&
+                                it[1].equals(
+                                    walletName,
+                                    ignoreCase = true
+                                )
+                            }
+
+                        if (duplicateName) {
+
+                            nameInput.error =
+                                "มีกระเป๋าชื่อนี้แล้ว"
+
+                            return@setOnClickListener
+                        }
+
+                        val updated =
+                            currentWallets
+                                .filterNot {
+                                    it[0] == id
+                                }
+                                .toMutableList()
+
+                        updated.add(
+                            listOf(
+                                id,
+                                walletName,
+                                type,
+                                balance
+                                    .stripTrailingZeros()
+                                    .toPlainString(),
+                                note
+                            )
+                        )
+
+                        saveWallets(updated)
+
+                        dialog.dismiss()
+
+                        // Redraw from persisted data
+                        showMoneyManager()
+                    }
+            }
+
+            dialog.show()
+        }
+
+        // ------------------------------------------------------------
+        // DELETE WALLET
+        // ------------------------------------------------------------
+
+        fun confirmDeleteWallet(
+            walletId: String,
+            walletName: String
+        ) {
+
+            android.app.AlertDialog.Builder(this)
+                .setTitle(
+                    "ลบกระเป๋า"
+                )
+                .setMessage(
+                    "ต้องการลบ \"$walletName\" ใช่หรือไม่?\n\n" +
+                    "Phase 2A ยังไม่มีรายการรับ–จ่ายในกระเป๋า " +
+                    "ดังนั้นการลบจะลบเฉพาะข้อมูลกระเป๋านี้"
+                )
+                .setNegativeButton(
+                    "ยกเลิก",
+                    null
+                )
+                .setPositiveButton(
+                    "ลบ"
+                ) { _, _ ->
+
+                    val updated =
+                        loadWallets()
+                            .filterNot {
+                                it[0] == walletId
+                            }
+
+                    saveWallets(updated)
+
+                    showMoneyManager()
+                }
+                .show()
+        }
+
+        // ------------------------------------------------------------
+        // PAGE
+        // ------------------------------------------------------------
+
+        val wallets =
+            loadWallets()
+
+        val totalBalance =
+            wallets.fold(
+                java.math.BigDecimal.ZERO
+            ) { total, wallet ->
+
+                total.add(
+                    parseMoney(
+                        wallet.getOrNull(3)
+                            ?: "0"
+                    )
+                )
+            }
 
         val root =
             android.widget.LinearLayout(this).apply {
@@ -1079,7 +1527,9 @@ class MainActivity : Activity() {
                 isFocusable = true
 
                 setOnClickListener {
-                    showScreen(AppRoute.DASHBOARD)
+                    showScreen(
+                        AppRoute.DASHBOARD
+                    )
                 }
             }
         )
@@ -1099,7 +1549,9 @@ class MainActivity : Activity() {
 
         root.addView(
             android.widget.TextView(this).apply {
-                text = "จัดการกระเป๋าเงินและเงินทุนของธุรกิจ"
+                text =
+                    "จัดการกระเป๋าเงินและเงินทุนของธุรกิจ"
+
                 textSize = 14f
                 setTextColor(gray)
 
@@ -1126,7 +1578,15 @@ class MainActivity : Activity() {
 
                 background =
                     rounded(
-                        greenDark,
+                        if (
+                            totalBalance.compareTo(
+                                java.math.BigDecimal.ZERO
+                            ) >= 0
+                        ) {
+                            greenDark
+                        } else {
+                            red
+                        },
                         18
                     )
             }
@@ -1135,15 +1595,22 @@ class MainActivity : Activity() {
             android.widget.TextView(this).apply {
                 text = "ยอดรวมทุกกระเป๋า"
                 textSize = 15f
-                setTextColor(android.graphics.Color.WHITE)
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
             }
         )
 
         totalBox.addView(
             android.widget.TextView(this).apply {
-                text = "0.00 บาท"
+                text =
+                    "${moneyFormat.format(totalBalance)} บาท"
+
                 textSize = 28f
-                setTextColor(android.graphics.Color.WHITE)
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
 
                 setTypeface(
                     typeface,
@@ -1181,129 +1648,214 @@ class MainActivity : Activity() {
             }
         )
 
-        fun walletCard(
-            icon: String,
-            title: String,
-            subtitle: String
-        ): android.widget.LinearLayout {
+        if (wallets.isEmpty()) {
 
-            return android.widget.LinearLayout(this).apply {
-                orientation =
-                    android.widget.LinearLayout.HORIZONTAL
+            root.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        "ยังไม่มีกระเป๋าเงิน\nกด + เพิ่มกระเป๋า เพื่อเริ่มใช้งาน"
 
-                gravity =
-                    android.view.Gravity.CENTER_VERTICAL
+                    textSize = 15f
+                    gravity =
+                        android.view.Gravity.CENTER
 
-                setPadding(
-                    dp(14),
-                    dp(14),
-                    dp(14),
-                    dp(14)
-                )
+                    setTextColor(gray)
 
-                background =
-                    rounded(
-                        android.graphics.Color.WHITE,
-                        16
+                    setPadding(
+                        dp(16),
+                        dp(24),
+                        dp(16),
+                        dp(24)
                     )
-
-                elevation = dp(2).toFloat()
-
-                addView(
-                    android.widget.TextView(
-                        this@MainActivity
-                    ).apply {
-                        text = icon
-                        textSize = 25f
-                        gravity =
-                            android.view.Gravity.CENTER
-                    },
-                    android.widget.LinearLayout.LayoutParams(
-                        dp(48),
-                        dp(48)
-                    )
-                )
-
-                val textBox =
-                    android.widget.LinearLayout(
-                        this@MainActivity
-                    ).apply {
-                        orientation =
-                            android.widget.LinearLayout.VERTICAL
-
-                        setPadding(
-                            dp(10),
-                            0,
-                            0,
-                            0
-                        )
-
-                        addView(
-                            android.widget.TextView(
-                                this@MainActivity
-                            ).apply {
-                                text = title
-                                textSize = 17f
-                                setTextColor(dark)
-
-                                setTypeface(
-                                    typeface,
-                                    android.graphics.Typeface.BOLD
-                                )
-                            }
-                        )
-
-                        addView(
-                            android.widget.TextView(
-                                this@MainActivity
-                            ).apply {
-                                text = subtitle
-                                textSize = 13f
-                                setTextColor(gray)
-                            }
-                        )
-                    }
-
-                addView(
-                    textBox,
-                    android.widget.LinearLayout.LayoutParams(
-                        0,
-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
-                        1f
-                    )
-                )
-
-                addView(
-                    android.widget.TextView(
-                        this@MainActivity
-                    ).apply {
-                        text = "›"
-                        textSize = 26f
-                        setTextColor(green)
-                    }
-                )
-            }
+                }
+            )
         }
 
-        val wallets =
-            listOf(
-                Triple("฿", "เงินสด", "เงินสดที่ถืออยู่"),
-                Triple("▣", "บัญชีธนาคาร", "เงินในบัญชี"),
-                Triple("⛽", "ค่าน้ำมัน", "งบเชื้อเพลิง"),
-                Triple("⚙", "ซ่อมบำรุง", "โดรน รถ และอุปกรณ์"),
-                Triple("♟", "ค่าแรง", "ลูกน้องและทีมงาน"),
-                Triple("✓", "เงินงานลูกค้า", "เงินจากงานบิน"),
-                Triple("★", "เงินเก็บ / ลงทุน", "เงินสำรองธุรกิจ"),
-                Triple("…", "อื่น ๆ", "ค่าใช้จ่ายหรือเงินกองอื่น")
+        wallets.forEach { wallet ->
+
+            val id =
+                wallet.getOrNull(0)
+                    ?: return@forEach
+
+            val name =
+                wallet.getOrNull(1)
+                    ?: "ไม่ระบุชื่อ"
+
+            val type =
+                wallet.getOrNull(2)
+                    ?: "อื่น ๆ"
+
+            val balance =
+                parseMoney(
+                    wallet.getOrNull(3)
+                        ?: "0"
+                )
+
+            val note =
+                wallet.getOrNull(4)
+                    .orEmpty()
+
+            val icon =
+                when (type) {
+                    "เงินสด" -> "฿"
+                    "ธนาคาร" -> "▣"
+                    "รายรับ" -> "✓"
+                    "ค่าใช้จ่าย" -> "⚙"
+                    "เงินสำรอง" -> "★"
+                    else -> "•"
+                }
+
+            val card =
+                android.widget.LinearLayout(this).apply {
+
+                    orientation =
+                        android.widget.LinearLayout.HORIZONTAL
+
+                    gravity =
+                        android.view.Gravity.CENTER_VERTICAL
+
+                    setPadding(
+                        dp(14),
+                        dp(14),
+                        dp(10),
+                        dp(14)
+                    )
+
+                    background =
+                        rounded(
+                            android.graphics.Color.WHITE,
+                            16
+                        )
+
+                    elevation =
+                        dp(2).toFloat()
+
+                    isClickable = true
+                    isFocusable = true
+
+                    setOnClickListener {
+                        showWalletEditor(id)
+                    }
+
+                    setOnLongClickListener {
+                        confirmDeleteWallet(
+                            id,
+                            name
+                        )
+
+                        true
+                    }
+                }
+
+            card.addView(
+                android.widget.TextView(this).apply {
+                    text = icon
+                    textSize = 24f
+
+                    gravity =
+                        android.view.Gravity.CENTER
+                },
+                android.widget.LinearLayout.LayoutParams(
+                    dp(45),
+                    dp(48)
+                )
             )
 
-        wallets.forEach { item ->
-            val card =
-                walletCard(
-                    item.first,
-                    item.second,
-                    item.third
+            val textBox =
+                android.widget.LinearLayout(this).apply {
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+
+                    setPadding(
+                        dp(9),
+                        0,
+                        dp(8),
+                        0
+                    )
+                }
+
+            textBox.addView(
+                android.widget.TextView(this).apply {
+                    text = name
+                    textSize = 17f
+                    setTextColor(dark)
+
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                }
+            )
+
+            textBox.addView(
+                android.widget.TextView(this).apply {
+
+                    text =
+                        if (note.isBlank()) {
+                            type
+                        } else {
+                            "$type • $note"
+                        }
+
+                    textSize = 12f
+                    setTextColor(gray)
+                }
+            )
+
+            card.addView(
+                textBox,
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                    1f
                 )
+            )
+
+            val rightBox =
+                android.widget.LinearLayout(this).apply {
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+
+                    gravity =
+                        android.view.Gravity.END
+                }
+
+            rightBox.addView(
+                android.widget.TextView(this).apply {
+
+                    text =
+                        "${moneyFormat.format(balance)} บาท"
+
+                    textSize = 15f
+
+                    setTextColor(
+                        if (
+                            balance.compareTo(
+                                java.math.BigDecimal.ZERO
+                            ) >= 0
+                        ) {
+                            greenDark
+                        } else {
+                            red
+                        }
+                    )
+
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                }
+            )
+
+            rightBox.addView(
+                android.widget.TextView(this).apply {
+                    text = "แตะเพื่อแก้ไข"
+                    textSize = 10f
+                    setTextColor(gray)
+                }
+            )
+
+            card.addView(rightBox)
 
             root.addView(
                 card,
@@ -1311,19 +1863,44 @@ class MainActivity : Activity() {
                     android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    bottomMargin = dp(10)
+                    bottomMargin =
+                        dp(10)
                 }
             )
         }
+
+        root.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "แตะกระเป๋า = แก้ไข   •   กดค้าง = ลบ"
+
+                textSize = 11f
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(gray)
+
+                setPadding(
+                    dp(4),
+                    dp(2),
+                    dp(4),
+                    dp(10)
+                )
+            }
+        )
 
         val addWallet =
             android.widget.TextView(this).apply {
                 text = "+  เพิ่มกระเป๋า"
                 textSize = 17f
+
                 gravity =
                     android.view.Gravity.CENTER
 
-                setTextColor(android.graphics.Color.WHITE)
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
 
                 setTypeface(
                     typeface,
@@ -1342,6 +1919,13 @@ class MainActivity : Activity() {
                         green,
                         14
                     )
+
+                isClickable = true
+                isFocusable = true
+
+                setOnClickListener {
+                    showWalletEditor()
+                }
             }
 
         root.addView(
@@ -1349,13 +1933,35 @@ class MainActivity : Activity() {
             android.widget.LinearLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                topMargin = dp(4)
-            }
+            )
         )
+
+        val phaseNote =
+            android.widget.TextView(this).apply {
+
+                text =
+                    "Phase 2A: ยอดกระเป๋าเป็นยอดตั้งต้น/ยอดจัดสรร " +
+                    "ยังไม่บันทึกเป็นรายรับหรือรายจ่าย"
+
+                textSize = 11f
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(gray)
+
+                setPadding(
+                    dp(8),
+                    dp(12),
+                    dp(8),
+                    0
+                )
+            }
+
+        root.addView(phaseNote)
 
         val scroll =
             android.widget.ScrollView(this).apply {
+
                 isFillViewport = true
 
                 addView(
