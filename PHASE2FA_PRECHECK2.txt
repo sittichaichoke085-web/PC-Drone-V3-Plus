@@ -1,0 +1,52 @@
+]633;E;echo "===== PHASE 2F-A PRECHECK =====";16810d58-b7ea-4441-95e0-411cd38fd785]633;C===== PHASE 2F-A PRECHECK =====
+
+[1] CURRENT COMMIT
+65d7660 Phase 2F-A build diagnostic
+
+[2] OLD 2F-A MARKERS
+1506:                    .setTitle("ยังลบกระเป๋านี้ไม่ได้")
+2104:        // PC_DRONE_PHASE_2FA_CENTRAL_AUDIT
+2625:                    "ศูนย์ตรวจสอบการเงิน"
+
+[3] showMoneyManager
+1024:    private fun showMoneyManager() {
+
+[4] totalBalance
+2080:        val totalBalance =
+
+[5] DELETE WALLET
+1435:        // DELETE WALLET
+
+[6] MONEY MANAGER KEYS
+1030:        // - Wallet data is stored separately in money_manager_wallets
+1048:        val walletKey = "money_manager_wallets"
+1446:                    "money_manager_links",
+1452:                    "money_manager_job_links",
+1458:                    "money_manager_transfers",
+1552:                    "money_manager_links",
+1643:                    "money_manager_job_links",
+1736:                    "money_manager_transfers",
+2055:                            "money_manager_transfers",
+2066:                            "money_manager_transfers",
+2136:                "money_manager_links",
+2259:                "money_manager_job_links",
+2418:                "money_manager_transfers",
+3318:                "money_manager_links",
+3460:                "money_manager_job_links",
+3598:                "money_manager_transfers",
+3605:                "money_manager_wallets",
+10104:                                        "money_manager_wallets",
+10173:                                                        "money_manager_job_links",
+10197:                                                        "money_manager_job_links",
+10337:                                                "money_manager_job_links",
+10355:                                                "money_manager_job_links",
+11704:                    "money_manager_wallets",
+12187:                                                "money_manager_links",
+12205:                                                "money_manager_links",
+12454:                                    "money_manager_links",
+12478:                                    "money_manager_links",
+
+[7] SOURCE STATUS
+ M app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+
+===== END =====
