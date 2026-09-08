@@ -1,0 +1,65 @@
+]633;E;echo "=== PC DRONE PRE-V3.0.1 CHECK ===";0a3d74fe-9667-458b-92cc-618081ef6dce]633;C=== PC DRONE PRE-V3.0.1 CHECK ===
+
+DATE:
+Tue Sep  8 10:00:28 UTC 2026
+
+BRANCH:
+main
+
+STATUS:
+ M .gradle/8.13/executionHistory/executionHistory.bin
+ M .gradle/8.13/executionHistory/executionHistory.lock
+ M .gradle/8.13/fileHashes/fileHashes.bin
+ M .gradle/8.13/fileHashes/fileHashes.lock
+ M .gradle/8.13/fileHashes/resourceHashesCache.bin
+ M .gradle/buildOutputCleanup/buildOutputCleanup.lock
+ M app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources/R.jar
+ M app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+ M app/build/intermediates/dex_archive_input_jar_hashes/debug/dexBuilderDebug/out
+ M app/build/intermediates/incremental/debug/mergeDebugResources/compile-file-map.properties
+ D app/build/intermediates/incremental/debug/mergeDebugResources/merged.dir/values/values.xml
+ M app/build/intermediates/incremental/debug/mergeDebugResources/merger.xml
+ M app/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+ D app/build/intermediates/incremental/debug/packageDebugResources/merged.dir/values/values.xml
+ M app/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/zip-cache/androidResources
+ M app/build/intermediates/linked_resources_binary_format/debug/processDebugResources/linked-resources-binary-format-debug.ap_
+ M app/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+ M app/build/intermediates/manifest_merge_blame_file/debug/processDebugMainManifest/manifest-merger-blame-debug-report.txt
+ M app/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml
+ M app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
+ M app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/AndroidManifest.xml
+ M app/build/intermediates/runtime_symbol_list/debug/processDebugResources/R.txt
+ M app/build/intermediates/stable_resource_ids_file/debug/processDebugResources/stableIds.txt
+ M app/build/kotlin/compileDebugKotlin/cacheable/last-build.bin
+ M app/build/kotlin/compileDebugKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin
+ M app/build/outputs/apk/debug/app-debug.apk
+ M app/build/outputs/logs/manifest-merger-debug-report.txt
+ M app/src/main/AndroidManifest.xml
+?? PRE_V301_CHECK.txt
+?? app/src/main/AndroidManifest.xml.before_icon
+?? app/src/main/res/drawable/
+?? backup_before_app_icon/
+?? final_build/FINAL.apk
+?? final_build/P4D.apk
+?? final_build/PC-Drone-V3-Plus-APP-ICON.apk
+?? final_build/PC-Drone-V3-Plus-FINAL.apk
+?? final_build/PC-Drone-V3-Plus-SOURCE-FINAL.zip
+?? final_build/SOURCE.zip
+
+JAVA:
+openjdk version "25.0.2" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13053558 (build 25.0.2+10-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13053558 (build 25.0.2+10-LTS, mixed mode, sharing)
+
+LATEST COMMITS:
+98a20db Add icon build diagnostic log
+e7b2057 Add files via upload
+518b484 Final build verification
+0010b80 Sync Phase 4.2D restore alarm work
+220cfec Audit exact alarm scheduling for restore
+
+VERSION:
+17:        versionCode = 1
+18:        versionName = "3.0.0"
