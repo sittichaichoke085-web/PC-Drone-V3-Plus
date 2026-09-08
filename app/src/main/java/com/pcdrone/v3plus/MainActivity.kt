@@ -4873,22 +4873,21 @@ class MainActivity : Activity() {
                                         android.widget.Toast
                                             .makeText(
                                                 this@MainActivity,
-                                                "บันทึกข้อมูลลูกค้าไม่สำเร็จ",
+                                                "ลบข้อมูลลูกค้าไม่สำเร็จ",
                                                 android.widget.Toast.LENGTH_LONG
                                             )
                                             .show()
-                                        return@setOnClickListener
+                                    } else {
+                                        android.widget.Toast
+                                            .makeText(
+                                                this@MainActivity,
+                                                "ลบข้อมูลลูกค้าแล้ว",
+                                                android.widget.Toast.LENGTH_SHORT
+                                            )
+                                            .show()
+
+                                        reloadCustomers()
                                     }
-
-                                    android.widget.Toast
-                                        .makeText(
-                                            this@MainActivity,
-                                            "ลบข้อมูลลูกค้าแล้ว",
-                                            android.widget.Toast.LENGTH_SHORT
-                                        )
-                                        .show()
-
-                                    reloadCustomers()
                                 }
                                 .show()
                         }
