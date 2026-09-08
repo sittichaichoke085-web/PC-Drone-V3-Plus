@@ -1,0 +1,215 @@
+MARKERS=OK
+SHOW_MONEY_MANAGER_CHARS=59485
+
+1272: 
+1273:                 setTypeface(
+1274:                     typeface,
+1275:                     android.graphics.Typeface.BOLD
+1276:                 )
+1277:             }
+1278:         )
+1279: 
+1280:         root.addView(
+1281:             android.widget.TextView(this).apply {
+1282:                 text =
+1283:                     "จัดการกระเป๋าเงินและเงินทุนของธุรกิจ"
+1284: 
+1285:                 textSize = 14f
+1286:                 setTextColor(gray)
+1287: 
+1288:                 setPadding(
+1289:                     0,
+1290:                     dp(4),
+1291:                     0,
+1292:                     dp(16)
+1293:                 )
+1294:             }
+1295:         )
+1296: 
+1297:         // PC_DRONE_PHASE_2FA_STEP2_AUDIT_UI
+1298:         val auditBox =
+1299:             android.widget.LinearLayout(this).apply {
+1300:                 orientation = android.widget.LinearLayout.VERTICAL
+1301:                 setPadding(dp(16), dp(16), dp(16), dp(16))
+1302:                 background = rounded(
+1303:                     if (auditPass) android.graphics.Color.rgb(232, 245, 233)
+1304:                     else android.graphics.Color.rgb(255, 243, 224),
+1305:                     dp(16)
+1306:                 )
+1307:             }
+1308: 
+1309:         auditBox.addView(
+1310:             android.widget.TextView(this).apply {
+1311:                 text = "ศูนย์ตรวจสอบการเงิน"
+1312:                 textSize = 20f
+1313:                 setTextColor(dark)
+1314:                 setTypeface(typeface, android.graphics.Typeface.BOLD)
+1315:             }
+1316:         )
+1317: 
+1318:         auditBox.addView(
+1319:             android.widget.TextView(this).apply {
+1320:                 text =
+1321:                     if (auditPass) "✓ บัญชีและกระเป๋าเงินตรงกัน"
+1322:                     else "⚠ พบรายการที่ต้องตรวจสอบ"
+1323:                 textSize = 16f
+1324:                 setTextColor(if (auditPass) greenDark else red)
+1325:                 setTypeface(typeface, android.graphics.Typeface.BOLD)
+1326:                 setPadding(0, dp(6), 0, dp(10))
+1327:             }
+1328:         )
+1329: 
+1330:         val auditSummary =
+1331:             buildString {
+1332:                 append("ยอดตามบัญชี: ฿")
+1333:                 append(moneyFormat.format(auditBusinessNet))
+1334:                 append("\nยอดรวมทุกกระเป๋า: ฿")
+1335:                 append(moneyFormat.format(totalBalance))
+1336:                 append("\nผลต่างบัญชี-กระเป๋า: ฿")
+1337:                 append(moneyFormat.format(auditDifference))
+1338: 
+1339:                 append("\n\nรายรับยังไม่ระบุกระเป๋า: ")
+1340:                 append(auditUnlinkedIncomeCount)
+1341:                 append(" รายการ  ฿")
+1342:                 append(moneyFormat.format(auditUnlinkedIncomeAmount))
+1343: 
+1344:                 append("\nรายจ่ายยังไม่ระบุกระเป๋าที่จ่าย: ")
+1345:                 append(auditUnlinkedExpenseCount)
+1346:                 append(" รายการ  ฿")
+1347:                 append(moneyFormat.format(auditUnlinkedExpenseAmount))
+1348: 
+1349:                 append("\nงานบินเสร็จแล้วยังไม่ระบุกระเป๋ารับเงิน: ")
+1350:                 append(auditUnlinkedCompletedJobCount)
+1351:                 append(" รายการ  ฿")
+1352:                 append(moneyFormat.format(auditUnlinkedCompletedJobAmount))
+1353: 
+1354:                 append("\nรายการเชื่อมโยง/โอนเงินผิดปกติ: ")
+1355:                 append(auditAnomalyCount)
+1356:                 append(" รายการ")
+1357: 
+1358:                 if (auditOpeningTotal.compareTo(java.math.BigDecimal.ZERO) != 0) {
+1359:                     append("\nยอดตั้งต้นกระเป๋า: ฿")
+1360:                     append(moneyFormat.format(auditOpeningTotal))
+1361:                     append("  (ต้องตรวจสอบ)")
+1362:                 }
+1363:             }
+1364: 
+1365:         auditBox.addView(
+1366:             android.widget.TextView(this).apply {
+1367:                 text = auditSummary
+1368:                 textSize = 14f
+1369:                 setTextColor(dark)
+1370:                 setLineSpacing(0f, 1.18f)
+1371:             }
+1372:         )
+1373: 
+1374:         root.addView(
+1375:             auditBox,
+1376:             android.widget.LinearLayout.LayoutParams(
+1377:                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+1378:                 android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+1379:             ).apply {
+1380:                 bottomMargin = dp(16)
+1381:             }
+1382:         )
+1383: 
+1384:         val totalBox =
+1385:             android.widget.LinearLayout(this).apply {
+1386:                 orientation =
+1387:                     android.widget.LinearLayout.VERTICAL
+1388: 
+1389:                 setPadding(
+1390:                     dp(18),
+1391:                     dp(18),
+1392:                     dp(18),
+1393:                     dp(18)
+1394:                 )
+1395: 
+1396:                 background =
+1397:                     rounded(
+1398:                         if (
+1399:                             totalBalance.compareTo(
+1400:                                 java.math.BigDecimal.ZERO
+1401:                             ) >= 0
+1402:                         ) {
+1403:                             greenDark
+1404:                         } else {
+1405:                             red
+1406:                         },
+1407:                         18
+1408:                     )
+1409:             }
+1410: 
+1411:         totalBox.addView(
+1412:             android.widget.TextView(this).apply {
+1413:                 text = "ยอดรวมทุกกระเป๋า"
+1414:                 textSize = 15f
+1415:                 setTextColor(
+1416:                     android.graphics.Color.WHITE
+1417:                 )
+1418:             }
+1419:         )
+1420: 
+1421:         totalBox.addView(
+1422:             android.widget.TextView(this).apply {
+1423:                 text =
+1424:                     "${moneyFormat.format(totalBalance)} บาท"
+1425: 
+1426:                 textSize = 28f
+1427: 
+1428:                 setTextColor(
+1429:                     android.graphics.Color.WHITE
+1430:                 )
+1431: 
+1432:                 setTypeface(
+1433:                     typeface,
+1434:                     android.graphics.Typeface.BOLD
+1435:                 )
+1436: 
+1437:                 setPadding(
+1438:                     0,
+1439:                     dp(5),
+1440:                     0,
+1441:                     0
+1442:                 )
+1443:             }
+1444:         )
+1445: 
+1446:         root.addView(totalBox)
+1447: 
+1448:         root.addView(
+1449:             android.widget.TextView(this).apply {
+1450:                 text = "กระเป๋าเงิน"
+1451:                 textSize = 20f
+1452:                 setTextColor(dark)
+1453: 
+1454:                 setTypeface(
+1455:                     typeface,
+1456:                     android.graphics.Typeface.BOLD
+1457:                 )
+1458: 
+1459:                 setPadding(
+1460:                     dp(2),
+1461:                     dp(22),
+1462:                     0,
+1463:                     dp(10)
+1464:                 )
+1465:             }
+1466:         )
+1467: 
+1468:         if (wallets.isEmpty()) {
+1469: 
+1470:             root.addView(
+1471:                 android.widget.TextView(this).apply {
+1472:                     text =
+1473:                         "ยังไม่มีกระเป๋าเงิน\nกด + เพิ่มกระเป๋า เพื่อเริ่มใช้งาน"
+1474: 
+1475:                     textSize = 15f
+1476:                     gravity =
+1477:                         android.view.Gravity.CENTER
+1478: 
+1479:                     setTextColor(gray)
+1480: 
+1481:                     setPadding(
+1482:                         dp(16),
+1483:                         dp(24),
