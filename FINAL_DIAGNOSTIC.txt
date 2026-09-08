@@ -1,0 +1,221 @@
+]633;E;echo "=== PC DRONE FINAL BUILD DIAGNOSTIC ===";88c3153b-761c-4348-9cbb-5242705901bb]633;C=== PC DRONE FINAL BUILD DIAGNOSTIC ===
+PWD:
+/workspaces/PC-Drone-V3-Plus
+
+FINAL REALPATH:
+/workspaces/PC-Drone-V3-Plus/final_build
+
+SOURCE APK:
+-rw-rw-rw- 1 codespace codespace 2.2M Sep  8 03:37 app/build/outputs/apk/debug/app-debug.apk
+
+FINAL DIRECTORY:
+total 86M
+drwxrwxrwx+  2 codespace codespace 4.0K Sep  8 03:38 .
+drwxrwxrwx+ 36 codespace root      4.0K Sep  8 03:41 ..
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 16:51 PC-Drone-V3-Plus-A4-PDF.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 18:09 PC-Drone-V3-Plus-APPOINTMENT-PHASE1.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  6 18:26 PC-Drone-V3-Plus-BACK-BUTTON.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 08:05 PC-Drone-V3-Plus-DATE-REPORT-STEP1.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 08:12 PC-Drone-V3-Plus-DATE-REPORT-STEP2.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 08:37 PC-Drone-V3-Plus-DATE-REPORT-STEP3A.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 08:45 PC-Drone-V3-Plus-DATE-REPORT-STEP3B.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 10:27 PC-Drone-V3-Plus-DATE-REPORT-STEP3B1.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 17:11 PC-Drone-V3-Plus-FULL-PDF.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 19:26 PC-Drone-V3-Plus-NOTIFICATION-PHASE2-3.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 18:21 PC-Drone-V3-Plus-NOTIFICATION-PHASE2.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 17:16 PC-Drone-V3-Plus-PDF-STABLE.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 16:33 PC-Drone-V3-Plus-PDF-TEST.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 05:12 PC-Drone-V3-Plus-PHASE2.1.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 06:01 PC-Drone-V3-Plus-PHASE2.2.1.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 05:19 PC-Drone-V3-Plus-PHASE2.2.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 06:45 PC-Drone-V3-Plus-PHASE2.3.1-FIX.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 06:59 PC-Drone-V3-Plus-PHASE2.3.2.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 06:24 PC-Drone-V3-Plus-PHASE2.3.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 19:37 PC-Drone-V3-Plus-PHASE3-1-HISTORY-APPOINTMENT.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  8 01:29 PC-Drone-V3-Plus-PHASE3-2-EDIT-APPOINTMENT.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 03:10 PC-Drone-V3-Plus-PHASE3-3-AUTO-DATE.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 02:19 PC-Drone-V3-Plus-PHASE3-3-HISTORY-COMPLETE.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 03:00 PC-Drone-V3-Plus-PHASE3-3-HISTORY-DATE-FIELDS.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 03:20 PC-Drone-V3-Plus-PHASE3-3-HISTORY-REFRESH.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 02:53 PC-Drone-V3-Plus-PHASE3-3-HISTORY-SEARCH.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 02:32 PC-Drone-V3-Plus-PHASE3-3-STATUS-COLORS.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 02:37 PC-Drone-V3-Plus-PHASE3-3-STRONG-COLORS.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 14:39 PC-Drone-V3-Plus-REPORT-FINANCE-FIX.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 15:22 PC-Drone-V3-Plus-REPORT-FLIGHT-INCOME-FIX.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 19:00 PC-Drone-V3-Plus-RINGTONE-REPEAT-PHASE2-2.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 07:46 PC-Drone-V3-Plus-SAFE-BEFORE-CALENDAR.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 17:41 PC-Drone-V3-Plus-SETTINGS-PHASE.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 17:52 PC-Drone-V3-Plus-SETTINGS-REPORT-PDF.apk
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  7 18:43 PC-Drone-V3-Plus-SOUND-VIBRATION-PHASE2-1.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 04:25 PC-Drone-V3-Plus-UI1-1.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 04:41 PC-Drone-V3-Plus-UI1.2.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 04:58 PC-Drone-V3-Plus-UI1.3.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  7 04:14 PC-Drone-V3-Plus-UI1.apk
+-rw-rw-rw-   1 codespace codespace 2.1M Sep  6 17:29 PC-Drone-V3-Plus.apk
+-rw-rw-rw-   1 codespace codespace    0 Sep  8 03:38 TEST_VISIBLE.txt
+-rw-rw-rw-   1 codespace codespace 2.2M Sep  8 03:38 VIVID.apk
+
+VIVID APK:
+  File: final_build/VIVID.apk
+  Size: 2267072   	Blocks: 4432       IO Block: 4096   regular file
+Device: 7,4	Inode: 1310897     Links: 1
+Access: (0666/-rw-rw-rw-)  Uid: ( 1000/codespace)   Gid: ( 1000/codespace)
+Access: 2026-09-08 03:38:56.281484175 +0000
+Modify: 2026-09-08 03:38:56.298484175 +0000
+Change: 2026-09-08 03:38:56.298484175 +0000
+ Birth: 2026-09-08 03:38:56.281484175 +0000
+
+TEST FILE:
+  File: final_build/TEST_VISIBLE.txt
+  Size: 0         	Blocks: 0          IO Block: 4096   regular empty file
+Device: 7,4	Inode: 1310899     Links: 1
+Access: (0666/-rw-rw-rw-)  Uid: ( 1000/codespace)   Gid: ( 1000/codespace)
+Access: 2026-09-08 03:38:56.406484177 +0000
+Modify: 2026-09-08 03:38:56.406484177 +0000
+Change: 2026-09-08 03:38:56.406484177 +0000
+ Birth: 2026-09-08 03:38:56.406484177 +0000
+
+GIT STATUS:
+ M .gradle/8.13/executionHistory/executionHistory.bin
+ M .gradle/8.13/executionHistory/executionHistory.lock
+ M .gradle/8.13/fileHashes/fileHashes.bin
+ M .gradle/8.13/fileHashes/fileHashes.lock
+ M .gradle/8.13/fileHashes/resourceHashesCache.bin
+ M .gradle/buildOutputCleanup/buildOutputCleanup.lock
+ M app/build/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex
+ M app/build/intermediates/incremental/debug-mergeJavaRes/merge-state
+ D app/build/intermediates/incremental/debug-mergeJavaRes/zip-cache/ikPTGNg4ME0umSpIqH+Xpg==
+ M app/build/intermediates/incremental/debug/mergeDebugResources/compile-file-map.properties
+ M app/build/intermediates/incremental/debug/mergeDebugResources/merger.xml
+ M app/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/zip-cache/androidResources
+ M app/build/intermediates/linked_resources_binary_format/debug/processDebugResources/linked-resources-binary-format-debug.ap_
+ M app/build/intermediates/manifest_merge_blame_file/debug/processDebugMainManifest/manifest-merger-blame-debug-report.txt
+ M app/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml
+ M app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
+ M app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/AndroidManifest.xml
+ M app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/pcdrone/v3plus/MainActivity.dex
+ M app/build/intermediates/source_set_path_map/debug/mapDebugSourceSetPaths/file-map.txt
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/counters.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.len
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at
+ M app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab_i
+ M app/build/kotlin/compileDebugKotlin/cacheable/last-build.bin
+ M app/build/kotlin/compileDebugKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin
+ M app/build/outputs/apk/debug/app-debug.apk
+ M app/build/outputs/logs/manifest-merger-debug-report.txt
+ M app/build/tmp/kotlin-classes/debug/com/pcdrone/v3plus/MainActivity.class
+ M app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+ M gradle.properties.before-memory-fix
+?? "-lht \\"
+?? FINAL_DIAGNOSTIC.txt
+?? app/build.gradle.kts.before-room-restore
+?? app/build.gradle.kts.phase32-backup
+?? app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt.phase21.bak
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.before-a4
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.before-full-item
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.before-pdf-step1
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.before-settings
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.phase2.bak
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.phase21.bak
+?? e
+?? final_backup/FinanceReportProvider-before-a4-pdf.kt
+?? final_backup/MainActivity-before-a4-pdf.kt
+?? final_backup/MainActivity-before-pdf-v2.kt
+?? final_backup/MainActivity-before-pdf-v3.kt
+?? final_backup/MainActivity-before-report-flight-income-final.kt
+?? final_build/PC-Drone-V3-Plus-A4-PDF.apk
+?? final_build/PC-Drone-V3-Plus-APPOINTMENT-PHASE1.apk
+?? final_build/PC-Drone-V3-Plus-FULL-PDF.apk
+?? final_build/PC-Drone-V3-Plus-NOTIFICATION-PHASE2-3.apk
+?? final_build/PC-Drone-V3-Plus-NOTIFICATION-PHASE2.apk
+?? final_build/PC-Drone-V3-Plus-PDF-STABLE.apk
+?? final_build/PC-Drone-V3-Plus-PDF-TEST.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-1-HISTORY-APPOINTMENT.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-2-EDIT-APPOINTMENT.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-3-AUTO-DATE.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-3-HISTORY-COMPLETE.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-3-HISTORY-DATE-FIELDS.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-3-HISTORY-REFRESH.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-3-HISTORY-SEARCH.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-3-STATUS-COLORS.apk
+?? final_build/PC-Drone-V3-Plus-PHASE3-3-STRONG-COLORS.apk
+?? final_build/PC-Drone-V3-Plus-REPORT-FLIGHT-INCOME-FIX.apk
+?? final_build/PC-Drone-V3-Plus-RINGTONE-REPEAT-PHASE2-2.apk
+?? final_build/PC-Drone-V3-Plus-SETTINGS-PHASE.apk
+?? final_build/PC-Drone-V3-Plus-SOUND-VIBRATION-PHASE2-1.apk
+?? final_build/TEST_VISIBLE.txt
+?? final_build/VIVID.apk
+?? gradle.properties.before-single-jvm
+?? gradle.properties.memory-backup
+?? pdf_v3_build.log
+?? phase32-room-restored.log
+?? report_flight_build.log
+?? restore_check.log
