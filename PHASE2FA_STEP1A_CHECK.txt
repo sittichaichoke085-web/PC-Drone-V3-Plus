@@ -1,0 +1,13 @@
+291:        val root =
+2015:        val totalBalance =
+2038:        // PC_DRONE_PHASE_2FA_STEP1A
+2058:        val auditBusinessNet = auditCompletedJobIncome.add(auditManualIncome).subtract(auditManualExpense)
+2060:        val root =
+3220:        val root =
+3684:        val root = android.widget.LinearLayout(this).apply {
+5424:        val root =
+6992:        val root = LinearLayout(this).apply {
+7081:        val root = android.widget.LinearLayout(this).apply {
+7964:        val root = android.widget.LinearLayout(this).apply {
+8603:        val root = android.widget.LinearLayout(this).apply {
+10909:        val root =
