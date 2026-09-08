@@ -1,0 +1,51 @@
+2104-                auditUnlinkedCompletedJobCount++
+2105-                auditUnlinkedCompletedJobAmount = auditUnlinkedCompletedJobAmount.add(amount)
+2106-            }
+2107-        }
+2108-
+2109:        // PC_DRONE_PHASE_2FA_STEP1D
+2110-        val auditValidWalletIds = wallets.map { it.id }.toSet()
+2111-
+2112-        val auditOpeningTotal = wallets.fold(java.math.BigDecimal.ZERO) { sum, wallet ->
+2113-            sum.add(wallet.openingBalance)
+2114-        }
+2115-
+2116-        val auditFinanceTransactionIds =
+2117-            prefs.getStringSet("finance_transactions", emptySet()).orEmpty().mapNotNull { record ->
+2118-                record.split("|||", ignoreCase = false, limit = 5)
+2119-                    .getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+2120-            }.toSet()
+2121-
+2122-        var auditOrphanFinanceLinkCount = 0
+2123-
+2124-        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+2125-            val parts = link.split("|||", ignoreCase = false, limit = 2)
+2126-            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+2127-            val walletId = parts.getOrNull(1)?.trim().orEmpty()
+2128-
+2129-            if (
+2130-                transactionId.isEmpty() ||
+2131-                walletId.isEmpty() ||
+2132-                transactionId !in auditFinanceTransactionIds ||
+2133-                walletId !in auditValidWalletIds
+2134-            ) {
+2135-                auditOrphanFinanceLinkCount++
+2136-            }
+2137-        }
+2138-
+2139-        val root =
+2140-            android.widget.LinearLayout(this).apply {
+2141-                orientation =
+2142-                    android.widget.LinearLayout.VERTICAL
+2143-
+2144-                setPadding(
+2145-                    dp(16),
+2146-                    dp(18),
+2147-                    dp(16),
+2148-                    dp(32)
+2149-                )
+2150-
+2151-                setBackgroundColor(pageBg)
+2152-            }
+2153-
+2154-        root.addView(
