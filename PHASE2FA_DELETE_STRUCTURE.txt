@@ -1,0 +1,111 @@
+1418-                                note
+1419-                            )
+1420-                        )
+1421-
+1422-                        saveWallets(updated)
+1423-
+1424-                        dialog.dismiss()
+1425-
+1426-                        // Redraw from persisted data
+1427-                        showMoneyManager()
+1428-                    }
+1429-            }
+1430-
+1431-            dialog.show()
+1432-        }
+1433-
+1434-        // ------------------------------------------------------------
+1435-        // DELETE WALLET
+1436-        // ------------------------------------------------------------
+1437-
+1438:        fun confirmDeleteWallet(
+1439-            walletId: String,
+1440-            walletName: String
+1441-        ) {
+1442-
+1443-            android.app.AlertDialog.Builder(this)
+1444-                .setTitle(
+1445-                    "ลบกระเป๋า"
+1446-                )
+1447-                .setMessage(
+1448-                    "ต้องการลบ \"$walletName\" ใช่หรือไม่?\n\n" +
+1449-                    "Phase 2A ยังไม่มีรายการรับ–จ่ายในกระเป๋า " +
+1450-                    "ดังนั้นการลบจะลบเฉพาะข้อมูลกระเป๋านี้"
+1451-                )
+1452-                .setNegativeButton(
+1453-                    "ยกเลิก",
+1454-                    null
+1455-                )
+1456-                .setPositiveButton(
+1457-                    "ลบ"
+1458-                ) { _, _ ->
+1459-
+1460-                    val updated =
+1461-                        loadWallets()
+1462-                            .filterNot {
+1463-                                it[0] == walletId
+1464-                            }
+1465-
+1466-                    saveWallets(updated)
+1467-
+1468-                    showMoneyManager()
+1469-                }
+1470-                .show()
+1471-        }
+1472-
+1473-        // ------------------------------------------------------------
+1474-        // PAGE
+1475-        // ------------------------------------------------------------
+1476-
+1477-        val wallets =
+1478-            loadWallets()
+1479-
+1480-        fun computedWalletBalance(
+1481-            walletId: String,
+1482-            openingBalance: java.math.BigDecimal
+1483-        ): java.math.BigDecimal {
+1484-
+1485-            val links =
+1486-                prefs.getStringSet(
+1487-                    "money_manager_links",
+1488-                    emptySet()
+1489-                )?.toList()
+1490-                    ?: emptyList()
+1491-
+1492-            val transactionIds =
+1493-                links.mapNotNull { link ->
+1494-
+1495-                    val p =
+1496-                        link.split(
+1497-                            "|||",
+1498-                            ignoreCase = false,
+1499-                            limit = 2
+1500-                        )
+1501-
+1502-                    val txId =
+1503-                        p.getOrNull(0)
+1504-                            ?.trim()
+1505-                            .orEmpty()
+1506-
+1507-                    val linkedWalletId =
+1508-                        p.getOrNull(1)
+1509-                            ?.trim()
+1510-                            .orEmpty()
+1511-
+1512-                    if (
+1513-                        txId.isNotBlank() &&
+1514-                        linkedWalletId == walletId
+1515-                    ) {
+1516-                        txId
+1517-                    } else {
+1518-                        null
+1519-                    }
+1520-                }.toSet()
+1521-
+1522-            var movement =
+1523-                java.math.BigDecimal.ZERO
+1524-
+1525-            val financeRecords =
+1526-                prefs.getStringSet(
+1527-                    "finance_transactions",
+1528-                    emptySet()
