@@ -1,0 +1,66 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+
+> Task :app:compileDebugKotlin
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:300:13 Unresolved reference 'wallets'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:301:17 Unresolved reference 'it'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:309:13 Unresolved reference 'wallets'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:311:17 Cannot infer type for value parameter 'total'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:311:24 Cannot infer type for value parameter 'wallet'. Specify it explicitly.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:313:23 Unresolved reference 'add'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:314:21 Unresolved reference 'parseMoney'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:402:17 Unresolved reference 'parseMoney'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:527:17 Unresolved reference 'parseMoney'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:578:17 Unresolved reference 'totalBalance'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2699:25 Unresolved reference 'auditPass'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2708:25 Unresolved reference 'auditPass'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2755:35 Unresolved reference 'businessNet'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2765:35 Unresolved reference 'difference'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2770:15 Unresolved reference 'unlinkedIncomeCount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2771:35 Unresolved reference 'unlinkedIncomeAmount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2776:15 Unresolved reference 'unlinkedExpenseCount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2777:35 Unresolved reference 'unlinkedExpenseAmount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2782:15 Unresolved reference 'unlinkedJobCount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2783:35 Unresolved reference 'unlinkedJobAmount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2787:13 Unresolved reference 'orphanCount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2792:19 Unresolved reference 'orphanCount'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2797:13 Unresolved reference 'openingTotal'.
+e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:2804:39 Unresolved reference 'openingTotal'.
+
+> Task :app:compileDebugKotlin FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 49s
+17 actionable tasks: 1 executed, 16 up-to-date
