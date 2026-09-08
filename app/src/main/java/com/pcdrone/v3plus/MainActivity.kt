@@ -6620,7 +6620,14 @@ class MainActivity : Activity() {
                         textSize = 20f
 
                         setTextColor(
-                            cardTextColor
+                            when (status) {
+                                "เสร็จแล้ว",
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.WHITE
+
+                                else ->
+                                    android.graphics.Color.BLACK
+                            }
                         )
 
                         setTypeface(
@@ -6654,7 +6661,14 @@ class MainActivity : Activity() {
                         textSize = 16f
 
                         setTextColor(
-                            cardTextColor
+                            when (status) {
+                                "เสร็จแล้ว",
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.WHITE
+
+                                else ->
+                                    android.graphics.Color.BLACK
+                            }
                         )
 
                         setPadding(
