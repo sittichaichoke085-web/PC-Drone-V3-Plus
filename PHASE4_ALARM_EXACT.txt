@@ -1,0 +1,2473 @@
+]633;E;echo "===== EXACT ALARM FUNCTIONS =====";8c53bbd3-6613-43b8-81fb-0be61dd85038]633;C===== EXACT ALARM FUNCTIONS =====
+
+===== LINES 5019-5119 =====
+        root.addView(customerList)
+
+        reloadCustomers()
+
+        val scrollView =
+            android.widget.ScrollView(this).apply {
+
+                addView(
+                    root,
+                    android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                )
+            }
+
+        setContentView(scrollView)
+    }
+
+
+    private fun scheduleJobReminder(
+        jobId: Long,
+        appointmentMillis: Long,
+        customer: String,
+        service: String,
+        location: String,
+        rai: Double
+    ) {
+
+        val settingsPrefs =
+            getSharedPreferences(
+                "pc_drone_settings",
+                android.content.Context.MODE_PRIVATE
+            )
+
+        val notificationsEnabled =
+            settingsPrefs.getBoolean(
+                "notifications_enabled",
+                true
+            )
+
+        if (!notificationsEnabled) {
+            return
+        }
+
+        /*
+         * รองรับทั้ง Int / Long / String
+         * เผื่อ Settings รุ่นก่อนบันทึกคนละชนิด
+         */
+        val advanceValue =
+            settingsPrefs.all[
+                "notify_advance_minutes"
+            ]
+
+        val advanceMinutes =
+            when (advanceValue) {
+
+                is Int ->
+                    advanceValue
+
+                is Long ->
+                    advanceValue.toInt()
+
+                is Float ->
+                    advanceValue.toInt()
+
+                is String ->
+                    advanceValue
+                        .toIntOrNull()
+                        ?: 120
+
+                else ->
+                    120
+            }.coerceAtLeast(0)
+
+        var triggerAt =
+            appointmentMillis -
+                (
+                    advanceMinutes *
+                        60_000L
+                )
+
+        val now =
+            System.currentTimeMillis()
+
+        /*
+         * ถ้าเลยเวลาเตือนล่วงหน้าแล้ว
+         * ให้เตือนภายในประมาณ 5 วินาที
+         * แทนที่จะไม่เตือนเลย
+         */
+        if (triggerAt <= now) {
+            triggerAt =
+                now + 5_000L
+        }
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            ).apply {
+
+
+===== LINES 5138-5238 =====
+                )
+
+                putExtra(
+                    "location",
+                    location
+                )
+
+                putExtra(
+                    "rai",
+                    rai
+                )
+            }
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_UPDATE_CURRENT or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        val alarmManager =
+            getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.S
+        ) {
+
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+===== LINES 5143-5243 =====
+                )
+
+                putExtra(
+                    "rai",
+                    rai
+                )
+            }
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_UPDATE_CURRENT or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        val alarmManager =
+            getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.S
+        ) {
+
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+===== LINES 5145-5245 =====
+                putExtra(
+                    "rai",
+                    rai
+                )
+            }
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_UPDATE_CURRENT or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        val alarmManager =
+            getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.S
+        ) {
+
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+
+===== LINES 5152-5252 =====
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_UPDATE_CURRENT or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        val alarmManager =
+            getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.S
+        ) {
+
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+
+===== LINES 5165-5265 =====
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        val alarmManager =
+            getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.S
+        ) {
+
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+
+===== LINES 5166-5266 =====
+                            .FLAG_IMMUTABLE
+                )
+
+        val alarmManager =
+            getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.S
+        ) {
+
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+
+===== LINES 5179-5279 =====
+            if (
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+
+===== LINES 5180-5280 =====
+                alarmManager
+                    .canScheduleExactAlarms()
+            ) {
+
+                alarmManager
+                    .setExactAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+
+===== LINES 5190-5290 =====
+                    )
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+===== LINES 5191-5291 =====
+
+            } else {
+
+                /*
+                 * ไม่มีสิทธิ์ Exact Alarm
+                 * ใช้ alarm ปกติแทน
+                 */
+                alarmManager
+                    .setAndAllowWhileIdle(
+                        android.app.AlarmManager
+                            .RTC_WAKEUP,
+                        triggerAt,
+                        pendingIntent
+                    )
+            }
+
+        } else {
+
+            alarmManager
+                .setExactAndAllowWhileIdle(
+                    android.app.AlarmManager
+                        .RTC_WAKEUP,
+                    triggerAt,
+                    pendingIntent
+                )
+        }
+
+        /*
+         * Android 13+
+         * ขอสิทธิ์ Notification จากผู้ใช้
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+
+===== LINES 5221-5321 =====
+         */
+        if (
+            android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(
+                "android.permission.POST_NOTIFICATIONS"
+            ) !=
+            android.content.pm.PackageManager
+                .PERMISSION_GRANTED
+        ) {
+
+            requestPermissions(
+                arrayOf(
+                    "android.permission.POST_NOTIFICATIONS"
+                ),
+                5501
+            )
+        }
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+
+===== LINES 5238-5338 =====
+    }
+
+
+    private fun cancelJobReminder(
+        jobId: Long
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+
+===== LINES 5243-5343 =====
+    ) {
+
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+===== LINES 5245-5345 =====
+        val intent =
+            android.content.Intent(
+                this,
+                JobNotificationReceiver::class.java
+            )
+
+        val requestCode =
+            (
+                jobId xor
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+
+===== LINES 5254-5354 =====
+                    (jobId ushr 32)
+                ).toInt() and 0x7fffffff
+
+        val pendingIntent =
+            android.app.PendingIntent
+                .getBroadcast(
+                    this,
+                    requestCode,
+                    intent,
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+
+===== LINES 5263-5363 =====
+                    android.app.PendingIntent
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+
+===== LINES 5264-5364 =====
+                        .FLAG_NO_CREATE or
+                        android.app.PendingIntent
+                            .FLAG_IMMUTABLE
+                )
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+            "พ่นยา",
+
+===== LINES 5268-5368 =====
+
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+            "พ่นยา",
+            "หว่านปุ๋ย",
+            "หว่านเมล็ด",
+            "พ่นสวนผลไม้",
+            "งานอื่น ๆ"
+
+===== LINES 5269-5369 =====
+        if (pendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+            "พ่นยา",
+            "หว่านปุ๋ย",
+            "หว่านเมล็ด",
+            "พ่นสวนผลไม้",
+            "งานอื่น ๆ"
+        )
+
+===== LINES 5272-5372 =====
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+            "พ่นยา",
+            "หว่านปุ๋ย",
+            "หว่านเมล็ด",
+            "พ่นสวนผลไม้",
+            "งานอื่น ๆ"
+        )
+
+        serviceSpinner.adapter =
+            android.widget.ArrayAdapter(
+
+===== LINES 5277-5377 =====
+                pendingIntent
+            )
+
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+            "พ่นยา",
+            "หว่านปุ๋ย",
+            "หว่านเมล็ด",
+            "พ่นสวนผลไม้",
+            "งานอื่น ๆ"
+        )
+
+        serviceSpinner.adapter =
+            android.widget.ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                services
+            )
+
+
+===== LINES 5280-5380 =====
+            pendingIntent.cancel()
+        }
+
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+            "พ่นยา",
+            "หว่านปุ๋ย",
+            "หว่านเมล็ด",
+            "พ่นสวนผลไม้",
+            "งานอื่น ๆ"
+        )
+
+        serviceSpinner.adapter =
+            android.widget.ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                services
+            )
+
+        // ---------- LOCATION ----------
+        val locationInput = android.widget.EditText(this).apply {
+            hint = "พื้นที่ / สวน / ตำบล / อำเภอ"
+
+===== LINES 5283-5383 =====
+        val repeatPendingIntent =
+            android.app.PendingIntent.getBroadcast(
+                this,
+                requestCode + 100000,
+                intent,
+                android.app.PendingIntent.FLAG_NO_CREATE or
+                    android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+
+        if (repeatPendingIntent != null) {
+
+            val alarmManager =
+                getSystemService(
+                    android.content.Context.ALARM_SERVICE
+                ) as android.app.AlarmManager
+
+            alarmManager.cancel(
+                repeatPendingIntent
+            )
+
+            repeatPendingIntent.cancel()
+        }
+    }
+
+
+    private fun showJobs() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(20), dp(20), dp(20), dp(28))
+            setBackgroundColor(android.graphics.Color.WHITE)
+        }
+
+        // ---------- TITLE ----------
+        root.addView(createBackButton())
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บันทึกงานบิน"
+                textSize = 28f
+                setTextColor(android.graphics.Color.BLACK)
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+                textSize = 15f
+                setTextColor(android.graphics.Color.DKGRAY)
+                setPadding(0, dp(4), 0, dp(16))
+            }
+        )
+
+        // ---------- CUSTOMER ----------
+        val customerInput = android.widget.EditText(this).apply {
+            hint = "ชื่อลูกค้า"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
+        }
+
+        // ---------- SERVICE ----------
+        val serviceLabel = android.widget.TextView(this).apply {
+            text = "ประเภทงาน"
+            textSize = 16f
+            setTextColor(android.graphics.Color.BLACK)
+            setPadding(0, dp(12), 0, dp(4))
+        }
+
+        val serviceSpinner = android.widget.Spinner(this)
+
+        val services = arrayOf(
+            "พ่นยา",
+            "หว่านปุ๋ย",
+            "หว่านเมล็ด",
+            "พ่นสวนผลไม้",
+            "งานอื่น ๆ"
+        )
+
+        serviceSpinner.adapter =
+            android.widget.ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                services
+            )
+
+        // ---------- LOCATION ----------
+        val locationInput = android.widget.EditText(this).apply {
+            hint = "พื้นที่ / สวน / ตำบล / อำเภอ"
+            textSize = 17f
+            setTextColor(android.graphics.Color.BLACK)
+            setHintTextColor(android.graphics.Color.GRAY)
