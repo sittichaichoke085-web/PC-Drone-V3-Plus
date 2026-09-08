@@ -5910,6 +5910,180 @@ class MainActivity : Activity() {
 
         root.addView(summaryText)
 
+        val searchRow =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                setPadding(
+                    0,
+                    dp(4),
+                    0,
+                    dp(12)
+                )
+            }
+
+        val daySearchInput =
+            android.widget.EditText(this).apply {
+
+                hint = "วัน"
+                textSize = 15f
+                isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(2)
+                    )
+            }
+
+        val monthSearchInput =
+            android.widget.EditText(this).apply {
+
+                hint = "เดือน"
+                textSize = 15f
+                isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(2)
+                    )
+            }
+
+        val yearSearchInput =
+            android.widget.EditText(this).apply {
+
+                hint = "ปี"
+                textSize = 15f
+                isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(4)
+                    )
+            }
+
+        val searchButton =
+            android.widget.Button(this).apply {
+
+                text = "ค้นหา"
+                isAllCaps = false
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+
+                        setColor(
+                            android.graphics.Color.rgb(
+                                0,
+                                105,
+                                55
+                            )
+                        )
+
+                        cornerRadius =
+                            dp(10).toFloat()
+
+                        setStroke(
+                            dp(2),
+                            android.graphics.Color.rgb(
+                                0,
+                                70,
+                                35
+                            )
+                        )
+                    }
+
+                elevation =
+                    dp(5).toFloat()
+            }
+
+        searchRow.addView(
+            daySearchInput,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                0.8f
+            ).apply {
+                marginEnd = dp(4)
+            }
+        )
+
+        searchRow.addView(
+            monthSearchInput,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                0.9f
+            ).apply {
+                marginEnd = dp(4)
+            }
+        )
+
+        searchRow.addView(
+            yearSearchInput,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1.2f
+            ).apply {
+                marginEnd = dp(6)
+            }
+        )
+
+        searchRow.addView(
+            searchButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        )
+
+        root.addView(searchRow)
+
+        val historyModeText =
+            android.widget.TextView(this).apply {
+                text =
+                    "แสดง 10 งานล่าสุด • ค้นหาวันที่เพื่อดูงานย้อนหลัง"
+
+                textSize = 14f
+
+                setTextColor(
+                    android.graphics.Color.DKGRAY
+                )
+
+                setPadding(
+                    0,
+                    0,
+                    0,
+                    dp(10)
+                )
+            }
+
+        root.addView(historyModeText)
+
+        var historySearchDate: String? = null
+
         val listContainer =
             android.widget.LinearLayout(this).apply {
                 orientation =
@@ -5960,7 +6134,7 @@ class MainActivity : Activity() {
                     }
                     .toMap()
 
-            val sortedRecords =
+            val allSortedRecords =
                 records.sortedByDescending { record ->
 
                     val parts =
@@ -5973,6 +6147,77 @@ class MainActivity : Activity() {
                     parts.getOrNull(0)
                         ?.toLongOrNull()
                         ?: 0L
+                }
+
+            fun normalizedSearchDate(
+                millis: Long
+            ): String {
+
+                val calendar =
+                    java.util.Calendar.getInstance(
+                        java.util.TimeZone.getTimeZone(
+                            "Asia/Bangkok"
+                        )
+                    ).apply {
+                        timeInMillis = millis
+                    }
+
+                return "%02d/%02d/%04d".format(
+                    calendar.get(
+                        java.util.Calendar.DAY_OF_MONTH
+                    ),
+                    calendar.get(
+                        java.util.Calendar.MONTH
+                    ) + 1,
+                    calendar.get(
+                        java.util.Calendar.YEAR
+                    ) + 543
+                )
+            }
+
+            val searchDate =
+                historySearchDate
+
+            val sortedRecords =
+                if (searchDate.isNullOrBlank()) {
+
+                    allSortedRecords.take(10)
+
+                } else {
+
+                    allSortedRecords.filter { record ->
+
+                        val searchParts =
+                            record.split(
+                                "|||",
+                                ignoreCase = false,
+                                limit = 9
+                            )
+
+                        val jobId =
+                            searchParts
+                                .getOrNull(0)
+                                ?.toLongOrNull()
+                                ?: 0L
+
+                        val appointmentMillis =
+                            appointmentMap[jobId]
+                                ?.getOrNull(1)
+                                ?.toLongOrNull()
+                                ?: 0L
+
+                        val dateMillis =
+                            if (appointmentMillis > 0L) {
+                                appointmentMillis
+                            } else {
+                                jobId
+                            }
+
+                        dateMillis > 0L &&
+                            normalizedSearchDate(
+                                dateMillis
+                            ) == searchDate
+                    }
                 }
 
             var totalRai = 0.0
@@ -6509,9 +6754,16 @@ class MainActivity : Activity() {
             }
 
             summaryText.text =
-                "ทั้งหมด ${sortedRecords.size} งาน\n" +
-                "พื้นที่รวม %.2f ไร่\n".format(totalRai) +
-                "มูลค่างานรวม %.2f บาท".format(totalValue)
+                if (historySearchDate.isNullOrBlank()) {
+                    "แสดง ${sortedRecords.size} จาก ${allSortedRecords.size} งาน\n" +
+                    "พื้นที่รวม %.2f ไร่\n".format(totalRai) +
+                    "มูลค่างานรวม %.2f บาท".format(totalValue)
+                } else {
+                    "ผลการค้นหา ${historySearchDate}\n" +
+                    "พบ ${sortedRecords.size} งาน\n" +
+                    "พื้นที่รวม %.2f ไร่\n".format(totalRai) +
+                    "มูลค่างานรวม %.2f บาท".format(totalValue)
+                }
 
             if (sortedRecords.isEmpty()) {
 
@@ -6539,6 +6791,156 @@ class MainActivity : Activity() {
                     }
                 )
             }
+        }
+
+        searchButton.setOnClickListener {
+
+            val dayText =
+                daySearchInput.text
+                    .toString()
+                    .trim()
+
+            val monthText =
+                monthSearchInput.text
+                    .toString()
+                    .trim()
+
+            val yearText =
+                yearSearchInput.text
+                    .toString()
+                    .trim()
+
+            if (
+                dayText.isBlank() &&
+                monthText.isBlank() &&
+                yearText.isBlank()
+            ) {
+
+                historySearchDate = null
+
+                historyModeText.text =
+                    "แสดง 10 งานล่าสุด • ค้นหาวันที่เพื่อดูงานย้อนหลัง"
+
+                reloadHistory()
+
+                return@setOnClickListener
+            }
+
+            if (
+                dayText.isBlank() ||
+                monthText.isBlank() ||
+                yearText.isBlank()
+            ) {
+
+                android.widget.Toast.makeText(
+                    this,
+                    "กรุณากรอก วัน เดือน และ ปี ให้ครบ",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            val day =
+                dayText.toIntOrNull()
+
+            val month =
+                monthText.toIntOrNull()
+
+            var year =
+                yearText.toIntOrNull()
+
+            if (
+                day == null ||
+                month == null ||
+                year == null
+            ) {
+
+                android.widget.Toast.makeText(
+                    this,
+                    "วันที่ไม่ถูกต้อง",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            if (year < 2400) {
+                year += 543
+            }
+
+            if (
+                day !in 1..31 ||
+                month !in 1..12
+            ) {
+
+                android.widget.Toast.makeText(
+                    this,
+                    "วันที่ไม่ถูกต้อง",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            try {
+
+                val validateCalendar =
+                    java.util.Calendar.getInstance(
+                        java.util.TimeZone.getTimeZone(
+                            "Asia/Bangkok"
+                        )
+                    )
+
+                validateCalendar.isLenient = false
+
+                validateCalendar.set(
+                    year - 543,
+                    month - 1,
+                    day,
+                    12,
+                    0,
+                    0
+                )
+
+                validateCalendar.set(
+                    java.util.Calendar.MILLISECOND,
+                    0
+                )
+
+                validateCalendar.timeInMillis
+
+            } catch (
+                e: IllegalArgumentException
+            ) {
+
+                android.widget.Toast.makeText(
+                    this,
+                    "วันที่นี้ไม่มีอยู่จริง",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            historySearchDate =
+                "%02d/%02d/%04d".format(
+                    day,
+                    month,
+                    year
+                )
+
+            historyModeText.text =
+                "กำลังแสดงงานวันที่ ${historySearchDate}"
+
+            reloadHistory()
+        }
+
+        yearSearchInput.setOnEditorActionListener {
+            _, _, _ ->
+
+            searchButton.performClick()
+            true
         }
 
         reloadHistory()
