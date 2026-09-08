@@ -6118,13 +6118,55 @@ class MainActivity : Activity() {
                             dp(14)
                         )
 
-                        setBackgroundColor(
-                            android.graphics.Color.rgb(
-                                245,
-                                247,
-                                245
-                            )
-                        )
+                        val cardColor =
+                            when (status) {
+                                "เสร็จแล้ว" ->
+                                    android.graphics.Color.rgb(
+                                        183,
+                                        230,
+                                        196
+                                    )
+
+                                "รอทำงาน" ->
+                                    android.graphics.Color.rgb(
+                                        255,
+                                        226,
+                                        128
+                                    )
+
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.rgb(
+                                        255,
+                                        183,
+                                        183
+                                    )
+
+                                else ->
+                                    android.graphics.Color.rgb(
+                                        245,
+                                        247,
+                                        245
+                                    )
+                            }
+
+                        background =
+                            android.graphics.drawable.GradientDrawable().apply {
+                                setColor(cardColor)
+
+                                cornerRadius =
+                                    dp(14).toFloat()
+
+                                setStroke(
+                                    dp(1),
+                                    android.graphics.Color.rgb(
+                                        215,
+                                        220,
+                                        215
+                                    )
+                                )
+                            }
+
+                        elevation = dp(3).toFloat()
 
                         val params =
                             android.widget.LinearLayout.LayoutParams(
@@ -6219,16 +6261,32 @@ class MainActivity : Activity() {
 
                         background =
                             android.graphics.drawable.GradientDrawable().apply {
+
                                 setColor(
                                     android.graphics.Color.rgb(
                                         0,
-                                        145,
-                                        70
+                                        120,
+                                        55
                                     )
                                 )
+
                                 cornerRadius =
-                                    dp(10).toFloat()
+                                    dp(12).toFloat()
+
+                                setStroke(
+                                    dp(2),
+                                    android.graphics.Color.rgb(
+                                        0,
+                                        80,
+                                        38
+                                    )
+                                )
                             }
+
+                        elevation =
+                            dp(8).toFloat()
+
+                        stateListAnimator = null
 
                         setOnClickListener {
 
