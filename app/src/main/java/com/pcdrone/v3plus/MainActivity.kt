@@ -1569,9 +1569,97 @@ class MainActivity : Activity() {
                 }
             }
 
-            return openingBalance.add(
-                movement
-            )
+            // =============================================
+            // PHASE 2C - JOB INCOME LINKED TO WALLET
+            // =============================================
+
+            val jobLinks =
+                prefs.getStringSet(
+                    "money_manager_job_links",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            val linkedJobIds =
+                jobLinks.mapNotNull { link ->
+
+                    val p =
+                        link.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 2
+                        )
+
+                    val jobId =
+                        p.getOrNull(0)
+                            ?.trim()
+                            .orEmpty()
+
+                    val linkedWalletId =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    if (
+                        jobId.isNotBlank() &&
+                        linkedWalletId == walletId
+                    ) {
+                        jobId
+                    } else {
+                        null
+                    }
+
+                }.toSet()
+
+            var jobIncomeMovement =
+                java.math.BigDecimal.ZERO
+
+            val jobs =
+                prefs.getStringSet(
+                    "flight_jobs",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            jobs.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 9
+                    )
+
+                val jobId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                val total =
+                    parseMoney(
+                        p.getOrNull(6)
+                            ?: "0"
+                    )
+
+                val status =
+                    p.getOrNull(7)
+                        ?.trim()
+                        .orEmpty()
+
+                if (
+                    jobId in linkedJobIds &&
+                    status == "เสร็จแล้ว"
+                ) {
+                    jobIncomeMovement =
+                        jobIncomeMovement.add(
+                            total
+                        )
+                }
+            }
+
+            return openingBalance
+                .add(movement)
+                .add(jobIncomeMovement)
         }
 
         val totalBalance =
@@ -7946,6 +8034,132 @@ class MainActivity : Activity() {
                                     )
                                     .apply()
 
+                                // =====================================
+                                // PHASE 2C - LINK COMPLETED JOB TO WALLET
+                                // =====================================
+
+                                val completedJobId =
+                                    updatedParts
+                                        .getOrNull(0)
+                                        ?.trim()
+                                        .orEmpty()
+
+                                val walletRecords =
+                                    prefs.getStringSet(
+                                        "money_manager_wallets",
+                                        emptySet()
+                                    )?.toList()
+                                        ?: emptyList()
+
+                                val walletPairs =
+                                    walletRecords.mapNotNull { walletRecord ->
+
+                                        val walletParts =
+                                            walletRecord.split(
+                                                "|||",
+                                                ignoreCase = false,
+                                                limit = 5
+                                            )
+
+                                        val walletId =
+                                            walletParts.getOrNull(0)
+                                                ?.trim()
+                                                .orEmpty()
+
+                                        val walletName =
+                                            walletParts.getOrNull(1)
+                                                ?.trim()
+                                                .orEmpty()
+
+                                        if (
+                                            walletId.isBlank() ||
+                                            walletName.isBlank()
+                                        ) {
+                                            null
+                                        } else {
+                                            walletId to walletName
+                                        }
+                                    }.sortedBy {
+                                        it.second
+                                    }
+
+                                if (
+                                    completedJobId.isNotBlank() &&
+                                    walletPairs.isNotEmpty()
+                                ) {
+
+                                    val walletNames =
+                                        walletPairs.map {
+                                            it.second
+                                        }.toTypedArray()
+
+                                    android.app.AlertDialog.Builder(
+                                        this@MainActivity
+                                    )
+                                        .setTitle(
+                                            "รับเงินงานบินเข้ากระเป๋า"
+                                        )
+                                        .setItems(
+                                            walletNames
+                                        ) { _, which ->
+
+                                            val selectedWalletId =
+                                                walletPairs
+                                                    .getOrNull(which)
+                                                    ?.first
+                                                    .orEmpty()
+
+                                            if (
+                                                selectedWalletId.isNotBlank()
+                                            ) {
+
+                                                val links =
+                                                    prefs.getStringSet(
+                                                        "money_manager_job_links",
+                                                        emptySet()
+                                                    )?.toMutableSet()
+                                                        ?: mutableSetOf()
+
+                                                links.removeAll { link ->
+
+                                                    link.split(
+                                                        "|||",
+                                                        ignoreCase = false,
+                                                        limit = 2
+                                                    ).getOrNull(0)
+                                                        ?.trim() ==
+                                                        completedJobId
+                                                }
+
+                                                links.add(
+                                                    completedJobId +
+                                                        "|||" +
+                                                        selectedWalletId
+                                                )
+
+                                                prefs.edit()
+                                                    .putStringSet(
+                                                        "money_manager_job_links",
+                                                        links.toSet()
+                                                    )
+                                                    .apply()
+
+                                                android.widget.Toast
+                                                    .makeText(
+                                                        this@MainActivity,
+                                                        "เชื่อมรายรับงานบินเข้ากระเป๋าแล้ว",
+                                                        android.widget.Toast.LENGTH_SHORT
+                                                    )
+                                                    .show()
+                                            }
+                                        }
+                                        .setNegativeButton(
+                                            "ยังไม่เลือก",
+                                            null
+                                        )
+                                        .show()
+                                }
+
                                 val appointmentCurrent =
                                     prefs.getStringSet(
                                         "job_appointments",
@@ -8052,6 +8266,42 @@ class MainActivity : Activity() {
                                             current
                                         )
                                         .apply()
+
+                                    // PHASE 2C - remove wallet link
+                                    val deletedJobId =
+                                        parts.getOrNull(0)
+                                            ?.trim()
+                                            .orEmpty()
+
+                                    if (
+                                        deletedJobId.isNotBlank()
+                                    ) {
+
+                                        val jobLinks =
+                                            prefs.getStringSet(
+                                                "money_manager_job_links",
+                                                emptySet()
+                                            )?.toMutableSet()
+                                                ?: mutableSetOf()
+
+                                        jobLinks.removeAll { link ->
+
+                                            link.split(
+                                                "|||",
+                                                ignoreCase = false,
+                                                limit = 2
+                                            ).getOrNull(0)
+                                                ?.trim() ==
+                                                deletedJobId
+                                        }
+
+                                        prefs.edit()
+                                            .putStringSet(
+                                                "money_manager_job_links",
+                                                jobLinks.toSet()
+                                            )
+                                            .apply()
+                                    }
 
                                     val appointmentCurrent =
                                         prefs.getStringSet(
