@@ -1,0 +1,1527 @@
+]633;E;echo "===== CUSTOMER STORAGE =====";083c01a7-6f7f-49e0-88cc-2b1ea8c4fe30]633;C===== CUSTOMER STORAGE =====
+105-                if (value.isNullOrBlank()) {
+106-                    java.math.BigDecimal.ZERO
+107-                } else {
+108-                    java.math.BigDecimal(value.trim())
+109-                }
+110-            } catch (_: Exception) {
+111-                java.math.BigDecimal.ZERO
+112-            }
+113-        }
+114-
+115-        // =========================================
+116-        // คำนวณข้อมูลงานบิน
+117-        // =========================================
+118-
+119-        val jobs =
+120:            prefs.getStringSet(
+121-                "flight_jobs",
+122-                emptySet()
+123-            )?.toList() ?: emptyList()
+124-
+125-        var completedJobs = 0
+126-        var waitingJobs = 0
+127-        var totalRai = 0.0
+128-
+129-        var jobIncome =
+130-            java.math.BigDecimal.ZERO
+131-
+132-        jobs.forEach { record ->
+133-
+134-            val parts =
+135-                record.split(
+136-                    "|||",
+137-                    ignoreCase = false,
+138-                    limit = 9
+139-                )
+140-
+141-            if (parts.size >= 8) {
+142-
+143-                val rai =
+144-                    parts.getOrNull(4)
+145-                        ?.toDoubleOrNull() ?: 0.0
+--
+166-                        // ไม่นับ
+167-                    }
+168-
+169-                    else -> {
+170-                        waitingJobs++
+171-                    }
+172-                }
+173-            }
+174-        }
+175-
+176-        // =========================================
+177-        // คำนวณการเงิน
+178-        // =========================================
+179-
+180-        val transactions =
+181:            prefs.getStringSet(
+182-                "finance_transactions",
+183-                emptySet()
+184-            )?.toList() ?: emptyList()
+185-
+186-        var otherIncome =
+187-            java.math.BigDecimal.ZERO
+188-
+189-        var expense =
+190-            java.math.BigDecimal.ZERO
+191-
+192-        transactions.forEach { record ->
+193-
+194-            val parts =
+195-                record.split(
+196-                    "|||",
+197-                    ignoreCase = false,
+198-                    limit = 5
+199-                )
+200-
+201-            if (parts.size >= 4) {
+202-
+203-                val type =
+204-                    parts.getOrNull(1)
+205-                        ?.trim() ?: ""
+206-
+--
+722-                addView(left, lp1)
+723-                addView(right, lp2)
+724-            }
+725-        }
+726-
+727-        content.addView(
+728-            menuRow(
+729-                menuCard(
+730-                    "✈",
+731-                    "งานของฉัน",
+732-                    "จัดการงานบิน",
+733-                    AppRoute.JOBS
+734-                ),
+735-                menuCard(
+736-                    "👤",
+737:                    "ลูกค้า",
+738:                    "ข้อมูลลูกค้า",
+739:                    AppRoute.CUSTOMERS
+740-                )
+741-            )
+742-        )
+743-
+744-        val row2 =
+745-            menuRow(
+746-                menuCard(
+747-                    "฿",
+748-                    "การเงิน",
+749-                    "รายรับ–รายจ่าย",
+750-                    AppRoute.FINANCE
+751-                ),
+752-                menuCard(
+753-                    "☰",
+754-                    "ประวัติงาน",
+755-                    "ดูงานที่ผ่านมา",
+756-                    AppRoute.HISTORY
+757-                )
+758-            )
+759-
+760-        row2.setPadding(
+761-            0,
+762-            dp(12),
+763-            0,
+764-            0
+--
+1618-                     */
+1619-                    val financePrefs =
+1620-                        getSharedPreferences(
+1621-                            "pc_drone_v3_data",
+1622-                            MODE_PRIVATE
+1623-                        )
+1624-
+1625-
+1626-                    // FINANCE_SCHEMA:
+1627-                    // 0=timestamp
+1628-                    // 1=typeCode
+1629-                    // 2=category
+1630-                    // 3=amount
+1631-                    // 4=note
+1632-                    val rawSet: Set<String> =
+1633:                        financePrefs.getStringSet(
+1634-                            "finance_transactions",
+1635-                            emptySet()
+1636-                        )?.toSet()
+1637-                            ?: emptySet()
+1638-
+1639-                    val all =
+1640-                        rawSet.mapNotNull {
+1641-                            parseTx(it)
+1642-                        }.sortedBy {
+1643-                            it.time
+1644-                        }
+1645-
+1646-                    /*
+1647-                     * รวมข้อมูลการเงิน + รายได้จากงานบิน
+1648-                     *
+1649-                     * flight_jobs schema:
+1650-                     * 0 timestamp
+1651:                     * 1 customer
+1652-                     * 2 service
+1653-                     * 3 location
+1654-                     * 4 rai
+1655-                     * 5 rate
+1656-                     * 6 total
+1657-                     * 7 status
+1658-                     * 8 note
+1659-                     */
+1660-
+1661-                    data class ReportRow(
+1662-                        val time: Long,
+1663-                        val item: String,
+1664-                        val income: Double,
+1665-                        val expense: Double
+1666-                    )
+1667-
+1668-                    val financeRows =
+1669-                        all.map { tx ->
+1670-
+1671-                            val income =
+1672-                                if (isIncome(tx.type)) {
+1673-                                    tx.amount
+1674-                                } else {
+1675-                                    0.0
+1676-                                }
+--
+1686-                                if (tx.note.isNotBlank()) {
+1687-                                    tx.item + " - " + tx.note
+1688-                                } else {
+1689-                                    tx.item
+1690-                                }
+1691-
+1692-                            ReportRow(
+1693-                                time = tx.time,
+1694-                                item = itemText.ifBlank { "-" },
+1695-                                income = income,
+1696-                                expense = expense
+1697-                            )
+1698-                        }
+1699-
+1700-                    val rawJobs =
+1701:                        financePrefs.getStringSet(
+1702-                            "flight_jobs",
+1703-                            emptySet()
+1704-                        )?.toSet()
+1705-                            ?: emptySet()
+1706-
+1707-                    val flightRows =
+1708-                        rawJobs.mapNotNull { record ->
+1709-
+1710-                            val parts =
+1711-                                record.split(
+1712-                                    "|||",
+1713-                                    ignoreCase = false,
+1714-                                    limit = 9
+1715-                                )
+1716-
+1717-                            if (parts.size < 8) {
+1718-                                null
+1719-                            } else {
+1720-
+1721-                                val time =
+1722-                                    parts.getOrNull(0)
+1723-                                        ?.toLongOrNull()
+1724-
+1725:                                val customer =
+1726-                                    parts.getOrNull(1)
+1727-                                        ?.trim()
+1728-                                        .orEmpty()
+1729-
+1730-                                val service =
+1731-                                    parts.getOrNull(2)
+1732-                                        ?.trim()
+1733-                                        .orEmpty()
+1734-
+1735-                                val total =
+1736-                                    parts.getOrNull(6)
+1737-                                        ?.trim()
+1738-                                        ?.toDoubleOrNull()
+1739-
+1740-                                val status =
+1741-                                    parts.getOrNull(7)
+1742-                                        ?.trim()
+1743-                                        .orEmpty()
+1744-
+1745-                                if (
+1746-                                    time == null ||
+1747-                                    total == null ||
+1748-                                    total < 0.0 ||
+1749-                                    status != "เสร็จแล้ว"
+1750-                                ) {
+1751-                                    null
+1752-                                } else {
+1753-
+1754-                                    val description =
+1755-                                        buildString {
+1756-
+1757-                                            append("งานบิน")
+1758-
+1759:                                            if (customer.isNotBlank()) {
+1760-                                                append(" - ")
+1761:                                                append(customer)
+1762-                                            }
+1763-
+1764-                                            if (service.isNotBlank()) {
+1765-                                                append(" - ")
+1766-                                                append(service)
+1767-                                            }
+1768-                                        }
+1769-
+1770-                                    ReportRow(
+1771-                                        time = time,
+1772-                                        item = description,
+1773-                                        income = total,
+1774-                                        expense = 0.0
+1775-                                    )
+1776-                                }
+1777-                            }
+1778-                        }
+1779-
+1780-                    /*
+1781-                     * รวมทุกการเคลื่อนไหวทางการเงิน
+1782-                     * แล้วเรียงตามเวลา
+1783-                     */
+1784-                    val reportRows =
+1785-                        (financeRows + flightRows)
+1786-                            .sortedBy { it.time }
+--
+4324-        if (route == AppRoute.FINANCE) {
+4325-            showFinance()
+4326-            return
+4327-        }
+4328-
+4329-        if (route == AppRoute.HISTORY) {
+4330-            showJobHistory()
+4331-            return
+4332-        }
+4333-
+4334-        if (route == AppRoute.JOBS) {
+4335-            showJobs()
+4336-            return
+4337-        }
+4338-
+4339:        if (route == AppRoute.CUSTOMERS) {
+4340:            showCustomers()
+4341-            return
+4342-        }
+4343-        val root = LinearLayout(this).apply {
+4344-            orientation = LinearLayout.VERTICAL
+4345-            gravity = Gravity.CENTER
+4346-            setPadding(dp(24), dp(24), dp(24), dp(24))
+4347-            setBackgroundColor(white)
+4348-        }
+4349-
+4350-        root.addView(TextView(this).apply {
+4351-            text = route.title
+4352-            textSize = 28f
+4353-            setTextColor(greenDark)
+4354-            gravity = Gravity.CENTER
+4355-            setTypeface(typeface, android.graphics.Typeface.BOLD)
+4356-        })
+4357-
+4358-        root.addView(TextView(this).apply {
+4359-            text = "กำลังเตรียมระบบใน Phase ถัดไป"
+4360-            textSize = 17f
+4361-            setTextColor(black)
+4362-            gravity = Gravity.CENTER
+4363-            setPadding(0, dp(16), 0, dp(28))
+4364-        })
+4365-
+--
+4410-                text = title
+4411-                textSize = 16f
+4412-                setTextColor(black)
+4413-            })
+4414-
+4415-            addView(TextView(this@MainActivity).apply {
+4416-                text = value
+4417-                textSize = 24f
+4418-                setTextColor(greenDark)
+4419-                setTypeface(typeface, android.graphics.Typeface.BOLD)
+4420-            })
+4421-        }
+4422-    }
+4423-
+4424-
+4425:    private fun showCustomers() {
+4426-
+4427-        val prefs = getSharedPreferences(
+4428-            "pc_drone_v3_data",
+4429-            android.content.Context.MODE_PRIVATE
+4430-        )
+4431-
+4432-        val root = android.widget.LinearLayout(this).apply {
+4433-            orientation = android.widget.LinearLayout.VERTICAL
+4434-            setPadding(dp(20), dp(8), dp(20), dp(28))
+4435-            setBackgroundColor(android.graphics.Color.WHITE)
+4436-        }
+4437-
+4438-        root.addView(createBackButton())
+4439-
+4440-        root.addView(
+4441-            android.widget.TextView(this).apply {
+4442:                text = "ประวัติลูกค้า"
+4443-                textSize = 28f
+4444-                setTextColor(android.graphics.Color.BLACK)
+4445-                setTypeface(
+4446-                    typeface,
+4447-                    android.graphics.Typeface.BOLD
+4448-                )
+4449-            }
+4450-        )
+4451-
+4452-        root.addView(
+4453-            android.widget.TextView(this).apply {
+4454-                text = "ข้อมูลจะถูกเก็บไว้จนกว่าจะกดแก้ไขหรือลบ"
+4455-                textSize = 15f
+4456-                setTextColor(android.graphics.Color.DKGRAY)
+4457-                setPadding(0, dp(5), 0, dp(16))
+4458-            }
+4459-        )
+4460-
+4461-        val nameInput =
+4462-            android.widget.EditText(this).apply {
+4463:                hint = "ชื่อลูกค้า"
+4464-                textSize = 17f
+4465-                setTextColor(android.graphics.Color.BLACK)
+4466-                setHintTextColor(android.graphics.Color.GRAY)
+4467-            }
+4468-
+4469-        val phoneInput =
+4470-            android.widget.EditText(this).apply {
+4471-                hint = "เบอร์โทร"
+4472-                textSize = 17f
+4473-                inputType =
+4474-                    android.text.InputType.TYPE_CLASS_PHONE
+4475-                setTextColor(android.graphics.Color.BLACK)
+4476-                setHintTextColor(android.graphics.Color.GRAY)
+4477-            }
+4478-
+4479-        val areaInput =
+4480-            android.widget.EditText(this).apply {
+4481-                hint = "พื้นที่ / สวน / ตำบล / อำเภอ"
+4482-                textSize = 17f
+4483-                setTextColor(android.graphics.Color.BLACK)
+4484-                setHintTextColor(android.graphics.Color.GRAY)
+4485-            }
+4486-
+4487-        root.addView(nameInput)
+4488-        root.addView(phoneInput)
+4489-        root.addView(areaInput)
+4490-
+4491:        val customerList =
+4492-            android.widget.LinearLayout(this).apply {
+4493-                orientation =
+4494-                    android.widget.LinearLayout.VERTICAL
+4495-                setPadding(0, dp(18), 0, 0)
+4496-            }
+4497-
+4498-        fun reloadCustomers() {
+4499-
+4500:            customerList.removeAllViews()
+4501-
+4502-            val records =
+4503:                prefs.getStringSet(
+4504:                    "customers",
+4505-                    emptySet()
+4506-                )?.toList()
+4507-                    ?: emptyList()
+4508-
+4509-            val sorted =
+4510-                records.sortedByDescending { record ->
+4511-                    record.split(
+4512-                        "|||",
+4513-                        ignoreCase = false,
+4514-                        limit = 4
+4515-                    ).getOrNull(0)
+4516-                        ?.toLongOrNull()
+4517-                        ?: 0L
+4518-                }
+4519-
+4520-            if (sorted.isEmpty()) {
+4521-
+4522:                customerList.addView(
+4523-                    android.widget.TextView(
+4524-                        this@MainActivity
+4525-                    ).apply {
+4526-
+4527:                        text = "ยังไม่มีประวัติลูกค้า"
+4528-                        textSize = 17f
+4529-                        setTextColor(
+4530-                            android.graphics.Color.GRAY
+4531-                        )
+4532-                        setPadding(
+4533-                            dp(4),
+4534-                            dp(20),
+4535-                            dp(4),
+4536-                            dp(20)
+4537-                        )
+4538-                    }
+4539-                )
+4540-
+4541-                return
+4542-            }
+4543-
+4544-            sorted.forEach { record ->
+4545-
+4546-                val parts =
+4547-                    record.split(
+4548-                        "|||",
+4549-                        ignoreCase = false,
+4550-                        limit = 4
+4551-                    )
+4552-
+--
+4684-                                    orientation =
+4685-                                        android.widget.LinearLayout.VERTICAL
+4686-
+4687-                                    setPadding(
+4688-                                        dp(18),
+4689-                                        dp(8),
+4690-                                        dp(18),
+4691-                                        dp(4)
+4692-                                    )
+4693-                                }
+4694-
+4695-                            val editName =
+4696-                                android.widget.EditText(
+4697-                                    this@MainActivity
+4698-                                ).apply {
+4699:                                    hint = "ชื่อลูกค้า"
+4700-                                    setText(name)
+4701-                                }
+4702-
+4703-                            val editPhone =
+4704-                                android.widget.EditText(
+4705-                                    this@MainActivity
+4706-                                ).apply {
+
+===== BACKUP ACTIVITY =====
+package com.pcdrone.v3plus
+
+import android.app.Activity
+import android.graphics.Color
+import android.os.Bundle
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+
+class BackupActivity : Activity() {
+
+    private fun dp(value: Int): Int =
+        (value * resources.displayMetrics.density)
+            .toInt()
+
+    @Deprecated("ใช้เพื่อรองรับโครงสร้าง Activity ปัจจุบัน")
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: android.content.Intent?
+    ) {
+
+        super.onActivityResult(
+            requestCode,
+            resultCode,
+            data
+        )
+
+        if (
+            requestCode != 8401 ||
+            resultCode != RESULT_OK
+        ) {
+            return
+        }
+
+        val uri =
+            data?.data
+                ?: return
+
+        try {
+
+            val jsonText =
+                contentResolver
+                    .openInputStream(
+                        uri
+                    )
+                    ?.bufferedReader(
+                        Charsets.UTF_8
+                    )
+                    ?.use {
+                        it.readText()
+                    }
+                    ?: throw IllegalArgumentException(
+                        "เปิดไฟล์ไม่ได้"
+                    )
+
+            android.app.AlertDialog.Builder(
+                this
+            )
+                .setTitle(
+                    "ยืนยันกู้คืนข้อมูล"
+                )
+                .setMessage(
+                    "ข้อมูลในแอปปัจจุบันจะถูกแทนที่ด้วยข้อมูลจากไฟล์สำรอง\\n\\nระบบจะตรวจสอบไฟล์ก่อน และสร้างสำเนาข้อมูลปัจจุบันไว้เพื่อความปลอดภัย"
+                )
+                .setNegativeButton(
+                    "ยกเลิก",
+                    null
+                )
+                .setPositiveButton(
+                    "กู้คืน"
+                ) { _, _ ->
+
+                    try {
+
+                        BackupManager
+                            .restoreBackup(
+                                this,
+                                jsonText
+                            )
+
+                        Toast.makeText(
+                            this,
+                            "กู้คืนข้อมูลสำเร็จ",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        val intent =
+                            android.content.Intent(
+                                this,
+                                MainActivity::class.java
+                            ).apply {
+
+                                addFlags(
+                                    android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                        android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                                )
+                            }
+
+                        startActivity(
+                            intent
+                        )
+
+                        finish()
+
+                    } catch (
+                        e: Exception
+                    ) {
+
+                        Toast.makeText(
+                            this,
+                            "กู้คืนไม่สำเร็จ: " +
+                                (
+                                    e.message
+                                        ?: "ไฟล์ไม่ถูกต้อง"
+                                    ),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+                .show()
+
+        } catch (
+            e: Exception
+        ) {
+
+            Toast.makeText(
+                this,
+                "อ่านไฟล์ไม่สำเร็จ: " +
+                    (
+                        e.message
+                            ?: "ไฟล์ไม่ถูกต้อง"
+                        ),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+
+
+    override fun onCreate(
+        savedInstanceState: Bundle?
+    ) {
+
+        super.onCreate(savedInstanceState)
+
+        val dark =
+            Color.rgb(17, 17, 17)
+
+        val green =
+            Color.rgb(0, 145, 70)
+
+        val root =
+            LinearLayout(this).apply {
+
+                orientation =
+                    LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(20),
+                    dp(24),
+                    dp(20),
+                    dp(30)
+                )
+
+                setBackgroundColor(
+                    Color.WHITE
+                )
+            }
+
+        root.addView(
+            TextView(this).apply {
+
+                text = "‹  กลับ"
+
+                textSize = 17f
+
+                setTextColor(green)
+
+                setPadding(
+                    0,
+                    dp(10),
+                    0,
+                    dp(14)
+                )
+
+                setOnClickListener {
+                    finish()
+                }
+            }
+        )
+
+        root.addView(
+            TextView(this).apply {
+
+                text =
+                    "สำรองข้อมูล"
+
+                textSize = 28f
+
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            TextView(this).apply {
+
+                text =
+                    "เก็บข้อมูลลูกค้า งานบิน นัดหมาย การเงิน และการตั้งค่าของ PC Drone ไว้ในไฟล์เดียว"
+
+                textSize = 15f
+
+                setTextColor(
+                    Color.DKGRAY
+                )
+
+                setPadding(
+                    0,
+                    dp(8),
+                    0,
+                    dp(24)
+                )
+            }
+        )
+
+        val backupButton =
+            Button(this).apply {
+
+                text =
+                    "สร้างและแชร์ไฟล์สำรอง"
+
+                textSize = 17f
+
+                setTextColor(
+                    Color.WHITE
+                )
+
+                setBackgroundColor(
+                    green
+                )
+
+                setOnClickListener {
+
+                    try {
+
+                        BackupManager
+                            .shareBackup(
+                                this@BackupActivity
+                            )
+
+                    } catch (
+                        e: Exception
+                    ) {
+
+                        Toast.makeText(
+                            this@BackupActivity,
+                            "สำรองข้อมูลไม่สำเร็จ: " +
+                                (e.message ?: "ไม่ทราบสาเหตุ"),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+        root.addView(
+            backupButton,
+            LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(58)
+            )
+        )
+
+        val restoreButton =
+            Button(this).apply {
+
+                text =
+                    "กู้คืนจากไฟล์สำรอง"
+
+                textSize = 17f
+
+                setTextColor(
+                    Color.WHITE
+                )
+
+                setBackgroundColor(
+                    Color.rgb(
+                        65,
+                        65,
+                        65
+                    )
+                )
+
+                setOnClickListener {
+
+                    val intent =
+                        android.content.Intent(
+                            android.content.Intent.ACTION_OPEN_DOCUMENT
+                        ).apply {
+
+                            addCategory(
+                                android.content.Intent.CATEGORY_OPENABLE
+                            )
+
+                            type =
+                                "application/octet-stream"
+
+                            putExtra(
+                                android.content.Intent.EXTRA_MIME_TYPES,
+                                arrayOf(
+                                    "application/octet-stream",
+                                    "application/json",
+                                    "text/plain"
+
+===== BACKUP MANAGER =====
+package com.pcdrone.v3plus
+
+import android.content.Context
+import android.net.Uri
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+
+object BackupManager {
+
+    private const val BACKUP_VERSION = 1
+
+    private val preferenceNames = listOf(
+        "pc_drone_v3_data",
+        "pc_drone_settings"
+    )
+
+    fun createBackup(context: Context): File {
+
+        val root = JSONObject()
+        root.put("format", "PC_DRONE_BACKUP")
+        root.put("version", BACKUP_VERSION)
+        root.put("createdAt", System.currentTimeMillis())
+
+        val preferencesObject = JSONObject()
+
+        preferenceNames.forEach { prefName ->
+
+            val prefs =
+                context.getSharedPreferences(
+                    prefName,
+                    Context.MODE_PRIVATE
+                )
+
+            val prefObject = JSONObject()
+
+            prefs.all.forEach { (key, value) ->
+
+                val item = JSONObject()
+
+                when (value) {
+
+                    is String -> {
+                        item.put("type", "string")
+                        item.put("value", value)
+                    }
+
+                    is Boolean -> {
+                        item.put("type", "boolean")
+                        item.put("value", value)
+                    }
+
+                    is Int -> {
+                        item.put("type", "int")
+                        item.put("value", value)
+                    }
+
+                    is Long -> {
+                        item.put("type", "long")
+                        item.put("value", value)
+                    }
+
+                    is Float -> {
+                        item.put("type", "float")
+                        item.put("value", value.toDouble())
+                    }
+
+                    is Set<*> -> {
+                        item.put("type", "string_set")
+
+                        val array = JSONArray()
+
+                        value
+                            .filterIsInstance<String>()
+                            .sorted()
+                            .forEach {
+                                array.put(it)
+                            }
+
+                        item.put("value", array)
+                    }
+
+                    else -> return@forEach
+                }
+
+                prefObject.put(key, item)
+            }
+
+            preferencesObject.put(
+                prefName,
+                prefObject
+            )
+        }
+
+        root.put(
+            "preferences",
+            preferencesObject
+        )
+
+        val dir =
+            File(
+                context.cacheDir,
+                "pc_drone_backups"
+            ).apply {
+                mkdirs()
+            }
+
+        val formatter =
+            SimpleDateFormat(
+                "yyyyMMdd-HHmmss",
+                Locale.US
+            ).apply {
+                timeZone =
+                    TimeZone.getTimeZone(
+                        "Asia/Bangkok"
+                    )
+            }
+
+        val file =
+            File(
+                dir,
+                "PC-Drone-Backup-${
+                    formatter.format(Date())
+                }.pcdrone"
+            )
+
+        file.writeText(
+            root.toString(2),
+            Charsets.UTF_8
+        )
+
+
+        return file
+    }
+
+    fun restoreBackup(
+        context: Context,
+        jsonText: String
+    ) {
+
+        val root =
+            JSONObject(jsonText)
+
+        if (
+            root.optString("format") !=
+            "PC_DRONE_BACKUP"
+        ) {
+            throw IllegalArgumentException(
+                "ไฟล์นี้ไม่ใช่ Backup ของ PC Drone"
+            )
+        }
+
+        val version =
+            root.optInt(
+                "version",
+                -1
+            )
+
+        if (
+            version != BACKUP_VERSION
+        ) {
+            throw IllegalArgumentException(
+                "เวอร์ชันไฟล์ Backup ไม่รองรับ"
+            )
+        }
+
+        val preferences =
+            root.optJSONObject(
+                "preferences"
+            )
+                ?: throw IllegalArgumentException(
+                    "ไม่พบข้อมูล preferences"
+                )
+
+        /*
+         * ตรวจทุกอย่างก่อนแตะข้อมูลจริง
+         */
+        val validated =
+            mutableMapOf<
+                String,
+                MutableMap<String, Pair<String, Any>>
+            >()
+
+        preferenceNames.forEach { prefName ->
+
+            val prefObject =
+                preferences.optJSONObject(
+                    prefName
+                )
+                    ?: throw IllegalArgumentException(
+                        "Backup ขาดข้อมูล $prefName"
+                    )
+
+            val values =
+                mutableMapOf<
+                    String,
+                    Pair<String, Any>
+                >()
+
+            val keys =
+                prefObject.keys()
+
+            while (
+                keys.hasNext()
+            ) {
+
+                val key =
+                    keys.next()
+
+                val item =
+                    prefObject.optJSONObject(
+                        key
+                    )
+                        ?: throw IllegalArgumentException(
+                            "ข้อมูล $key ไม่ถูกต้อง"
+                        )
+
+                val type =
+                    item.optString(
+                        "type"
+                    )
+
+                if (
+                    !item.has("value")
+                ) {
+                    throw IllegalArgumentException(
+                        "ข้อมูล $key ไม่มี value"
+                    )
+                }
+
+                val value: Any =
+                    when (type) {
+
+                        "string" ->
+                            item.getString(
+                                "value"
+                            )
+
+                        "boolean" ->
+                            item.getBoolean(
+                                "value"
+                            )
+
+                        "int" ->
+                            item.getInt(
+                                "value"
+                            )
+
+                        "long" ->
+                            item.getLong(
+                                "value"
+                            )
+
+                        "float" ->
+                            item.getDouble(
+                                "value"
+                            ).toFloat()
+
+                        "string_set" -> {
+
+                            val array =
+                                item.getJSONArray(
+                                    "value"
+                                )
+
+                            val set =
+                                mutableSetOf<String>()
+
+                            for (
+                                i in 0 until
+                                    array.length()
+                            ) {
+
+                                val element =
+                                    array.get(i)
+
+                                if (
+                                    element !is String
+                                ) {
+                                    throw IllegalArgumentException(
+                                        "ข้อมูล $key มีค่าที่ไม่ใช่ข้อความ"
+                                    )
+                                }
+
+                                set.add(
+                                    element
+                                )
+                            }
+
+                            set
+                        }
+
+                        else ->
+                            throw IllegalArgumentException(
+                                "ชนิดข้อมูล $type ไม่รองรับ"
+                            )
+                    }
+
+                values[key] =
+                    type to value
+            }
+
+            validated[prefName] =
+                values
+        }
+
+        /*
+         * ผ่าน validation แล้วเท่านั้น
+         * จึง snapshot ข้อมูลเดิมไว้ก่อน Restore
+         */
+        val safetySnapshot =
+            createBackup(
+                context
+            )
+
+        try {
+
+            preferenceNames.forEach { prefName ->
+
+                val prefs =
+                    context.getSharedPreferences(
+                        prefName,
+                        Context.MODE_PRIVATE
+                    )
+
+                val editor =
+                    prefs.edit()
+                        .clear()
+
+                validated[
+                    prefName
+                ]!!.forEach {
+                    (key, pair) ->
+
+                    val type =
+                        pair.first
+
+                    val value =
+                        pair.second
+
+                    when (type) {
+
+                        "string" ->
+                            editor.putString(
+                                key,
+                                value as String
+                            )
+
+                        "boolean" ->
+                            editor.putBoolean(
+                                key,
+                                value as Boolean
+                            )
+
+                        "int" ->
+                            editor.putInt(
+                                key,
+                                value as Int
+                            )
+
+                        "long" ->
+                            editor.putLong(
+                                key,
+                                value as Long
+                            )
+
+                        "float" ->
+                            editor.putFloat(
+                                key,
+                                value as Float
+                            )
+
+                        "string_set" -> {
+                            @Suppress("UNCHECKED_CAST")
+                            editor.putStringSet(
+                                key,
+                                value as Set<String>
+                            )
+                        }
+                    }
+                }
+
+                if (
+                    !editor.commit()
+                ) {
+                    throw IllegalStateException(
+                        "เขียนข้อมูล $prefName ไม่สำเร็จ"
+                    )
+                }
+            }
+
+        } catch (
+            e: Exception
+        ) {
+
+            /*
+             * ถ้า Restore มีปัญหาระหว่างทาง
+             * ย้อนกลับจาก snapshot เดิม
+             */
+            try {
+
+                restoreBackupInternal(
+                    context,
+                    safetySnapshot.readText(
+                        Charsets.UTF_8
+                    )
+                )
+
+            } catch (
+                _: Exception
+            ) {
+            }
+
+            throw e
+        }
+    }
+
+
+    private fun restoreBackupInternal(
+        context: Context,
+        jsonText: String
+    ) {
+
+        val root =
+            JSONObject(jsonText)
+
+        val preferences =
+            root.getJSONObject(
+                "preferences"
+            )
+
+        preferenceNames.forEach { prefName ->
+
+            val prefObject =
+                preferences.getJSONObject(
+                    prefName
+                )
+
+            val editor =
+                context.getSharedPreferences(
+                    prefName,
+                    Context.MODE_PRIVATE
+                )
+                    .edit()
+                    .clear()
+
+            val keys =
+                prefObject.keys()
+
+            while (
+                keys.hasNext()
+            ) {
+
+                val key =
+                    keys.next()
+
+                val item =
+                    prefObject.getJSONObject(
+                        key
+                    )
+
+                when (
+                    item.getString(
+                        "type"
+                    )
+                ) {
+
+                    "string" ->
+                        editor.putString(
+                            key,
+                            item.getString(
+                                "value"
+                            )
+                        )
+
+                    "boolean" ->
+                        editor.putBoolean(
+                            key,
+                            item.getBoolean(
+                                "value"
+                            )
+                        )
+
+                    "int" ->
+                        editor.putInt(
+                            key,
+                            item.getInt(
+                                "value"
+                            )
+                        )
+
+                    "long" ->
+                        editor.putLong(
+                            key,
+                            item.getLong(
+                                "value"
+                            )
+                        )
+
+                    "float" ->
+                        editor.putFloat(
+                            key,
+                            item.getDouble(
+                                "value"
+                            ).toFloat()
+                        )
+
+                    "string_set" -> {
+
+                        val array =
+                            item.getJSONArray(
+                                "value"
+                            )
+
+                        val set =
+                            mutableSetOf<String>()
+
+===== BACKUP PROVIDER =====
+package com.pcdrone.v3plus
+
+import android.content.ContentProvider
+import android.content.ContentValues
+import android.database.Cursor
+import android.database.MatrixCursor
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import android.provider.OpenableColumns
+import java.io.File
+
+class BackupFileProvider : ContentProvider() {
+
+    override fun onCreate(): Boolean = true
+
+    private fun resolveFile(uri: Uri): File? {
+
+        val name =
+            uri.lastPathSegment
+                ?.replace("/", "")
+                ?.replace("\\", "")
+                ?: return null
+
+        val dir =
+            File(
+                context?.cacheDir,
+                "pc_drone_backups"
+            )
+
+        val file =
+            File(
+                dir,
+                name
+            )
+
+        return if (
+            file.exists() &&
+            file.isFile
+        ) {
+            file
+        } else {
+            null
+        }
+    }
+
+    override fun getType(uri: Uri): String =
+        "application/octet-stream"
+
+    override fun openFile(
+        uri: Uri,
+        mode: String
+    ): ParcelFileDescriptor {
+
+        val file =
+            resolveFile(uri)
+                ?: throw java.io.FileNotFoundException(
+                    uri.toString()
+                )
+
+        return ParcelFileDescriptor.open(
+            file,
+            ParcelFileDescriptor.MODE_READ_ONLY
+        )
+    }
+
+    override fun query(
+        uri: Uri,
+        projection: Array<out String>?,
+        selection: String?,
+        selectionArgs: Array<out String>?,
+        sortOrder: String?
+    ): Cursor? {
+
+        val file =
+            resolveFile(uri)
+                ?: return null
+
+        val columns =
+            projection
+                ?: arrayOf(
+                    OpenableColumns.DISPLAY_NAME,
+                    OpenableColumns.SIZE
+                )
+
+        val cursor =
+            MatrixCursor(columns)
+
+        val row =
+            cursor.newRow()
+
+        columns.forEach { column ->
+
+            when (column) {
+
+                OpenableColumns.DISPLAY_NAME ->
+                    row.add(file.name)
+
+                OpenableColumns.SIZE ->
+                    row.add(file.length())
+
+                else ->
+                    row.add(null)
+            }
+        }
+
+        return cursor
+    }
+
+    override fun insert(
+        uri: Uri,
+        values: ContentValues?
+    ): Uri? = null
+
+    override fun delete(
+        uri: Uri,
+        selection: String?,
+        selectionArgs: Array<out String>?
+    ): Int = 0
+
+    override fun update(
+        uri: Uri,
+        values: ContentValues?,
+        selection: String?,
+        selectionArgs: Array<out String>?
+    ): Int = 0
+}
+
+===== MANIFEST BACKUP SECTION =====
+6-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+7-
+8-    <application
+9-        android:allowBackup="true"
+10-        android:label="@string/app_name"
+11-        android:supportsRtl="true"
+12-        android:theme="@style/Theme.PCDrone">
+13-
+14-
+15-        <activity
+16:            android:name=".BackupActivity"
+17-            android:exported="false" />
+18-
+19-        <activity
+20-            android:name=".HistoryReportActivity"
+21-            android:exported="false" />
+22-
+23-        <activity
+24-            android:name=".MainActivity"
+25-            android:exported="true">
+26-
+27-            <intent-filter>
+28-                <action android:name="android.intent.action.MAIN" />
+29-                <category android:name="android.intent.category.LAUNCHER" />
+30-            </intent-filter>
+31-
+32-        </activity>
+33-
+34-    
+35-        <receiver
+36-            android:name=".JobNotificationReceiver"
+37-            android:exported="false" />
+38-
+39-
+40-        <provider
+41:            android:name=".BackupFileProvider"
+42:            android:authorities="${applicationId}.backup-files"
+43-            android:exported="false"
+44-            android:grantUriPermissions="true" />
+45-
+46-        <provider
+47-            android:name=".FinanceReportProvider"
+48-            android:authorities="${applicationId}.finance-reports"
+49-            android:exported="false"
+50-            android:grantUriPermissions="true" />
+51-
+52-        <provider
+53-            android:name=".HistoryReportProvider"
+54-            android:authorities="${applicationId}.history-reports"
+55-            android:exported="false"
+56-            android:grantUriPermissions="true" />
+57-
