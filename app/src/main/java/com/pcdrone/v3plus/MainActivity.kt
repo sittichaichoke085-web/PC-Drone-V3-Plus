@@ -6183,6 +6183,61 @@ class MainActivity : Activity() {
 
         root.addView(searchRow)
 
+        val refreshHistoryButton =
+            android.widget.Button(this).apply {
+
+                text = "↻ กลับงานล่าสุด"
+                isAllCaps = false
+                textSize = 16f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+
+                        setColor(
+                            android.graphics.Color.rgb(
+                                65,
+                                65,
+                                65
+                            )
+                        )
+
+                        cornerRadius =
+                            dp(12).toFloat()
+
+                        setStroke(
+                            dp(2),
+                            android.graphics.Color.rgb(
+                                30,
+                                30,
+                                30
+                            )
+                        )
+                    }
+
+                elevation = dp(5).toFloat()
+
+                setPadding(
+                    dp(16),
+                    dp(8),
+                    dp(16),
+                    dp(8)
+                )
+            }
+
+        root.addView(
+            refreshHistoryButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                bottomMargin = dp(12)
+            }
+        )
+
         val historyModeText =
             android.widget.TextView(this).apply {
                 text =
@@ -6913,6 +6968,40 @@ class MainActivity : Activity() {
                     }
                 )
             }
+        }
+
+        refreshHistoryButton.setOnClickListener {
+
+            daySearchInput.text.clear()
+            monthSearchInput.text.clear()
+            yearSearchInput.text.clear()
+
+            historySearchDate = null
+
+            historyModeText.text =
+                "แสดง 10 งานล่าสุด • ค้นหาวันที่เพื่อดูงานย้อนหลัง"
+
+            daySearchInput.clearFocus()
+            monthSearchInput.clearFocus()
+            yearSearchInput.clearFocus()
+
+            val inputMethodManager =
+                getSystemService(
+                    android.content.Context.INPUT_METHOD_SERVICE
+                ) as android.view.inputmethod.InputMethodManager
+
+            inputMethodManager.hideSoftInputFromWindow(
+                refreshHistoryButton.windowToken,
+                0
+            )
+
+            reloadHistory()
+
+            android.widget.Toast.makeText(
+                this,
+                "กลับมาแสดง 10 งานล่าสุดแล้ว",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
         }
 
         searchButton.setOnClickListener {
