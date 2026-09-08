@@ -1,0 +1,553 @@
+// PC_DRONE_MONTHLY_EXPENSE_REPORT
+    private fun showMonthlyExpenseReport() {
+
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val dark = android.graphics.Color.rgb(17, 17, 17)
+        val pageBg = android.graphics.Color.rgb(245, 248, 246)
+        val red = android.graphics.Color.rgb(180, 35, 35)
+        val orange = android.graphics.Color.rgb(239, 108, 0)
+
+        val monthlyMoneyFormat =
+            java.text.NumberFormat.getNumberInstance(
+                java.util.Locale("th", "TH")
+            ).apply {
+                minimumFractionDigits = 2
+                maximumFractionDigits = 2
+            }
+
+        fun rounded(
+            color: Int,
+            radius: Int
+        ): android.graphics.drawable.GradientDrawable {
+            return android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+                setColor(color)
+                cornerRadius = dp(radius).toFloat()
+            }
+        }
+
+        val scroll = android.widget.ScrollView(this).apply {
+            setBackgroundColor(pageBg)
+        }
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(16), dp(24), dp(16), dp(32))
+        }
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "รายจ่ายต่อเดือน"
+                textSize = 26f
+                setTextColor(dark)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+            }
+        )
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP1
+        fun createDateInput(
+            hintText: String,
+            maxLength: Int
+        ) = android.widget.EditText(this).apply {
+            hint = hintText
+            textSize = 14f
+            isSingleLine = true
+            gravity = android.view.Gravity.CENTER
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            filters = arrayOf(
+                android.text.InputFilter.LengthFilter(maxLength)
+            )
+        }
+
+        val cal = java.util.Calendar.getInstance()
+
+        val firstDay = cal.clone() as java.util.Calendar
+        firstDay.set(java.util.Calendar.DAY_OF_MONTH, 1)
+        firstDay.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        firstDay.set(java.util.Calendar.MINUTE, 0)
+        firstDay.set(java.util.Calendar.SECOND, 0)
+        firstDay.set(java.util.Calendar.MILLISECOND, 0)
+
+        val lastDay = cal.clone() as java.util.Calendar
+        lastDay.set(
+            java.util.Calendar.DAY_OF_MONTH,
+            lastDay.getActualMaximum(java.util.Calendar.DAY_OF_MONTH)
+        )
+        lastDay.set(java.util.Calendar.HOUR_OF_DAY, 23)
+        lastDay.set(java.util.Calendar.MINUTE, 59)
+        lastDay.set(java.util.Calendar.SECOND, 59)
+        lastDay.set(java.util.Calendar.MILLISECOND, 999)
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP2
+        val fromDay = createDateInput("วัน", 2)
+        val fromMonth = createDateInput("เดือน", 2)
+        val fromYear = createDateInput("ปี", 4)
+
+        val toDay = createDateInput("วัน", 2)
+        val toMonth = createDateInput("เดือน", 2)
+        val toYear = createDateInput("ปี", 4)
+
+        fromDay.setText(
+            "%02d".format(firstDay.get(java.util.Calendar.DAY_OF_MONTH))
+        )
+        fromMonth.setText(
+            "%02d".format(firstDay.get(java.util.Calendar.MONTH) + 1)
+        )
+        fromYear.setText(
+            firstDay.get(java.util.Calendar.YEAR).toString()
+        )
+
+        toDay.setText(
+            "%02d".format(lastDay.get(java.util.Calendar.DAY_OF_MONTH))
+        )
+        toMonth.setText(
+            "%02d".format(lastDay.get(java.util.Calendar.MONTH) + 1)
+        )
+        toYear.setText(
+            lastDay.get(java.util.Calendar.YEAR).toString()
+        )
+
+        val dateOnly =
+            java.text.SimpleDateFormat(
+                "dd/MM/yyyy",
+                java.util.Locale.getDefault()
+            )
+
+        val header =
+            android.widget.TextView(this).apply {
+                text =
+                    "จากวันที่ ${dateOnly.format(firstDay.time)} ถึง ${dateOnly.format(lastDay.time)}"
+                textSize = 15f
+                setTextColor(dark)
+                setPadding(0, dp(8), 0, dp(14))
+            }
+
+        root.addView(header)
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP4
+        fun setupDateAutoJump(
+            day: android.widget.EditText,
+            month: android.widget.EditText,
+            year: android.widget.EditText
+        ) {
+            day.addTextChangedListener(
+                object : android.text.TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?, start: Int, count: Int, after: Int
+                    ) {}
+                    override fun onTextChanged(
+                        s: CharSequence?, start: Int, before: Int, count: Int
+                    ) {
+                        if (s?.length == 2) month.requestFocus()
+                    }
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            month.addTextChangedListener(
+                object : android.text.TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?, start: Int, count: Int, after: Int
+                    ) {}
+                    override fun onTextChanged(
+                        s: CharSequence?, start: Int, before: Int, count: Int
+                    ) {
+                        if (s?.length == 2) year.requestFocus()
+                    }
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            day.imeOptions =
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            month.imeOptions =
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            year.imeOptions =
+                android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+
+            day.setOnEditorActionListener { _, actionId, _ ->
+                if (
+                    actionId ==
+                    android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+                ) {
+                    if (day.text.length == 1) {
+                        day.setText(day.text.toString().padStart(2, '0'))
+                    }
+                    month.requestFocus()
+                    true
+                } else false
+            }
+
+            month.setOnEditorActionListener { _, actionId, _ ->
+                if (
+                    actionId ==
+                    android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+                ) {
+                    if (month.text.length == 1) {
+                        month.setText(month.text.toString().padStart(2, '0'))
+                    }
+                    year.requestFocus()
+                    true
+                } else false
+            }
+        }
+
+        setupDateAutoJump(fromDay, fromMonth, fromYear)
+        setupDateAutoJump(toDay, toMonth, toYear)
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP5
+        fun readDateRange(
+            day: android.widget.EditText,
+            month: android.widget.EditText,
+            year: android.widget.EditText,
+            endOfDay: Boolean
+        ): java.util.Calendar? {
+            val d = day.text.toString().trim().toIntOrNull()
+                ?: return null
+            val m = month.text.toString().trim().toIntOrNull()
+                ?: return null
+            val y = year.text.toString().trim().toIntOrNull()
+                ?: return null
+
+            if (y !in 1900..2500) return null
+            if (m !in 1..12) return null
+            if (d !in 1..31) return null
+
+            return try {
+                java.util.Calendar.getInstance().apply {
+                    isLenient = false
+                    clear()
+                    set(
+                        y,
+                        m - 1,
+                        d,
+                        if (endOfDay) 23 else 0,
+                        if (endOfDay) 59 else 0,
+                        if (endOfDay) 59 else 0
+                    )
+                    set(
+                        java.util.Calendar.MILLISECOND,
+                        if (endOfDay) 999 else 0
+                    )
+
+                    timeInMillis
+                }
+            } catch (_: Exception) {
+                null
+            }
+        }
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP3
+        fun addDateInputRow(
+            label: String,
+            day: android.widget.EditText,
+            month: android.widget.EditText,
+            year: android.widget.EditText
+        ) {
+            val row = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setPadding(0, dp(4), 0, dp(4))
+            }
+
+            row.addView(
+                android.widget.TextView(this).apply {
+                    text = label
+                    textSize = 15f
+                    setTextColor(dark)
+                },
+                android.widget.LinearLayout.LayoutParams(
+                    dp(80),
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            )
+
+            row.addView(
+                day,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1f)
+            )
+            row.addView(
+                month,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1f)
+            )
+            row.addView(
+                year,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1.4f)
+            )
+
+            root.addView(row)
+        }
+
+        addDateInputRow(
+            "จากวันที่",
+            fromDay,
+            fromMonth,
+            fromYear
+        )
+
+        addDateInputRow(
+            "ถึงวันที่",
+            toDay,
+            toMonth,
+            toYear
+        )
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP6C
+        val resultArea = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+        }
+
+        fun renderReport(
+            from: java.util.Calendar,
+            to: java.util.Calendar
+        ) {
+            resultArea.removeAllViews()
+
+            val rows =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                ).orEmpty()
+                    .mapNotNull { record ->
+                        val parts = record.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 5
+                        )
+
+                        val time =
+                            parts.getOrNull(0)
+                                ?.trim()
+                                ?.toLongOrNull()
+                                ?: return@mapNotNull null
+
+                        val type =
+                            parts.getOrNull(1)
+                                ?.trim()
+                                .orEmpty()
+
+                        if (type != "EXPENSE") {
+                            return@mapNotNull null
+                        }
+
+                        if (
+                            time < from.timeInMillis ||
+                            time > to.timeInMillis
+                        ) {
+                            return@mapNotNull null
+                        }
+
+                        val category =
+                            parts.getOrNull(2)
+                                ?.trim()
+                                .orEmpty()
+
+                        val amount =
+                            parts.getOrNull(3)
+                                ?.replace(",", "")
+                                ?.trim()
+                                ?.toBigDecimalOrNull()
+                                ?: java.math.BigDecimal.ZERO
+
+                        Triple(time, category, amount)
+                    }
+                    .sortedByDescending { it.first }
+
+            val total =
+                rows.fold(java.math.BigDecimal.ZERO) { sum, row ->
+                    sum.add(row.third)
+                }
+
+            resultArea.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        "รายจ่ายรวม ${monthlyMoneyFormat.format(total)} บาท   •   ${rows.size} รายการ"
+                    textSize = 18f
+                    setTextColor(red)
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setPadding(0, 0, 0, dp(14))
+                }
+            )
+
+            val table =
+                android.widget.LinearLayout(this).apply {
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+                    background =
+                        rounded(android.graphics.Color.WHITE, 14)
+                    setPadding(
+                        dp(12), dp(12), dp(12), dp(12)
+                    )
+                }
+
+            table.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        "วันที่ / เวลา        รายการ        จำนวนเงิน"
+                    textSize = 14f
+                    setTextColor(dark)
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setPadding(0, 0, 0, dp(8))
+                }
+            )
+
+            val fullDate =
+                java.text.SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm",
+                    java.util.Locale.getDefault()
+                )
+
+            if (rows.isEmpty()) {
+                table.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            "ไม่พบรายการรายจ่ายในช่วงนี้"
+                        textSize = 14f
+                        setTextColor(
+                            android.graphics.Color.GRAY
+                        )
+                        setPadding(
+                            0, dp(12), 0, dp(12)
+                        )
+                    }
+                )
+            } else {
+                rows.forEach { row ->
+                    table.addView(
+                        android.widget.TextView(this).apply {
+                            text =
+                                "${fullDate.format(java.util.Date(row.first))}   ${row.second}   ${monthlyMoneyFormat.format(row.third)} บาท"
+                            textSize = 14f
+                            setTextColor(dark)
+                            setPadding(
+                                0, dp(8), 0, dp(8)
+                            )
+                        }
+                    )
+                }
+            }
+
+            resultArea.addView(table)
+
+            resultArea.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        "รวมทั้งหมด ${monthlyMoneyFormat.format(total)} บาท"
+                    textSize = 18f
+                    setTextColor(red)
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setPadding(
+                        0, dp(14), 0, dp(8)
+                    )
+                }
+            )
+        }
+
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP6D
+        val searchButton =
+            android.widget.Button(this).apply {
+                text = "ค้นหา"
+                isAllCaps = false
+                setTextColor(android.graphics.Color.WHITE)
+                background = rounded(orange, 12)
+
+                setOnClickListener {
+                    val from =
+                        readDateRange(
+                            fromDay,
+                            fromMonth,
+                            fromYear,
+                            false
+                        )
+
+                    val to =
+                        readDateRange(
+                            toDay,
+                            toMonth,
+                            toYear,
+                            true
+                        )
+
+                    when {
+                        from == null || to == null -> {
+                            android.widget.Toast.makeText(
+                                this@MainActivity,
+                                "กรุณากรอกวันที่ให้ถูกต้อง",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        from.timeInMillis > to.timeInMillis -> {
+                            android.widget.Toast.makeText(
+                                this@MainActivity,
+                                "วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        else -> {
+                            renderReport(from, to)
+                        }
+                    }
+                }
+            }
+
+        root.addView(
+            searchButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(52)
+            ).apply {
+                setMargins(0, dp(6), 0, dp(12))
+            }
+        )
+
+        root.addView(resultArea)
+
+        // แสดงเดือนปัจจุบันทันทีเมื่อเปิดหน้า
+        renderReport(firstDay, lastDay)
+
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "ย้อนกลับ"
+                isAllCaps = false
+                setTextColor(android.graphics.Color.WHITE)
+                background = rounded(orange, 12)
+                setOnClickListener {
+                    showMoneyManager()
+                }
+            }
+        )
+
+        scroll.addView(
+            root,
+            android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        )
+
+        setContentView(scroll)
+    }
+
+
+    
