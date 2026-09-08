@@ -542,6 +542,35 @@ object BackupManager {
 
 
 
+
+    fun writeBackupToUri(
+        context: Context,
+        uri: Uri
+    ) {
+        val tempFile =
+            createBackup(context)
+
+        context.contentResolver
+            .openOutputStream(
+                uri,
+                "w"
+            )
+            ?.use { output ->
+
+                tempFile
+                    .inputStream()
+                    .use { input ->
+                        input.copyTo(output)
+                    }
+
+                output.flush()
+            }
+            ?: throw java.io.IOException(
+                "ไม่สามารถเปิดตำแหน่งบันทึกไฟล์ได้"
+            )
+    }
+
+
     fun shareBackup(
         context: Context
     ) {

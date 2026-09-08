@@ -30,6 +30,47 @@ class BackupActivity : Activity() {
         )
 
         if (
+            requestCode == 8402 &&
+            resultCode == RESULT_OK
+        ) {
+
+            val saveUri =
+                data?.data
+                    ?: return
+
+            try {
+
+                BackupManager
+                    .writeBackupToUri(
+                        this,
+                        saveUri
+                    )
+
+                Toast.makeText(
+                    this,
+                    "สำรองข้อมูลทั้งแอปสำเร็จ",
+                    Toast.LENGTH_LONG
+                ).show()
+
+            } catch (
+                e: Exception
+            ) {
+
+                Toast.makeText(
+                    this,
+                    "สำรองข้อมูลไม่สำเร็จ: " +
+                        (
+                            e.message
+                                ?: "ไม่ทราบสาเหตุ"
+                        ),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            return
+        }
+
+        if (
             requestCode != 8401 ||
             resultCode != RESULT_OK
         ) {
@@ -214,7 +255,7 @@ class BackupActivity : Activity() {
             TextView(this).apply {
 
                 text =
-                    "เก็บข้อมูลลูกค้า งานบิน นัดหมาย การเงิน และการตั้งค่าของ PC Drone ไว้ในไฟล์เดียว"
+                    "สำรองข้อมูลทั้งหมดของ PC Drone ไว้ในไฟล์เดียว ทั้งลูกค้า งานบิน ประวัติ นัดหมาย การเงิน และการตั้งค่า"
 
                 textSize = 15f
 
@@ -235,7 +276,7 @@ class BackupActivity : Activity() {
             Button(this).apply {
 
                 text =
-                    "สร้างและแชร์ไฟล์สำรอง"
+                    "สำรองข้อมูลทั้งแอป"
 
                 textSize = 17f
 
@@ -249,24 +290,43 @@ class BackupActivity : Activity() {
 
                 setOnClickListener {
 
-                    try {
+                    val fileName =
+                        "PC-Drone-Full-Backup-" +
+                            java.text.SimpleDateFormat(
+                                "yyyyMMdd-HHmmss",
+                                java.util.Locale.US
+                            ).apply {
+                                timeZone =
+                                    java.util.TimeZone.getTimeZone(
+                                        "Asia/Bangkok"
+                                    )
+                            }.format(
+                                java.util.Date()
+                            ) +
+                            ".pcdrone"
 
-                        BackupManager
-                            .shareBackup(
-                                this@BackupActivity
+                    val intent =
+                        android.content.Intent(
+                            android.content.Intent.ACTION_CREATE_DOCUMENT
+                        ).apply {
+
+                            addCategory(
+                                android.content.Intent.CATEGORY_OPENABLE
                             )
 
-                    } catch (
-                        e: Exception
-                    ) {
+                            type =
+                                "application/octet-stream"
 
-                        Toast.makeText(
-                            this@BackupActivity,
-                            "สำรองข้อมูลไม่สำเร็จ: " +
-                                (e.message ?: "ไม่ทราบสาเหตุ"),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                            putExtra(
+                                android.content.Intent.EXTRA_TITLE,
+                                fileName
+                            )
+                        }
+
+                    startActivityForResult(
+                        intent,
+                        8402
+                    )
                 }
             }
 

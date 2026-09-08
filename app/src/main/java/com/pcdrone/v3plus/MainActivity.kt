@@ -4788,12 +4788,24 @@ class MainActivity : Activity() {
                                     current.remove(record)
                                     current.add(updated)
 
-                                    prefs.edit()
-                                        .putStringSet(
-                                            "customers",
-                                            current
-                                        )
-                                        .apply()
+                                    val saved =
+                                        prefs.edit()
+                                            .putStringSet(
+                                                "customers",
+                                                current.toSet()
+                                            )
+                                            .commit()
+
+                                    if (!saved) {
+                                        android.widget.Toast
+                                            .makeText(
+                                                this@MainActivity,
+                                                "บันทึกข้อมูลลูกค้าไม่สำเร็จ",
+                                                android.widget.Toast.LENGTH_LONG
+                                            )
+                                            .show()
+                                        return@setOnClickListener
+                                    }
 
                                     dialog.dismiss()
 
@@ -4849,12 +4861,24 @@ class MainActivity : Activity() {
 
                                     current.remove(record)
 
-                                    prefs.edit()
-                                        .putStringSet(
-                                            "customers",
-                                            current
-                                        )
-                                        .apply()
+                                    val saved =
+                                        prefs.edit()
+                                            .putStringSet(
+                                                "customers",
+                                                current.toSet()
+                                            )
+                                            .commit()
+
+                                    if (!saved) {
+                                        android.widget.Toast
+                                            .makeText(
+                                                this@MainActivity,
+                                                "บันทึกข้อมูลลูกค้าไม่สำเร็จ",
+                                                android.widget.Toast.LENGTH_LONG
+                                            )
+                                            .show()
+                                        return@setOnClickListener
+                                    }
 
                                     android.widget.Toast
                                         .makeText(
@@ -4948,12 +4972,24 @@ class MainActivity : Activity() {
 
                     current.add(record)
 
-                    prefs.edit()
-                        .putStringSet(
-                            "customers",
-                            current
-                        )
-                        .apply()
+                    val saved =
+                        prefs.edit()
+                            .putStringSet(
+                                "customers",
+                                current.toSet()
+                            )
+                            .commit()
+
+                    if (!saved) {
+                        android.widget.Toast
+                            .makeText(
+                                this@MainActivity,
+                                "บันทึกข้อมูลลูกค้าไม่สำเร็จ",
+                                android.widget.Toast.LENGTH_LONG
+                            )
+                            .show()
+                        return@setOnClickListener
+                    }
 
                     nameInput.text.clear()
                     phoneInput.text.clear()
