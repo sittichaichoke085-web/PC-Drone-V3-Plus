@@ -1,0 +1,1378 @@
+]633;E;echo "=== PHASE 2C JOB AUDIT ===";eba44c35-ede1-46aa-b4c3-a1f2f7490251]633;C=== PHASE 2C JOB AUDIT ===
+
+=== GIT CHECKPOINT ===
+78af33e PC Drone v3.0.1 Money Manager Phase 2B stable
+
+=== ALL flight_jobs REFERENCES ===
+109-                }
+110-            } catch (_: Exception) {
+111-                java.math.BigDecimal.ZERO
+112-            }
+113-        }
+114-
+115-        // =========================================
+116-        // คำนวณข้อมูลงานบิน
+117-        // =========================================
+118-
+119-        val jobs =
+120-            prefs.getStringSet(
+121:                "flight_jobs",
+122-                emptySet()
+123-            )?.toList() ?: emptyList()
+124-
+125-        var completedJobs = 0
+126-        var waitingJobs = 0
+127-        var totalRai = 0.0
+128-
+129-        var jobIncome =
+130-            java.math.BigDecimal.ZERO
+131-
+132-        jobs.forEach { record ->
+133-
+--
+2752-                                }
+2753-
+2754-                            ReportRow(
+2755-                                time = tx.time,
+2756-                                item = itemText.ifBlank { "-" },
+2757-                                income = income,
+2758-                                expense = expense
+2759-                            )
+2760-                        }
+2761-
+2762-                    val rawJobs =
+2763-                        financePrefs.getStringSet(
+2764:                            "flight_jobs",
+2765-                            emptySet()
+2766-                        )?.toSet()
+2767-                            ?: emptySet()
+2768-
+2769-                    val flightRows =
+2770-                        rawJobs.mapNotNull { record ->
+2771-
+2772-                            val parts =
+2773-                                record.split(
+2774-                                    "|||",
+2775-                                    ignoreCase = false,
+2776-                                    limit = 9
+--
+6806-                            customer,
+6807-                            service,
+6808-                            location,
+6809-                            rai.toString(),
+6810-                            rate.toString(),
+6811-                            total.toString(),
+6812-                            status,
+6813-                            note
+6814-                        ).joinToString("|||")
+6815-
+6816-                    val oldSet =
+6817-                        prefs.getStringSet(
+6818:                            "flight_jobs",
+6819-                            emptySet()
+6820-                        )?.toMutableSet()
+6821-                            ?: mutableSetOf()
+6822-
+6823-                    oldSet.add(record)
+6824-
+6825-                    prefs.edit()
+6826-                        .putStringSet(
+6827:                            "flight_jobs",
+6828-                            oldSet
+6829-                        )
+6830-                        .apply()
+6831-
+6832-                    /*
+6833-                     * APPOINTMENT_SCHEMA
+6834-                     * 0 = jobId (ใช้ timestamp เดียวกับ flight_jobs)
+6835-                     * 1 = appointmentMillis
+6836-                     * 2 = reminderEnabled
+6837-                     */
+6838-                    val appointmentRecord =
+6839-                        listOf(
+--
+7451-                orientation =
+7452-                    android.widget.LinearLayout.VERTICAL
+7453-            }
+7454-
+7455-        root.addView(listContainer)
+7456-
+7457-        fun reloadHistory() {
+7458-
+7459-            listContainer.removeAllViews()
+7460-
+7461-            val records =
+7462-                prefs.getStringSet(
+7463:                    "flight_jobs",
+7464-                    emptySet()
+7465-                )?.toList()
+7466-                    ?: emptyList()
+7467-
+7468-            val appointmentRecords =
+7469-                prefs.getStringSet(
+7470-                    "job_appointments",
+7471-                    emptySet()
+7472-                )?.toList()
+7473-                    ?: emptyList()
+7474-
+7475-            val appointmentMap =
+--
+7909-                                )
+7910-                            }
+7911-
+7912-                        elevation =
+7913-                            dp(8).toFloat()
+7914-
+7915-                        stateListAnimator = null
+7916-
+7917-                        setOnClickListener {
+7918-
+7919-                            val current =
+7920-                                prefs.getStringSet(
+7921:                                    "flight_jobs",
+7922-                                    emptySet()
+7923-                                )?.toMutableSet()
+7924-                                    ?: mutableSetOf()
+7925-
+7926-                            val updatedParts =
+7927-                                parts.toMutableList()
+7928-
+7929-                            if (updatedParts.size >= 8) {
+7930-
+7931-                                updatedParts[7] =
+7932-                                    "เสร็จแล้ว"
+7933-
+7934-                                val completedRecord =
+7935-                                    updatedParts.joinToString(
+7936-                                        "|||"
+7937-                                    )
+7938-
+7939-                                current.remove(record)
+7940-                                current.add(completedRecord)
+7941-
+7942-                                prefs.edit()
+7943-                                    .putStringSet(
+7944:                                        "flight_jobs",
+7945-                                        current
+7946-                                    )
+7947-                                    .apply()
+7948-
+7949-                                val appointmentCurrent =
+7950-                                    prefs.getStringSet(
+7951-                                        "job_appointments",
+7952-                                        emptySet()
+7953-                                    )?.toMutableSet()
+7954-                                        ?: mutableSetOf()
+7955-
+7956-                                appointmentCurrent.removeAll {
+--
+8030-                                    "ต้องการลบงานของ $customer ใช่หรือไม่?"
+8031-                                )
+8032-                                .setNegativeButton(
+8033-                                    "ยกเลิก",
+8034-                                    null
+8035-                                )
+8036-                                .setPositiveButton(
+8037-                                    "ลบ"
+8038-                                ) { _, _ ->
+8039-
+8040-                                    val current =
+8041-                                        prefs.getStringSet(
+8042:                                            "flight_jobs",
+8043-                                            emptySet()
+8044-                                        )?.toMutableSet()
+8045-                                            ?: mutableSetOf()
+8046-
+8047-                                    current.remove(record)
+8048-
+8049-                                    prefs.edit()
+8050-                                        .putStringSet(
+8051:                                            "flight_jobs",
+8052-                                            current
+8053-                                        )
+8054-                                        .apply()
+8055-
+8056-                                    val appointmentCurrent =
+8057-                                        prefs.getStringSet(
+8058-                                            "job_appointments",
+8059-                                            emptySet()
+8060-                                        )?.toMutableSet()
+8061-                                            ?: mutableSetOf()
+8062-
+8063-                                    appointmentCurrent.removeAll {
+--
+9000-                        location,
+9001-                        rai.toString(),
+9002-                        rate.toString(),
+9003-                        total.toString(),
+9004-                        status,
+9005-                        note
+9006-                    ).joinToString(
+9007-                        "|||"
+9008-                    )
+9009-
+9010-                val currentJobs =
+9011-                    prefs.getStringSet(
+9012:                        "flight_jobs",
+9013-                        emptySet()
+9014-                    )?.toMutableSet()
+9015-                        ?: mutableSetOf()
+9016-
+9017-                currentJobs.remove(
+9018-                    originalRecord
+9019-                )
+9020-
+9021-                currentJobs.add(
+9022-                    updatedRecord
+9023-                )
+9024-
+9025-                prefs.edit()
+9026-                    .putStringSet(
+9027:                        "flight_jobs",
+9028-                        currentJobs
+9029-                    )
+9030-                    .apply()
+9031-
+9032-                // ======================================
+9033-                // อัปเดต appointment metadata
+9034-                // ======================================
+9035-
+9036-                val currentAppointments =
+9037-                    prefs.getStringSet(
+9038-                        "job_appointments",
+9039-                        emptySet()
+--
+9561-
+9562-        fun reloadFinance() {
+9563-
+9564-            transactionContainer.removeAllViews()
+9565-
+9566-            // =============================================
+9567-            // 1. JOB INCOME
+9568-            // เฉพาะงานสถานะ "เสร็จแล้ว"
+9569-            // =============================================
+9570-
+9571-            val jobs =
+9572-                prefs.getStringSet(
+9573:                    "flight_jobs",
+9574-                    emptySet()
+9575-                )?.toList()
+9576-                    ?: emptyList()
+9577-
+9578-            var jobIncome =
+9579-                java.math.BigDecimal.ZERO
+9580-
+9581-            var completedJobCount = 0
+9582-
+9583-            jobs.forEach { record ->
+9584-
+9585-                val parts =
+
+=== COMPLETED STATUS REFERENCES ===
+143-                val rai =
+144-                    parts.getOrNull(4)
+145-                        ?.toDoubleOrNull() ?: 0.0
+146-
+147-                val total =
+148-                    money(
+149-                        parts.getOrNull(6)
+150-                    )
+151-
+152-                val status =
+153-                    parts.getOrNull(7)
+154-                        ?.trim() ?: ""
+155-
+156-                when (status) {
+157-
+158:                    "เสร็จแล้ว" -> {
+159-                        completedJobs++
+160-                        totalRai += rai
+161-                        jobIncome =
+162-                            jobIncome.add(total)
+163-                    }
+164-
+165-                    "ยกเลิก" -> {
+166-                        // ไม่นับ
+167-                    }
+168-
+169-                    else -> {
+170-                        waitingJobs++
+171-                    }
+172-                }
+173-            }
+--
+2796-
+2797-                                val total =
+2798-                                    parts.getOrNull(6)
+2799-                                        ?.trim()
+2800-                                        ?.toDoubleOrNull()
+2801-
+2802-                                val status =
+2803-                                    parts.getOrNull(7)
+2804-                                        ?.trim()
+2805-                                        .orEmpty()
+2806-
+2807-                                if (
+2808-                                    time == null ||
+2809-                                    total == null ||
+2810-                                    total < 0.0 ||
+2811:                                    status != "เสร็จแล้ว"
+2812-                                ) {
+2813-                                    null
+2814-                                } else {
+2815-
+2816-                                    val description =
+2817-                                        buildString {
+2818-
+2819-                                            append("งานบิน")
+2820-
+2821-                                            if (customer.isNotBlank()) {
+2822-                                                append(" - ")
+2823-                                                append(customer)
+2824-                                            }
+2825-
+2826-                                            if (service.isNotBlank()) {
+--
+6468-        }
+6469-
+6470-        // ---------- STATUS ----------
+6471-        val statusLabel = android.widget.TextView(this).apply {
+6472-            text = "สถานะงาน"
+6473-            textSize = 16f
+6474-            setTextColor(android.graphics.Color.BLACK)
+6475-            setPadding(0, dp(12), 0, dp(4))
+6476-        }
+6477-
+6478-        val statusSpinner = android.widget.Spinner(this)
+6479-
+6480-        val statuses = arrayOf(
+6481-            "รอทำงาน",
+6482-            "กำลังดำเนินงาน",
+6483:            "เสร็จแล้ว",
+6484-            "ยกเลิก"
+6485-        )
+6486-
+6487-        statusSpinner.adapter =
+6488-            android.widget.ArrayAdapter(
+6489-                this,
+6490-                android.R.layout.simple_spinner_dropdown_item,
+6491-                statuses
+6492-            )
+6493-
+6494-        // ---------- APPOINTMENT ----------
+6495-        val appointmentLabel =
+6496-            android.widget.TextView(this).apply {
+6497-                text = "วันและเวลานัดหมาย"
+6498-                textSize = 17f
+--
+6853-
+6854-                    appointmentSet.add(
+6855-                        appointmentRecord
+6856-                    )
+6857-
+6858-                    prefs.edit()
+6859-                        .putStringSet(
+6860-                            "job_appointments",
+6861-                            appointmentSet
+6862-                        )
+6863-                        .apply()
+6864-
+6865-                    // PC_DRONE_NOTIFICATION_SCHEDULED
+6866-                    if (
+6867-                        reminderSwitch.isChecked &&
+6868:                        status != "เสร็จแล้ว" &&
+6869-                        status != "ยกเลิก"
+6870-                    ) {
+6871-
+6872-                        scheduleJobReminder(
+6873-                            jobId = time,
+6874-                            appointmentMillis =
+6875-                                appointmentCal.timeInMillis,
+6876-                            customer = customer,
+6877-                            service = service,
+6878-                            location = location,
+6879-                            rai = rai
+6880-                        )
+6881-
+6882-                    } else {
+6883-
+--
+7715-                        this@MainActivity
+7716-                    ).apply {
+7717-
+7718-                        orientation =
+7719-                            android.widget.LinearLayout.VERTICAL
+7720-
+7721-                        setPadding(
+7722-                            dp(14),
+7723-                            dp(14),
+7724-                            dp(14),
+7725-                            dp(14)
+7726-                        )
+7727-
+7728-                        val cardColor =
+7729-                            when (status) {
+7730:                                "เสร็จแล้ว" ->
+7731-                                    android.graphics.Color.rgb(76, 175, 80)
+7732-
+7733-                                "รอทำงาน" ->
+7734-                                    android.graphics.Color.rgb(255, 193, 7)
+7735-
+7736-                                "กำลังดำเนินงาน" ->
+7737-                                    android.graphics.Color.rgb(239, 83, 80)
+7738-
+7739-                                else ->
+7740-                                    android.graphics.Color.rgb(224, 224, 224)
+7741-                            }
+7742-
+7743-                        val cardBorderColor =
+7744-                            when (status) {
+7745:                                "เสร็จแล้ว" ->
+7746-                                    android.graphics.Color.rgb(27, 94, 32)
+7747-
+7748-                                "รอทำงาน" ->
+7749-                                    android.graphics.Color.rgb(245, 127, 23)
+7750-
+7751-                                "กำลังดำเนินงาน" ->
+7752-                                    android.graphics.Color.rgb(183, 28, 28)
+7753-
+7754-                                else ->
+7755-                                    android.graphics.Color.rgb(97, 97, 97)
+7756-                            }
+7757-
+7758-                        val cardTextColor =
+7759-                            when (status) {
+7760:                                "เสร็จแล้ว",
+7761-                                "กำลังดำเนินงาน" ->
+7762-                                    android.graphics.Color.WHITE
+7763-
+7764-                                else ->
+7765-                                    android.graphics.Color.BLACK
+7766-                            }
+7767-
+7768-                        background =
+7769-                            android.graphics.drawable.GradientDrawable().apply {
+7770-                                setColor(cardColor)
+7771-
+7772-                                cornerRadius =
+7773-                                    dp(14).toFloat()
+7774-
+7775-                                setStroke(
+--
+7794-                        )
+7795-
+7796-                        layoutParams = params
+7797-                    }
+7798-
+7799-                card.addView(
+7800-                    android.widget.TextView(
+7801-                        this@MainActivity
+7802-                    ).apply {
+7803-
+7804-                        text = customer
+7805-                        textSize = 20f
+7806-
+7807-                        setTextColor(
+7808-                            when (status) {
+7809:                                "เสร็จแล้ว",
+7810-                                "กำลังดำเนินงาน" ->
+7811-                                    android.graphics.Color.WHITE
+7812-
+7813-                                else ->
+7814-                                    android.graphics.Color.BLACK
+7815-                            }
+7816-                        )
+7817-
+7818-                        setTypeface(
+7819-                            typeface,
+7820-                            android.graphics.Typeface.BOLD
+7821-                        )
+7822-                    }
+7823-                )
+7824-
+--
+7835-                            "พื้นที่: $location\n" +
+7836-                            "จำนวน: %.2f ไร่\n".format(rai) +
+7837-                            "ราคา: %.2f บาท/ไร่\n".format(rate) +
+7838-                            "ยอดงาน: %.2f บาท\n".format(total) +
+7839-                            "สถานะ: $status" +
+7840-                            if (note.isNotBlank()) {
+7841-                                "\nหมายเหตุ: $note"
+7842-                            } else {
+7843-                                ""
+7844-                            }
+7845-
+7846-                        textSize = 16f
+7847-
+7848-                        setTextColor(
+7849-                            when (status) {
+7850:                                "เสร็จแล้ว",
+7851-                                "กำลังดำเนินงาน" ->
+7852-                                    android.graphics.Color.WHITE
+7853-
+7854-                                else ->
+7855-                                    android.graphics.Color.BLACK
+7856-                            }
+7857-                        )
+7858-
+7859-                        setPadding(
+7860-                            0,
+7861-                            dp(6),
+7862-                            0,
+7863-                            dp(10)
+7864-                        )
+7865-                    }
+7866-                )
+7867-
+7868-                val buttonRow =
+7869-                    android.widget.LinearLayout(
+7870-                        this@MainActivity
+7871-                    ).apply {
+7872-                        orientation =
+7873-                            android.widget.LinearLayout.HORIZONTAL
+7874-                    }
+7875-
+7876-                val completeButton =
+7877-                    android.widget.Button(
+7878-                        this@MainActivity
+7879-                    ).apply {
+7880-
+7881:                        text = "เสร็จแล้ว"
+7882-                        isAllCaps = false
+7883-
+7884-                        setTextColor(
+7885-                            android.graphics.Color.WHITE
+7886-                        )
+7887-
+7888-                        background =
+7889-                            android.graphics.drawable.GradientDrawable().apply {
+7890-
+7891-                                setColor(
+7892-                                    android.graphics.Color.rgb(
+7893-                                        0,
+7894-                                        120,
+7895-                                        55
+7896-                                    )
+--
+7917-                        setOnClickListener {
+7918-
+7919-                            val current =
+7920-                                prefs.getStringSet(
+7921-                                    "flight_jobs",
+7922-                                    emptySet()
+7923-                                )?.toMutableSet()
+7924-                                    ?: mutableSetOf()
+7925-
+7926-                            val updatedParts =
+7927-                                parts.toMutableList()
+7928-
+7929-                            if (updatedParts.size >= 8) {
+7930-
+7931-                                updatedParts[7] =
+7932:                                    "เสร็จแล้ว"
+7933-
+7934-                                val completedRecord =
+7935-                                    updatedParts.joinToString(
+7936-                                        "|||"
+7937-                                    )
+7938-
+7939-                                current.remove(record)
+7940-                                current.add(completedRecord)
+7941-
+7942-                                prefs.edit()
+7943-                                    .putStringSet(
+7944-                                        "flight_jobs",
+7945-                                        current
+7946-                                    )
+7947-                                    .apply()
+--
+8084-                                    cancelJobReminder(time)
+8085-
+8086-                                    android.widget.Toast.makeText(
+8087-                                        this@MainActivity,
+8088-                                        "ลบรายการแล้ว",
+8089-                                        android.widget.Toast.LENGTH_SHORT
+8090-                                    ).show()
+8091-
+8092-                                    reloadHistory()
+8093-                                }
+8094-                                .show()
+8095-                        }
+8096-                    }
+8097-
+8098-                if (
+8099:                    status != "เสร็จแล้ว" &&
+8100-                    status != "ยกเลิก"
+8101-                ) {
+8102-                    buttonRow.addView(
+8103-                        completeButton,
+8104-                        android.widget.LinearLayout.LayoutParams(
+8105-                            0,
+8106-                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+8107-                            1f
+8108-                        ).apply {
+8109-                            marginEnd = dp(4)
+8110-                        }
+8111-                    )
+8112-                }
+8113-
+8114-                buttonRow.addView(
+--
+8595-                    android.text.InputType
+8596-                        .TYPE_NUMBER_FLAG_DECIMAL
+8597-
+8598-                setText(
+8599-                    parts.getOrNull(5) ?: ""
+8600-                )
+8601-            }
+8602-
+8603-        val statusSpinner =
+8604-            android.widget.Spinner(this)
+8605-
+8606-        val statuses =
+8607-            arrayOf(
+8608-                "รอทำงาน",
+8609-                "กำลังดำเนินงาน",
+8610:                "เสร็จแล้ว",
+8611-                "ยกเลิก"
+8612-            )
+8613-
+8614-        statusSpinner.adapter =
+8615-            android.widget.ArrayAdapter(
+8616-                this,
+8617-                android.R.layout
+8618-                    .simple_spinner_dropdown_item,
+8619-                statuses
+8620-            )
+8621-
+8622-        val oldStatus =
+8623-            parts.getOrNull(7) ?: ""
+8624-
+8625-        val statusIndex =
+--
+9077-                        currentAppointments
+9078-                    )
+9079-                    .apply()
+9080-
+9081-                // ======================================
+9082-                // ยกเลิก Alarm เก่า
+9083-                // แล้วตั้ง Alarm ใหม่
+9084-                // ======================================
+9085-
+9086-                cancelJobReminder(
+9087-                    originalTime
+9088-                )
+9089-
+9090-                if (
+9091-                    reminderSwitch.isChecked &&
+9092:                    status != "เสร็จแล้ว" &&
+9093-                    status != "ยกเลิก"
+9094-                ) {
+9095-
+9096-                    scheduleJobReminder(
+9097-                        jobId =
+9098-                            originalTime,
+9099-                        appointmentMillis =
+9100-                            appointmentCal
+9101-                                .timeInMillis,
+9102-                        customer =
+9103-                            customer,
+9104-                        service =
+9105-                            service,
+9106-                        location =
+9107-                            location,
+--
+9553-        )
+9554-
+9555-        val transactionContainer =
+9556-            android.widget.LinearLayout(this).apply {
+9557-
+9558-                orientation =
+9559-                    android.widget.LinearLayout.VERTICAL
+9560-            }
+9561-
+9562-        fun reloadFinance() {
+9563-
+9564-            transactionContainer.removeAllViews()
+9565-
+9566-            // =============================================
+9567-            // 1. JOB INCOME
+9568:            // เฉพาะงานสถานะ "เสร็จแล้ว"
+9569-            // =============================================
+9570-
+9571-            val jobs =
+9572-                prefs.getStringSet(
+9573-                    "flight_jobs",
+9574-                    emptySet()
+9575-                )?.toList()
+9576-                    ?: emptyList()
+9577-
+9578-            var jobIncome =
+9579-                java.math.BigDecimal.ZERO
+9580-
+9581-            var completedJobCount = 0
+9582-
+9583-            jobs.forEach { record ->
+--
+9589-                        limit = 9
+9590-                    )
+9591-
+9592-                if (parts.size >= 8) {
+9593-
+9594-                    val total =
+9595-                        parseMoney(
+9596-                            parts.getOrNull(6)
+9597-                        )
+9598-
+9599-                    val status =
+9600-                        parts.getOrNull(7)
+9601-                            ?.trim()
+9602-                            ?: ""
+9603-
+9604:                    if (status == "เสร็จแล้ว") {
+9605-
+9606-                        jobIncome =
+9607-                            jobIncome.add(total)
+9608-
+9609-                        completedJobCount++
+9610-                    }
+9611-                }
+9612-            }
+9613-
+9614-            // =============================================
+9615-            // 2. MANUAL TRANSACTIONS
+9616-            // =============================================
+9617-
+9618-            val transactions =
+9619-                prefs.getStringSet(
+
+=== JOB RECORD CREATION / JOIN ===
+1152-        }
+1153-
+1154-        fun parseMoney(
+1155-            text: String
+1156-        ): java.math.BigDecimal {
+1157-
+1158-            return try {
+1159-                java.math.BigDecimal(
+1160-                    text
+1161-                        .replace(",", "")
+--
+5828-                                        editName.error =
+5829-                                            "กรุณากรอกชื่อลูกค้า"
+5830-                                        return@setOnClickListener
+5831-                                    }
+5832-
+5833-                                    val current =
+5834-                                        prefs.getStringSet(
+5835-                                            "customers",
+5836-                                            emptySet()
+5837-                                        )?.toMutableSet()
+5838-                                            ?: mutableSetOf()
+5839-
+5840-                                    val updated =
+5841-                                        listOf(
+5842-                                            time.toString(),
+5843-                                            newName,
+5844-                                            newPhone,
+5845-                                            newArea
+5846:                                        ).joinToString(
+5847-                                            "|||"
+5848-                                        )
+5849-
+5850-                                    current.remove(record)
+5851-                                    current.add(updated)
+5852-
+5853-                                    val saved =
+5854-                                        prefs.edit()
+5855-                                            .putStringSet(
+5856-                                                "customers",
+5857-                                                current.toSet()
+5858-                                            )
+5859-                                            .commit()
+5860-
+5861-                                    if (!saved) {
+5862-                                        android.widget.Toast
+5863-                                            .makeText(
+5864-                                                this@MainActivity,
+--
+6005-                    val area =
+6006-                        areaInput.text
+6007-                            .toString()
+6008-                            .trim()
+6009-
+6010-                    if (name.isBlank()) {
+6011-                        nameInput.error =
+6012-                            "กรุณากรอกชื่อลูกค้า"
+6013-                        return@setOnClickListener
+6014-                    }
+6015-
+6016-                    val record =
+6017-                        listOf(
+6018-                            System.currentTimeMillis()
+6019-                                .toString(),
+6020-                            name,
+6021-                            phone,
+6022-                            area
+6023:                        ).joinToString(
+6024-                            "|||"
+6025-                        )
+6026-
+6027-                    val current =
+6028-                        prefs.getStringSet(
+6029-                            "customers",
+6030-                            emptySet()
+6031-                        )?.toMutableSet()
+6032-                            ?: mutableSetOf()
+6033-
+6034-                    current.add(record)
+6035-
+6036-                    val saved =
+6037-                        prefs.edit()
+6038-                            .putStringSet(
+6039-                                "customers",
+6040-                                current.toSet()
+6041-                            )
+--
+6796-                        System.currentTimeMillis()
+6797-
+6798-                    /*
+6799-                     * ใช้ตัวคั่นที่ควบคุมเอง
+6800-                     * เพื่อให้ชุดถัดไปสามารถอ่านข้อมูล
+6801-                     * และเชื่อมเข้าประวัติ/การเงินได้
+6802-                     */
+6803-                    val record =
+6804-                        listOf(
+6805-                            time.toString(),
+6806-                            customer,
+6807-                            service,
+6808-                            location,
+6809-                            rai.toString(),
+6810-                            rate.toString(),
+6811-                            total.toString(),
+6812-                            status,
+6813-                            note
+6814:                        ).joinToString("|||")
+6815-
+6816-                    val oldSet =
+6817-                        prefs.getStringSet(
+6818-                            "flight_jobs",
+6819-                            emptySet()
+6820-                        )?.toMutableSet()
+6821-                            ?: mutableSetOf()
+6822-
+6823-                    oldSet.add(record)
+6824-
+6825-                    prefs.edit()
+6826-                        .putStringSet(
+6827-                            "flight_jobs",
+6828-                            oldSet
+6829-                        )
+6830-                        .apply()
+6831-
+6832-                    /*
+6833-                     * APPOINTMENT_SCHEMA
+6834-                     * 0 = jobId (ใช้ timestamp เดียวกับ flight_jobs)
+6835-                     * 1 = appointmentMillis
+6836-                     * 2 = reminderEnabled
+6837-                     */
+6838-                    val appointmentRecord =
+6839-                        listOf(
+6840-                            time.toString(),
+6841-                            appointmentCal.timeInMillis
+6842-                                .toString(),
+6843-                            reminderSwitch.isChecked
+6844-                                .toString()
+6845:                        ).joinToString("|||")
+6846-
+6847-                    val appointmentSet =
+6848-                        prefs.getStringSet(
+6849-                            "job_appointments",
+6850-                            emptySet()
+6851-                        )?.toMutableSet()
+6852-                            ?: mutableSetOf()
+6853-
+6854-                    appointmentSet.add(
+6855-                        appointmentRecord
+6856-                    )
+6857-
+6858-                    prefs.edit()
+6859-                        .putStringSet(
+6860-                            "job_appointments",
+6861-                            appointmentSet
+6862-                        )
+6863-                        .apply()
+--
+7917-                        setOnClickListener {
+7918-
+7919-                            val current =
+7920-                                prefs.getStringSet(
+7921-                                    "flight_jobs",
+7922-                                    emptySet()
+7923-                                )?.toMutableSet()
+7924-                                    ?: mutableSetOf()
+7925-
+7926-                            val updatedParts =
+7927-                                parts.toMutableList()
+7928-
+7929-                            if (updatedParts.size >= 8) {
+7930-
+7931-                                updatedParts[7] =
+7932-                                    "เสร็จแล้ว"
+7933-
+7934-                                val completedRecord =
+7935:                                    updatedParts.joinToString(
+7936-                                        "|||"
+7937-                                    )
+7938-
+7939-                                current.remove(record)
+7940-                                current.add(completedRecord)
+7941-
+7942-                                prefs.edit()
+7943-                                    .putStringSet(
+7944-                                        "flight_jobs",
+7945-                                        current
+7946-                                    )
+7947-                                    .apply()
+7948-
+7949-                                val appointmentCurrent =
+7950-                                    prefs.getStringSet(
+7951-                                        "job_appointments",
+7952-                                        emptySet()
+7953-                                    )?.toMutableSet()
+--
+7958-
+7959-                                    appointmentRecord
+7960-                                        .split(
+7961-                                            "|||",
+7962-                                            ignoreCase = false,
+7963-                                            limit = 3
+7964-                                        )
+7965-                                        .getOrNull(0)
+7966-                                        ?.toLongOrNull() ==
+7967-                                        time
+7968-                                }
+7969-
+7970-                                if (appointmentMillis > 0L) {
+7971-                                    appointmentCurrent.add(
+7972-                                        listOf(
+7973-                                            time.toString(),
+7974-                                            appointmentMillis.toString(),
+7975-                                            "false"
+7976:                                        ).joinToString("|||")
+7977-                                    )
+7978-                                }
+7979-
+7980-                                prefs.edit()
+7981-                                    .putStringSet(
+7982-                                        "job_appointments",
+7983-                                        appointmentCurrent
+7984-                                    )
+7985-                                    .apply()
+7986-
+7987-                                cancelJobReminder(time)
+7988-
+7989-                                android.widget.Toast.makeText(
+7990-                                    this@MainActivity,
+7991-                                    "บันทึกงานเป็นเสร็จแล้ว",
+7992-                                    android.widget.Toast.LENGTH_SHORT
+7993-                                ).show()
+7994-
+--
+8988-                    noteInput.text
+8989-                        .toString()
+8990-                        .trim()
+8991-
+8992-                val total =
+8993-                    rai * rate
+8994-
+8995-                val updatedRecord =
+8996-                    listOf(
+8997-                        originalTime.toString(),
+8998-                        customer,
+8999-                        service,
+9000-                        location,
+9001-                        rai.toString(),
+9002-                        rate.toString(),
+9003-                        total.toString(),
+9004-                        status,
+9005-                        note
+9006:                    ).joinToString(
+9007-                        "|||"
+9008-                    )
+9009-
+9010-                val currentJobs =
+9011-                    prefs.getStringSet(
+9012-                        "flight_jobs",
+9013-                        emptySet()
+9014-                    )?.toMutableSet()
+9015-                        ?: mutableSetOf()
+9016-
+9017-                currentJobs.remove(
+9018-                    originalRecord
+9019-                )
+9020-
+9021-                currentJobs.add(
+9022-                    updatedRecord
+9023-                )
+9024-
+--
+9048-                            "|||",
+9049-                            ignoreCase = false,
+9050-                            limit = 3
+9051-                        )
+9052-                        .getOrNull(0)
+--
+9058-                    listOf(
+9059-                        originalTime.toString(),
+9060-                        appointmentCal
+9061-                            .timeInMillis
+9062-                            .toString(),
+9063-                        reminderSwitch
+9064-                            .isChecked
+9065-                            .toString()
+9066:                    ).joinToString(
+9067-                        "|||"
+9068-                    )
+9069-
+9070-                currentAppointments.add(
+9071-                    newAppointmentRecord
+9072-                )
+9073-
+9074-                prefs.edit()
+9075-                    .putStringSet(
+9076-                        "job_appointments",
+9077-                        currentAppointments
+9078-                    )
+9079-                    .apply()
+9080-
+9081-                // ======================================
+9082-                // ยกเลิก Alarm เก่า
+9083-                // แล้วตั้ง Alarm ใหม่
+9084-                // ======================================
+--
+10077-                        )
+10078-
+10079-                    val note =
+10080-                        safeText(
+10081-                            noteInput.text
+10082-                                .toString()
+10083-                        )
+10084-
+10085-                    val record =
+
+=== JOB SAVE REFERENCES ===
+6052-                        return@setOnClickListener
+6053-                    }
+6054-
+6055-                    nameInput.text.clear()
+6056-                    phoneInput.text.clear()
+6057-                    areaInput.text.clear()
+6058-
+--
+6806-                            customer,
+6807-                            service,
+6808-                            location,
+6809-                            rai.toString(),
+6810-                            rate.toString(),
+6811-                            total.toString(),
+6812-                            status,
+6813-                            note
+6814-                        ).joinToString("|||")
+6815-
+6816-                    val oldSet =
+6817-                        prefs.getStringSet(
+6818-                            "flight_jobs",
+6819-                            emptySet()
+6820-                        )?.toMutableSet()
+6821-                            ?: mutableSetOf()
+6822-
+6823-                    oldSet.add(record)
+6824-
+6825-                    prefs.edit()
+6826:                        .putStringSet(
+6827-                            "flight_jobs",
+6828-                            oldSet
+6829-                        )
+6830-                        .apply()
+6831-
+6832-                    /*
+6833-                     * APPOINTMENT_SCHEMA
+6834-                     * 0 = jobId (ใช้ timestamp เดียวกับ flight_jobs)
+6835-                     * 1 = appointmentMillis
+6836-                     * 2 = reminderEnabled
+6837-                     */
+6838-                    val appointmentRecord =
+6839-                        listOf(
+6840-                            time.toString(),
+6841-                            appointmentCal.timeInMillis
+6842-                                .toString(),
+6843-                            reminderSwitch.isChecked
+6844-                                .toString()
+6845-                        ).joinToString("|||")
+6846-
+6847-                    val appointmentSet =
+6848-                        prefs.getStringSet(
+6849-                            "job_appointments",
+6850-                            emptySet()
+6851-                        )?.toMutableSet()
+6852-                            ?: mutableSetOf()
+6853-
+6854-                    appointmentSet.add(
+--
+7924-                                    ?: mutableSetOf()
+7925-
+7926-                            val updatedParts =
+7927-                                parts.toMutableList()
+7928-
+7929-                            if (updatedParts.size >= 8) {
+7930-
+7931-                                updatedParts[7] =
+7932-                                    "เสร็จแล้ว"
+7933-
+7934-                                val completedRecord =
+7935-                                    updatedParts.joinToString(
+7936-                                        "|||"
+7937-                                    )
+7938-
+7939-                                current.remove(record)
+7940-                                current.add(completedRecord)
+7941-
+7942-                                prefs.edit()
+7943:                                    .putStringSet(
+7944-                                        "flight_jobs",
+7945-                                        current
+7946-                                    )
+7947-                                    .apply()
+7948-
+7949-                                val appointmentCurrent =
+7950-                                    prefs.getStringSet(
+7951-                                        "job_appointments",
+7952-                                        emptySet()
+7953-                                    )?.toMutableSet()
+7954-                                        ?: mutableSetOf()
+7955-
+7956-                                appointmentCurrent.removeAll {
+7957-                                    appointmentRecord ->
+7958-
+7959-                                    appointmentRecord
+7960-                                        .split(
+7961-                                            "|||",
+7962-                                            ignoreCase = false,
+7963-                                            limit = 3
+7964-                                        )
+--
+7995-                                reloadHistory()
+7996-                            }
+7997-                        }
+7998-                    }
+7999-
+8000-                val editButton =
+8001-                    android.widget.Button(
+--
+8030-                                    "ต้องการลบงานของ $customer ใช่หรือไม่?"
+8031-                                )
+8032-                                .setNegativeButton(
+8033-                                    "ยกเลิก",
+8034-                                    null
+8035-                                )
+8036-                                .setPositiveButton(
+8037-                                    "ลบ"
+8038-                                ) { _, _ ->
+8039-
+8040-                                    val current =
+8041-                                        prefs.getStringSet(
+8042-                                            "flight_jobs",
+8043-                                            emptySet()
+8044-                                        )?.toMutableSet()
+8045-                                            ?: mutableSetOf()
+8046-
+8047-                                    current.remove(record)
+8048-
+8049-                                    prefs.edit()
+8050:                                        .putStringSet(
+8051-                                            "flight_jobs",
+8052-                                            current
+8053-                                        )
+8054-                                        .apply()
+8055-
+8056-                                    val appointmentCurrent =
+8057-                                        prefs.getStringSet(
+8058-                                            "job_appointments",
+8059-                                            emptySet()
+8060-                                        )?.toMutableSet()
+8061-                                            ?: mutableSetOf()
+8062-
+8063-                                    appointmentCurrent.removeAll {
+8064-                                        appointmentRecord ->
+8065-
+8066-                                        appointmentRecord
+8067-                                            .split(
+8068-                                                "|||",
+8069-                                                ignoreCase = false,
+8070-                                                limit = 3
+8071-                                            )
+--
+8086-                                    android.widget.Toast.makeText(
+8087-                                        this@MainActivity,
+8088-                                        "ลบรายการแล้ว",
+8089-                                        android.widget.Toast.LENGTH_SHORT
+8090-                                    ).show()
+8091-
+8092-                                    reloadHistory()
+8093-                                }
+8094-                                .show()
+8095-                        }
+8096-                    }
+8097-
+8098-                if (
+--
+9006-                    ).joinToString(
+9007-                        "|||"
+9008-                    )
+9009-
+9010-                val currentJobs =
+9011-                    prefs.getStringSet(
+9012-                        "flight_jobs",
+9013-                        emptySet()
+9014-                    )?.toMutableSet()
+9015-                        ?: mutableSetOf()
+9016-
+9017-                currentJobs.remove(
+9018-                    originalRecord
+9019-                )
+9020-
+9021-                currentJobs.add(
+9022-                    updatedRecord
+9023-                )
+9024-
+9025-                prefs.edit()
+9026:                    .putStringSet(
+9027-                        "flight_jobs",
+9028-                        currentJobs
+9029-                    )
+9030-                    .apply()
+9031-
+9032-                // ======================================
+9033-                // อัปเดต appointment metadata
+9034-                // ======================================
+9035-
+9036-                val currentAppointments =
+9037-                    prefs.getStringSet(
+9038-                        "job_appointments",
+9039-                        emptySet()
+9040-                    )?.toMutableSet()
+9041-                        ?: mutableSetOf()
+9042-
+9043-                currentAppointments.removeAll {
+9044-                    appointmentRecord ->
+9045-
+9046-                    appointmentRecord
+--
+
+=== JOB EDIT FUNCTIONS ===
+5392:            showJobHistory()
+5397:            showJobs()
+6101:    private fun scheduleJobReminder(
+6303:    private fun cancelJobReminder(
+6370:    private fun showJobs() {
+7009:    private fun showJobHistory() {
+8008:                            showEditJobDialog(
+8379:    private fun showEditJobDialog(
+
+=== CURRENT MONEY LINKS ===
+1479-
+1480-        fun computedWalletBalance(
+1481-            walletId: String,
+1482-            openingBalance: java.math.BigDecimal
+1483-        ): java.math.BigDecimal {
+1484-
+1485-            val links =
+1486-                prefs.getStringSet(
+1487:                    "money_manager_links",
+1488-                    emptySet()
+1489-                )?.toList()
+1490-                    ?: emptyList()
+1491-
+1492-            val transactionIds =
+1493-                links.mapNotNull { link ->
+1494-
+1495-                    val p =
+--
+9874-                                            .orEmpty()
+9875-
+9876-                                    if (
+9877-                                        deletedTransactionId.isNotBlank()
+9878-                                    ) {
+9879-
+9880-                                        val links =
+9881-                                            prefs.getStringSet(
+9882:                                                "money_manager_links",
+9883-                                                emptySet()
+9884-                                            )?.toMutableSet()
+9885-                                                ?: mutableSetOf()
+9886-
+9887-                                        links.removeAll { link ->
+9888-
+9889-                                            link.split(
+9890-                                                "|||",
+--
+9892-                                                limit = 2
+9893-                                            ).getOrNull(0)
+9894-                                                ?.trim() ==
+9895-                                                deletedTransactionId
+9896-                                        }
+9897-
+9898-                                        prefs.edit()
+9899-                                            .putStringSet(
+9900:                                                "money_manager_links",
+9901-                                                links.toSet()
+9902-                                            )
+9903-                                            .apply()
+9904-                                    }
+9905-
+9906-                                    android.widget.Toast.makeText(
+9907-                                        this@MainActivity,
+9908-                                        "ลบรายการแล้ว",
+--
+10141-
+10142-                        if (
+10143-                            transactionId.isNotBlank() &&
+10144-                            walletId.isNotBlank()
+10145-                        ) {
+10146-
+10147-                            val links =
+10148-                                prefs.getStringSet(
+10149:                                    "money_manager_links",
+10150-                                    emptySet()
+10151-                                )?.toMutableSet()
+10152-                                    ?: mutableSetOf()
+10153-
+10154-                            links.removeAll { link ->
+10155-
+10156-                                link.split(
+10157-                                    "|||",
+--
+10165-                            links.add(
+10166-                                transactionId +
+10167-                                    "|||" +
+10168-                                    walletId
+10169-                            )
+10170-
+10171-                            prefs.edit()
+10172-                                .putStringSet(
+10173:                                    "money_manager_links",
+10174-                                    links.toSet()
+10175-                                )
+10176-                                .apply()
+10177-                        }
+10178-                    }
+10179-
+10180-                    amountInput.text.clear()
+10181-                    noteInput.text.clear()
+
+=== PROTECTED REPORT BUTTONS ===
+2502:                    "กรอกวันที่แล้วกดค้นหาและประมวลผลรายงาน"
+2634:                text = "ค้นหาและประมวลผลรายงาน"
+3106:                            "กรุณากดค้นหาและประมวลผลรายงานก่อน",
+3091:                text = "สร้างและแชร์ PDF"
