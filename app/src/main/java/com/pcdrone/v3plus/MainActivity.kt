@@ -6238,6 +6238,39 @@ class MainActivity : Activity() {
             }
         )
 
+        val historyProcessButton =
+            android.widget.Button(this).apply {
+                text = "ประมวลผล / แชร์ PDF"
+                isAllCaps = false
+                textSize = 16f
+
+                setTextColor(android.graphics.Color.WHITE)
+
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+                        setColor(
+                            android.graphics.Color.rgb(0, 105, 55)
+                        )
+                        cornerRadius = dp(12).toFloat()
+                        setStroke(
+                            dp(2),
+                            android.graphics.Color.rgb(0, 70, 35)
+                        )
+                    }
+
+                elevation = dp(5).toFloat()
+            }
+
+        root.addView(
+            historyProcessButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                bottomMargin = dp(12)
+            }
+        )
+
         val historyModeText =
             android.widget.TextView(this).apply {
                 text =
