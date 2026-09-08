@@ -6261,6 +6261,15 @@ class MainActivity : Activity() {
                 elevation = dp(5).toFloat()
             }
 
+        historyProcessButton.setOnClickListener {
+            startActivity(
+                android.content.Intent(
+                    this,
+                    HistoryReportActivity::class.java
+                )
+            )
+        }
+
         root.addView(
             historyProcessButton,
             android.widget.LinearLayout.LayoutParams(
