@@ -1,0 +1,6 @@
+renderReport=False
+searchButton=False
+fromDate=False
+toDate=False
+safeDecimal=False
+chars=7944
