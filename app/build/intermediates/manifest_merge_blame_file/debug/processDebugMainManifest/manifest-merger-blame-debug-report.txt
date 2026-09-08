@@ -8,54 +8,101 @@
 8        android:minSdkVersion="26"
 9        android:targetSdkVersion="36" />
 10
-11    <application
-11-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:4:5-28:19
-12        android:allowBackup="true"
-12-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:5:9-35
-13        android:debuggable="true"
-14        android:extractNativeLibs="false"
-15        android:label="@string/app_name"
-15-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:6:9-41
-16        android:supportsRtl="true"
-16-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:7:9-35
-17        android:theme="@style/Theme.PCDrone" >
-17-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:8:9-45
-18        <activity
-18-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:10:9-19:20
-19            android:name="com.pcdrone.v3plus.MainActivity"
-19-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:11:13-41
-20            android:exported="true" >
-20-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:12:13-36
-21            <intent-filter>
-21-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:14:13-17:29
-22                <action android:name="android.intent.action.MAIN" />
-22-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:15:17-69
-22-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:15:25-66
-23
-24                <category android:name="android.intent.category.LAUNCHER" />
-24-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:16:17-77
-24-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:16:27-74
-25            </intent-filter>
-26        </activity>
-27
-28        <provider
-29            android:name="com.pcdrone.v3plus.FinanceReportProvider"
-29-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:23:13-50
-30            android:authorities="com.pcdrone.v3plus.finance-reports"
-30-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:24:13-67
-31            android:exported="false"
-31-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:25:13-37
-32            android:grantUriPermissions="true" />
-32-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:26:13-47
+11    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+11-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:4:5-77
+11-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:4:22-74
+12    <uses-permission android:name="android.permission.VIBRATE" />
+12-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:5:5-66
+12-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:5:22-63
+13    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+13-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:6:5-79
+13-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:6:22-76
+14
+15    <application
+15-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:8:5-58:19
+16        android:allowBackup="true"
+16-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:9:9-35
+17        android:debuggable="true"
+18        android:extractNativeLibs="false"
+19        android:label="@string/app_name"
+19-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:10:9-41
+20        android:supportsRtl="true"
+20-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:11:9-35
+21        android:theme="@style/Theme.PCDrone" >
+21-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:12:9-45
+22        <activity
+22-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:15:9-17:40
+23            android:name="com.pcdrone.v3plus.BackupActivity"
+23-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:16:13-43
+24            android:exported="false" />
+24-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:17:13-37
+25        <activity
+25-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:19:9-21:40
+26            android:name="com.pcdrone.v3plus.HistoryReportActivity"
+26-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:20:13-50
+27            android:exported="false" />
+27-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:21:13-37
+28        <activity
+28-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:23:9-32:20
+29            android:name="com.pcdrone.v3plus.MainActivity"
+29-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:24:13-41
+30            android:exported="true" >
+30-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:25:13-36
+31            <intent-filter>
+31-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:27:13-30:29
+32                <action android:name="android.intent.action.MAIN" />
+32-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:28:17-69
+32-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:28:25-66
 33
-34        <service
-34-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:24:9-28:63
-35            android:name="androidx.room.MultiInstanceInvalidationService"
-35-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:25:13-74
-36            android:directBootAware="true"
-36-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:26:13-43
-37            android:exported="false" />
-37-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/3dc0d07dcfe391cc1f4309b33ba5f633/transformed/room-runtime/AndroidManifest.xml:27:13-37
-38    </application>
-39
-40</manifest>
+34                <category android:name="android.intent.category.LAUNCHER" />
+34-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:29:17-77
+34-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:29:27-74
+35            </intent-filter>
+36        </activity>
+37
+38        <receiver
+38-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:35:9-37:40
+39            android:name="com.pcdrone.v3plus.JobNotificationReceiver"
+39-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:36:13-52
+40            android:exported="false" />
+40-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:37:13-37
+41
+42        <provider
+43            android:name="com.pcdrone.v3plus.BackupFileProvider"
+43-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:41:13-47
+44            android:authorities="com.pcdrone.v3plus.backup-files"
+44-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:42:13-64
+45            android:exported="false"
+45-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:43:13-37
+46            android:grantUriPermissions="true" />
+46-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:44:13-47
+47        <provider
+48            android:name="com.pcdrone.v3plus.FinanceReportProvider"
+48-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:47:13-50
+49            android:authorities="com.pcdrone.v3plus.finance-reports"
+49-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:48:13-67
+50            android:exported="false"
+50-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:49:13-37
+51            android:grantUriPermissions="true" />
+51-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:50:13-47
+52        <provider
+53            android:name="com.pcdrone.v3plus.HistoryReportProvider"
+53-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:53:13-50
+54            android:authorities="com.pcdrone.v3plus.history-reports"
+54-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:54:13-67
+55            android:exported="false"
+55-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:55:13-37
+56            android:grantUriPermissions="true" />
+56-->/workspaces/PC-Drone-V3-Plus/app/src/main/AndroidManifest.xml:56:13-47
+57
+58        <service
+58-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/8eeee19dd86e8c3a2982054efa37c354/transformed/jetified-room-runtime/AndroidManifest.xml:24:9-28:63
+59            android:name="androidx.room.MultiInstanceInvalidationService"
+59-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/8eeee19dd86e8c3a2982054efa37c354/transformed/jetified-room-runtime/AndroidManifest.xml:25:13-74
+60            android:directBootAware="true"
+60-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/8eeee19dd86e8c3a2982054efa37c354/transformed/jetified-room-runtime/AndroidManifest.xml:26:13-43
+61            android:exported="false" />
+61-->[androidx.room:room-runtime-android:2.8.4] /home/codespace/.gradle/caches/8.13/transforms/8eeee19dd86e8c3a2982054efa37c354/transformed/jetified-room-runtime/AndroidManifest.xml:27:13-37
+62    </application>
+63
+64</manifest>

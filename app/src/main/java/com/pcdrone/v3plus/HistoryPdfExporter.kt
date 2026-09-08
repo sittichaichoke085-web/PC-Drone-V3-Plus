@@ -231,12 +231,13 @@ object HistoryPdfExporter {
                 val canvas = page!!.canvas
                 val top = y
                 val height = 25f
+                val bottom = top + height
 
                 canvas.drawRect(
                     left,
                     top,
                     right,
-                    top + height,
+                    bottom,
                     headerFill
                 )
 
@@ -258,7 +259,36 @@ object HistoryPdfExporter {
                     )
                 }
 
-                y += height
+                // กรอบบนสุด
+                canvas.drawLine(
+                    left,
+                    top,
+                    right,
+                    top,
+                    linePaint
+                )
+
+                // กรอบล่างของหัวตาราง
+                canvas.drawLine(
+                    left,
+                    bottom,
+                    right,
+                    bottom,
+                    linePaint
+                )
+
+                // เส้นแบ่งทุกคอลัมน์ รวมขอบซ้ายและขวา
+                for (x in columnX) {
+                    canvas.drawLine(
+                        x,
+                        top,
+                        x,
+                        bottom,
+                        linePaint
+                    )
+                }
+
+                y = bottom
             }
 
             fun startPage(firstPage: Boolean) {

@@ -117,10 +117,20 @@ class BackupActivity : Activity() {
 
                     try {
 
+                        val previousJobIds =
+                            JobReminderRestoreManager
+                                .currentJobIds(this)
+
                         BackupManager
                             .restoreBackup(
                                 this,
                                 jsonText
+                            )
+
+                        JobReminderRestoreManager
+                            .rescheduleAfterRestore(
+                                this,
+                                previousJobIds
                             )
 
                         Toast.makeText(

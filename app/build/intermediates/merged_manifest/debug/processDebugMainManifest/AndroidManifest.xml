@@ -8,6 +8,10 @@
         android:minSdkVersion="26"
         android:targetSdkVersion="36" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
     <application
         android:allowBackup="true"
         android:debuggable="true"
@@ -15,6 +19,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.PCDrone" >
+        <activity
+            android:name="com.pcdrone.v3plus.BackupActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.pcdrone.v3plus.HistoryReportActivity"
+            android:exported="false" />
         <activity
             android:name="com.pcdrone.v3plus.MainActivity"
             android:exported="true" >
@@ -25,9 +35,23 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name="com.pcdrone.v3plus.JobNotificationReceiver"
+            android:exported="false" />
+
+        <provider
+            android:name="com.pcdrone.v3plus.BackupFileProvider"
+            android:authorities="com.pcdrone.v3plus.backup-files"
+            android:exported="false"
+            android:grantUriPermissions="true" />
         <provider
             android:name="com.pcdrone.v3plus.FinanceReportProvider"
             android:authorities="com.pcdrone.v3plus.finance-reports"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+        <provider
+            android:name="com.pcdrone.v3plus.HistoryReportProvider"
+            android:authorities="com.pcdrone.v3plus.history-reports"
             android:exported="false"
             android:grantUriPermissions="true" />
 
