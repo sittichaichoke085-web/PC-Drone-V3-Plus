@@ -37,6 +37,12 @@
             android:exported="false"
             android:grantUriPermissions="true" />
 
+        <provider
+            android:name=".HistoryReportProvider"
+            android:authorities="${applicationId}.history-reports"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
     </application>
 
 </manifest>
