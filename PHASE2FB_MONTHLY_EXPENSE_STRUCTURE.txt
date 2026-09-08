@@ -1,0 +1,4104 @@
+
+
+===== finance_transactions =====
+record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 9
+                )
+
+            if (parts.size >= 8) {
+
+                val rai =
+                    parts.getOrNull(4)
+                        ?.toDoubleOrNull() ?: 0.0
+
+                val total =
+                    money(
+                        parts.getOrNull(6)
+                    )
+
+                val status =
+                    parts.getOrNull(7)
+                        ?.trim() ?: ""
+
+                when (status) {
+
+                    "เสร็จแล้ว" -> {
+                        completedJobs++
+                        totalRai += rai
+                        jobIncome =
+                            jobIncome.add(total)
+                    }
+
+                    "ยกเลิก" -> {
+                        // ไม่นับ
+                    }
+
+                    else -> {
+                        waitingJobs++
+                    }
+                }
+            }
+        }
+
+        // =========================================
+        // คำนวณการเงิน
+        // =========================================
+
+        val transactions =
+            prefs.getStringSet(
+                "finance_transactions",
+                emptySet()
+            )?.toList() ?: emptyList()
+
+        var otherIncome =
+            java.math.BigDecimal.ZERO
+
+        var expense =
+            java.math.BigDecimal.ZERO
+
+        transactions.forEach { record ->
+
+            val parts =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 5
+                )
+
+            if (parts.size >= 4) {
+
+                val type =
+                    parts.getOrNull(1)
+                        ?.trim() ?: ""
+
+                val amount =
+                    money(
+                        parts.getOrNull(3)
+                    )
+
+                if (type == "INCOME") {
+                    otherIncome =
+                        otherIncome.add(amount)
+                }
+
+                if (type == "EXPENSE") {
+                    expense =
+                        expense.add(amount)
+                }
+            }
+        }
+
+        val totalIncome =
+            jobIncome.add(otherIncome)
+
+        val balance =
+            totalIncome.subtract(expense)
+
+        // =========================================
+        // สีหลัก
+        // =========================================
+
+        val dark =
+            android.graphics.Color.rgb(
+                12, 18, 14
+            )
+
+        val deepGreen =
+            android.graphics.Color.rgb(
+                0, 91, 45
+            )
+
+        val green =
+            android.graphics.Color.rgb(
+                0, 145, 70
+            )
+
+        val softGreen =
+            android.graphics.Color.rgb(
+                235, 247, 239
+            )
+
+        val lightGray =
+            android.graphics.Color.rgb(
+                245, 247, 246
+            )
+
+        window.statusBarColor =
+            dark
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.M
+        ) {
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility and
+                android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }
+
+        fun rounded(
+            color: Int,
+            radius: Float
+        ): android.graphics.drawable.GradientDrawable {
+
+            return android.graphics.drawable.GradientDrawable().apply {
+                shape =
+                    android.graphics.drawable.GradientDrawable.RECTANGLE
+
+                setColor(color)
+
+                cornerRadius =
+                    dp(radius.toInt()).toFloat()
+            }
+        }
+
+        // =======================
+             gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(
+                    android.graphics.Color.GRAY
+                )
+
+                setPadding(
+                    0,
+                    dp(24),
+                    0,
+                    0
+                )
+            }
+        )
+
+        root.addView(
+            content
+        )
+
+        val scroll =
+            android.widget.ScrollView(this).apply {
+
+                setBackgroundColor(
+                    softGreen
+                )
+
+                addView(
+                    root,
+                    android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                )
+            }
+
+        setContentView(
+            scroll
+        )
+    }
+
+
+
+
+    private fun showMoneyManager() {
+
+        // ============================================================
+        // PC DRONE V3.0.1 - MONEY MANAGER PHASE 2A
+        //
+        // IMPORTANT:
+        // - Wallet data is stored separately in money_manager_wallets
+        // - finance_transactions is NOT modified in Phase 2A
+        // - Wallet balances here are opening/manual wallet balances only
+        // ============================================================
+
+        val dark = android.graphics.Color.rgb(17, 17, 17)
+        val green = android.graphics.Color.rgb(0, 145, 70)
+        val greenDark = android.graphics.Color.rgb(0, 91, 45)
+        val pageBg = android.graphics.Color.rgb(245, 248, 246)
+        val gray = android.graphics.Color.rgb(100, 105, 102)
+        val red = android.graphics.Color.rgb(180, 35, 35)
+
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val walletKey = "money_manager_wallets"
+        val delimiter = "|||"
+
+        fun clean(value: String): String {
+            return value
+                .replace(delimiter, " ")
+                .replace("\n", " ")
+                .trim()
+        }
+
+        fun rounded(
+            color: Int,
+            radius: Int
+        ): android.graphics.drawable.GradientDrawable {
+
+            return android.graphics.drawable.GradientDrawable().apply {
+                shape =
+                    android.graphics.drawable.GradientDrawable.RECTANGLE
+                setColor(color)
+                cornerRadius = dp(radius).toFloat()
+            }
+        }
+
+        // ------------------------------------------------------------
+        // SEED DEFAULT WALLETS ONLY ON FIRST USE
+        // ------------------------------------------------------------
+
+        if (!prefs.contains(walletKey)) {
+
+            val defaults =
+                linkedSetOf(
+                    "001${delimiter}เงินสด${delimiter}เงินสด${delimiter}0${delimiter}เงินสดที่ถืออยู่",
+                    "002${delimiter}บัญชีธนาคาร${delimiter}ธนาคาร${delimiter}0${delimiter}เงินในบัญชี",
+                    "003${delimiter}ค่าน้ำมัน${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}งบเชื้อเพลิง",
+                    "004${delimiter}ซ่อมบำรุง${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}โดรน รถ และอุปกรณ์",
+                    "005${delimiter}ค่าแรง${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}ลูกน้องและทีมงาน",
+                    "006${delimiter}เงินงานลูกค้า${delimiter}รายรับ${delimiter}0${delimiter}เงินจากงานบิน",
+                    "007${delimiter}เงินเก็บ / ลงทุน${delimiter}เงินสำรอง${delimiter}0${delimiter}เงินสำรองธุรกิจ",
+                    "008${delimiter}อื่น ๆ${delimiter}อื่น ๆ${delimiter}0${delimiter}ค่าใช้จ่ายหรือเงินกองอื่น"
+                )
+
+            prefs.edit()
+                .putStringSet(
+    
+        prefs.getStringSet(
+                    "money_manager_links",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            val transactionIds =
+                links.mapNotNull { link ->
+
+                    val p =
+                        link.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 2
+                        )
+
+                    val txId =
+                        p.getOrNull(0)
+                            ?.trim()
+                            .orEmpty()
+
+                    val linkedWalletId =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    if (
+                        txId.isNotBlank() &&
+                        linkedWalletId == walletId
+                    ) {
+                        txId
+                    } else {
+                        null
+                    }
+                }.toSet()
+
+            var movement =
+                java.math.BigDecimal.ZERO
+
+            val financeRecords =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            financeRecords.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                val txId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                if (txId in transactionIds) {
+
+                    val type =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    val amount =
+                        parseMoney(
+                            p.getOrNull(3)
+                                ?: "0"
+                        )
+
+                    when (type) {
+
+                        "INCOME" ->
+                            movement =
+                                movement.add(amount)
+
+                        "EXPENSE" ->
+                            movement =
+                                movement.subtract(amount)
+                    }
+                }
+            }
+
+            // =============================================
+            // PHASE 2C - JOB INCOME LINKED TO WALLET
+            // =============================================
+
+            val jobLinks =
+                prefs.getStringSet(
+                    "money_manager_job_links",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            val linkedJobIds =
+                jobLinks.mapNotNull { link ->
+
+                    val p =
+                        link.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 2
+                        )
+
+                    val jobId =
+                        p.getOrNull(0)
+                            ?.trim()
+                            .orEmpty()
+
+                    val linkedWalletId =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    if (
+                        jobId.isNotBlank() &&
+                        linkedWalletId == walletId
+                    ) {
+                        jobId
+                    } else {
+                        null
+                    }
+
+                }.toSet()
+
+            var jobIncomeMovement =
+                java.math.BigDecimal.ZERO
+
+            val jobs =
+                prefs.get
+efs.edit()
+                        .putStringSet(
+                            "money_manager_transfers",
+                            current
+                        )
+                        .apply()
+
+                    dialog.dismiss()
+
+                    showMoneyManager()
+                }
+            }
+
+            dialog.show()
+        }
+
+        val totalBalance =
+            wallets.fold(
+                java.math.BigDecimal.ZERO
+            ) { total, wallet ->
+
+                val openingBalance =
+                    parseMoney(
+                        wallet.getOrNull(3)
+                            ?: "0"
+                    )
+
+                val walletId =
+                    wallet.getOrNull(0)
+                        .orEmpty()
+
+                total.add(
+                    computedWalletBalance(
+                        walletId,
+                        openingBalance
+                    )
+                )
+            }
+
+        // PC_DRONE_PHASE_2FA_STEP1A
+        var auditManualIncome = java.math.BigDecimal.ZERO
+        var auditManualExpense = java.math.BigDecimal.ZERO
+        var auditCompletedJobIncome = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (type == "INCOME") auditManualIncome = auditManualIncome.add(amount)
+            if (type == "EXPENSE") auditManualExpense = auditManualExpense.add(amount)
+        }
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+            if (status == "เสร็จแล้ว") auditCompletedJobIncome = auditCompletedJobIncome.add(amount)
+        }
+
+        val auditBusinessNet = auditCompletedJobIncome.add(auditManualIncome).subtract(auditManualExpense)
+
+        // PC_DRONE_PHASE_2FA_STEP1B
+        val auditFinanceLinks = prefs.getStringSet("money_manager_links", emptySet()).orEmpty()
+        val auditLinkedFinanceIds = auditFinanceLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedIncomeCount = 0
+        var auditUnlinkedIncomeAmount = java.math.BigDecimal.ZERO
+        var auditUnlinkedExpenseCount = 0
+        var auditUnlinkedExpenseAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (transactionId.isNotEmpty() && transactionId !in auditLinkedFinanceIds) {
+                if (type == "INCOME") {
+                    auditUnlinkedIncomeCount++
+                    auditUnlinkedIncomeAmount = auditUnlinkedIncomeAmount.add(amount)
+                }
+                if (type == "EXPENSE") {
+                    auditUnlinkedExpenseCount++
+                    auditUnlinkedExpenseAmount = auditUnlinkedExpenseAmount.add(amount)
+                }
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1C
+        val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+        val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+            link.split("|||", ignoreC
+ome.add(amount)
+            if (type == "EXPENSE") auditManualExpense = auditManualExpense.add(amount)
+        }
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+            if (status == "เสร็จแล้ว") auditCompletedJobIncome = auditCompletedJobIncome.add(amount)
+        }
+
+        val auditBusinessNet = auditCompletedJobIncome.add(auditManualIncome).subtract(auditManualExpense)
+
+        // PC_DRONE_PHASE_2FA_STEP1B
+        val auditFinanceLinks = prefs.getStringSet("money_manager_links", emptySet()).orEmpty()
+        val auditLinkedFinanceIds = auditFinanceLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedIncomeCount = 0
+        var auditUnlinkedIncomeAmount = java.math.BigDecimal.ZERO
+        var auditUnlinkedExpenseCount = 0
+        var auditUnlinkedExpenseAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (transactionId.isNotEmpty() && transactionId !in auditLinkedFinanceIds) {
+                if (type == "INCOME") {
+                    auditUnlinkedIncomeCount++
+                    auditUnlinkedIncomeAmount = auditUnlinkedIncomeAmount.add(amount)
+                }
+                if (type == "EXPENSE") {
+                    auditUnlinkedExpenseCount++
+                    auditUnlinkedExpenseAmount = auditUnlinkedExpenseAmount.add(amount)
+                }
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1C
+        val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+        val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedCompletedJobCount = 0
+        var auditUnlinkedCompletedJobAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val jobId = parts.getOrNull(0)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+
+            if (status == "เสร็จแล้ว" && jobId.isNotEmpty() && jobId !in auditLinkedJobIds) {
+                auditUnlinkedCompletedJobCount++
+                auditUnlinkedCompletedJobAmount = auditUnlinkedCompletedJobAmount.add(amount)
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1D
+        val auditValidWalletIds = wallets.map { it[0] }.toSet()
+
+        val auditOpeningTotal = wallets.fold(java.math.BigDecimal.ZERO) { sum, wallet ->
+            sum.add(parseMoney(wallet[3]))
+        }
+
+        val auditFinanceTransactionIds =
+            prefs.getStringSet("finance_transactions", emptySet()).orEmpty().mapNotNull { record ->
+                record.split("|||", ignoreCase = false, limit = 5)
+                    .getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+            }.toSet()
+
+        var auditOrphanFinanceLinkCount = 0
+
+        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+            val parts = link.s
+nks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedCompletedJobCount = 0
+        var auditUnlinkedCompletedJobAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val jobId = parts.getOrNull(0)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+
+            if (status == "เสร็จแล้ว" && jobId.isNotEmpty() && jobId !in auditLinkedJobIds) {
+                auditUnlinkedCompletedJobCount++
+                auditUnlinkedCompletedJobAmount = auditUnlinkedCompletedJobAmount.add(amount)
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1D
+        val auditValidWalletIds = wallets.map { it[0] }.toSet()
+
+        val auditOpeningTotal = wallets.fold(java.math.BigDecimal.ZERO) { sum, wallet ->
+            sum.add(parseMoney(wallet[3]))
+        }
+
+        val auditFinanceTransactionIds =
+            prefs.getStringSet("finance_transactions", emptySet()).orEmpty().mapNotNull { record ->
+                record.split("|||", ignoreCase = false, limit = 5)
+                    .getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+            }.toSet()
+
+        var auditOrphanFinanceLinkCount = 0
+
+        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+            val parts = link.split("|||", ignoreCase = false, limit = 2)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val walletId = parts.getOrNull(1)?.trim().orEmpty()
+
+            if (
+                transactionId.isEmpty() ||
+                walletId.isEmpty() ||
+                transactionId !in auditFinanceTransactionIds ||
+                walletId !in auditValidWalletIds
+            ) {
+                auditOrphanFinanceLinkCount++
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1E
+        val auditFlightJobStatusById =
+            prefs.getStringSet("flight_jobs", emptySet()).orEmpty().mapNotNull { record ->
+                val p = record.split("|||", ignoreCase = false, limit = 9)
+                val id = p.getOrNull(0)?.trim().orEmpty()
+                if (id.isNotEmpty()) id to p.getOrNull(7)?.trim().orEmpty() else null
+            }.toMap()
+
+        var auditOrphanJobLinkCount = 0
+        val auditJobLinkCounts = mutableMapOf<String, Int>()
+
+        auditJobLinks.forEach { link ->
+            val p = link.split("|||", ignoreCase = false, limit = 2)
+            val jobId = p.getOrNull(0)?.trim().orEmpty()
+            val walletId = p.getOrNull(1)?.trim().orEmpty()
+
+            if (jobId.isNotEmpty()) {
+                auditJobLinkCounts[jobId] = (auditJobLinkCounts[jobId] ?: 0) + 1
+            }
+
+            if (
+                jobId.isEmpty() ||
+                walletId.isEmpty() ||
+                jobId !in auditFlightJobStatusById ||
+                walletId !in auditValidWalletIds ||
+                auditFlightJobStatusById[jobId] != "เสร็จแล้ว"
+            ) {
+                auditOrphanJobLinkCount++
+            }
+        }
+
+        val auditDuplicateJobLinkCount =
+            auditJobLinkCounts.values.count { it > 1 }
+
+        val auditFinanceLinkCounts = mutableMapOf<String, Int>()
+        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+            val id = link.split("|||", ignoreCase = false, limit = 2)
+                .getOrNull(0)?.trim().orEmpty()
+            if (id.isNotEmpty()) {
+                auditFinanceLinkCounts[id] = (auditFinanceLinkCounts[id] ?: 0) + 1
+            }
+        }
+
+     
+=================================
+        // MANUAL FINANCE LINKS
+        // ==========================================
+
+        val financeLinks =
+            prefs.getStringSet(
+                "money_manager_links",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        val linkedTransactionIds =
+            financeLinks.mapNotNull { link ->
+
+                val p =
+                    link.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 2
+                    )
+
+                val transactionId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                val linkedWalletId =
+                    p.getOrNull(1)
+                        ?.trim()
+                        .orEmpty()
+
+                if (
+                    transactionId.isNotBlank() &&
+                    linkedWalletId == walletId
+                ) {
+                    transactionId
+                } else {
+                    null
+                }
+
+            }.toSet()
+
+        val financeTransactions =
+            prefs.getStringSet(
+                "finance_transactions",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        financeTransactions.forEach { record ->
+
+            val p =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 5
+                )
+
+            val transactionId =
+                p.getOrNull(0)
+                    ?.trim()
+                    .orEmpty()
+
+            if (
+                transactionId !in linkedTransactionIds
+            ) {
+                return@forEach
+            }
+
+            val time =
+                transactionId.toLongOrNull()
+                    ?: 0L
+
+            val type =
+                p.getOrNull(1)
+                    ?.trim()
+                    .orEmpty()
+
+            val category =
+                p.getOrNull(2)
+                    ?.trim()
+                    .orEmpty()
+
+            val amount =
+                parseMoney(
+                    p.getOrNull(3)
+                        ?: "0"
+                )
+
+            val note =
+                p.getOrNull(4)
+                    ?.trim()
+                    .orEmpty()
+
+            if (type == "INCOME") {
+
+                totalIncome =
+                    totalIncome.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            if (category.isBlank()) {
+                                "รายรับ"
+                            } else {
+                                category
+                            },
+                        detail = note,
+                        amount = amount,
+                        isIncome = true
+                    )
+                )
+
+            } else if (
+                type == "EXPENSE"
+            ) {
+
+                totalExpense =
+                    totalExpense.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            if (category.isBlank()) {
+                                "รายจ่าย"
+                            } else {
+                                category
+                            },
+                        detail = note,
+                        amount = amount,
+                        isIncome = false
+                    )
+                )
+            }
+        }
+
+        // ==========================================
+ 
+t.Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
+                    if (fromMillis > toMillis) {
+
+                        android.widget.Toast.makeText(
+                            this@MainActivity,
+                            "วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+
+                        return@setOnClickListener
+                    }
+
+                    /*
+                     * REPORT FINANCE SOURCE
+                     * ฐานข้อมูลจริงของ PC Drone V3 Plus
+                     */
+                    val financePrefs =
+                        getSharedPreferences(
+                            "pc_drone_v3_data",
+                            MODE_PRIVATE
+                        )
+
+
+                    // FINANCE_SCHEMA:
+                    // 0=timestamp
+                    // 1=typeCode
+                    // 2=category
+                    // 3=amount
+                    // 4=note
+                    val rawSet: Set<String> =
+                        financePrefs.getStringSet(
+                            "finance_transactions",
+                            emptySet()
+                        )?.toSet()
+                            ?: emptySet()
+
+                    val all =
+                        rawSet.mapNotNull {
+                            parseTx(it)
+                        }.sortedBy {
+                            it.time
+                        }
+
+                    /*
+                     * รวมข้อมูลการเงิน + รายได้จากงานบิน
+                     *
+                     * flight_jobs schema:
+                     * 0 timestamp
+                     * 1 customer
+                     * 2 service
+                     * 3 location
+                     * 4 rai
+                     * 5 rate
+                     * 6 total
+                     * 7 status
+                     * 8 note
+                     */
+
+                    data class ReportRow(
+                        val time: Long,
+                        val item: String,
+                        val income: Double,
+                        val expense: Double
+                    )
+
+                    val financeRows =
+                        all.map { tx ->
+
+                            val income =
+                                if (isIncome(tx.type)) {
+                                    tx.amount
+                                } else {
+                                    0.0
+                                }
+
+                            val expense =
+                                if (isIncome(tx.type)) {
+                                    0.0
+                                } else {
+                                    tx.amount
+                                }
+
+                            val itemText =
+                                if (tx.note.isNotBlank()) {
+                                    tx.item + " - " + tx.note
+                                } else {
+                                    tx.item
+                                }
+
+                            ReportRow(
+                                time = tx.time,
+                                item = itemText.ifBlank { "-" },
+                                income = income,
+                                expense = expense
+                            )
+                        }
+
+                    val rawJobs =
+                        financePrefs.getStringSet(
+                            "flight_jobs",
+                            emptySet()
+                        )?.toSet()
+                            ?: emptySet()
+
+                    val flightRows =
+                        rawJobs.mapNotNull { record ->
+
+                    
+oList()
+                    ?: emptyList()
+
+            var jobIncome =
+                java.math.BigDecimal.ZERO
+
+            var completedJobCount = 0
+
+            jobs.forEach { record ->
+
+                val parts =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 9
+                    )
+
+                if (parts.size >= 8) {
+
+                    val total =
+                        parseMoney(
+                            parts.getOrNull(6)
+                        )
+
+                    val status =
+                        parts.getOrNull(7)
+                            ?.trim()
+                            ?: ""
+
+                    if (status == "เสร็จแล้ว") {
+
+                        jobIncome =
+                            jobIncome.add(total)
+
+                        completedJobCount++
+                    }
+                }
+            }
+
+            // =============================================
+            // 2. MANUAL TRANSACTIONS
+            // =============================================
+
+            val transactions =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            val sortedTransactions =
+                transactions.sortedByDescending { record ->
+
+                    record
+                        .split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 5
+                        )
+                        .getOrNull(0)
+                        ?.toLongOrNull()
+                        ?: 0L
+                }
+
+            var manualIncome =
+                java.math.BigDecimal.ZERO
+
+            var totalExpense =
+                java.math.BigDecimal.ZERO
+
+            sortedTransactions.forEach { record ->
+
+                val parts =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                if (parts.size < 4) {
+                    return@forEach
+                }
+
+                val time =
+                    parts.getOrNull(0)
+                        ?.toLongOrNull()
+                        ?: 0L
+
+                val type =
+                    parts.getOrNull(1)
+                        ?: ""
+
+                val category =
+                    parts.getOrNull(2)
+                        ?: "-"
+
+                val amount =
+                    parseMoney(
+                        parts.getOrNull(3)
+                    )
+
+                val note =
+                    parts.getOrNull(4)
+                        ?: ""
+
+                if (type == "INCOME") {
+
+                    manualIncome =
+                        manualIncome.add(amount)
+
+                } else if (type == "EXPENSE") {
+
+                    totalExpense =
+                        totalExpense.add(amount)
+                }
+
+                val dateText =
+                    if (time > 0L) {
+
+                        java.text.SimpleDateFormat(
+                            "dd/MM/yyyy HH:mm",
+                            java.util.Locale.getDefault()
+                        ).format(
+                            java.util.Date(time)
+                        )
+
+                    } else {
+                        "-"
+                    }
+
+                val card =
+                    android.widget.LinearLayout(
+                        this@MainActivity
+                    ).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+
+                        setPadding(
+                   
+                           }
+                        }
+                    }
+
+                val deleteButton =
+                    android.widget.Button(
+                        this@MainActivity
+                    ).apply {
+
+                        text = "ลบรายการ"
+
+                        setOnClickListener {
+
+                            android.app.AlertDialog.Builder(
+                                this@MainActivity
+                            )
+                                .setTitle(
+                                    "ยืนยันการลบ"
+                                )
+                                .setMessage(
+                                    "ต้องการลบรายการเงินนี้หรือไม่?"
+                                )
+                                .setNegativeButton(
+                                    "ยกเลิก",
+                                    null
+                                )
+                                .setPositiveButton(
+                                    "ลบ"
+                                ) { _, _ ->
+
+                                    val current =
+                                        prefs.getStringSet(
+                                            "finance_transactions",
+                                            emptySet()
+                                        )?.toMutableSet()
+                                            ?: mutableSetOf()
+
+                                    current.remove(
+                                        record
+                                    )
+
+                                    prefs.edit()
+                                        .putStringSet(
+                                            "finance_transactions",
+                                            current
+                                        )
+                                        .apply()
+
+                                    val deletedTransactionId =
+                                        record.split(
+                                            "|||",
+                                            ignoreCase = false,
+                                            limit = 2
+                                        ).getOrNull(0)
+                                            ?.trim()
+                                            .orEmpty()
+
+                                    if (
+                                        deletedTransactionId.isNotBlank()
+                                    ) {
+
+                                        val links =
+                                            prefs.getStringSet(
+                                                "money_manager_links",
+                                                emptySet()
+                                            )?.toMutableSet()
+                                                ?: mutableSetOf()
+
+                                        links.removeAll { link ->
+
+                                            link.split(
+                                                "|||",
+                                                ignoreCase = false,
+                                                limit = 2
+                                            ).getOrNull(0)
+                                                ?.trim() ==
+                                                deletedTransactionId
+                                        }
+
+                                        prefs.edit()
+                                            .putStringSet(
+                                                "money_manager_links",
+                                                links.toSet()
+                                            )
+                                            .apply()
+                                    }
+
+                                    android.widg
+
+===== EXPENSE =====
+                  else -> {
+                        waitingJobs++
+                    }
+                }
+            }
+        }
+
+        // =========================================
+        // คำนวณการเงิน
+        // =========================================
+
+        val transactions =
+            prefs.getStringSet(
+                "finance_transactions",
+                emptySet()
+            )?.toList() ?: emptyList()
+
+        var otherIncome =
+            java.math.BigDecimal.ZERO
+
+        var expense =
+            java.math.BigDecimal.ZERO
+
+        transactions.forEach { record ->
+
+            val parts =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 5
+                )
+
+            if (parts.size >= 4) {
+
+                val type =
+                    parts.getOrNull(1)
+                        ?.trim() ?: ""
+
+                val amount =
+                    money(
+                        parts.getOrNull(3)
+                    )
+
+                if (type == "INCOME") {
+                    otherIncome =
+                        otherIncome.add(amount)
+                }
+
+                if (type == "EXPENSE") {
+                    expense =
+                        expense.add(amount)
+                }
+            }
+        }
+
+        val totalIncome =
+            jobIncome.add(otherIncome)
+
+        val balance =
+            totalIncome.subtract(expense)
+
+        // =========================================
+        // สีหลัก
+        // =========================================
+
+        val dark =
+            android.graphics.Color.rgb(
+                12, 18, 14
+            )
+
+        val deepGreen =
+            android.graphics.Color.rgb(
+                0, 91, 45
+            )
+
+        val green =
+            android.graphics.Color.rgb(
+                0, 145, 70
+            )
+
+        val softGreen =
+            android.graphics.Color.rgb(
+                235, 247, 239
+            )
+
+        val lightGray =
+            android.graphics.Color.rgb(
+                245, 247, 246
+            )
+
+        window.statusBarColor =
+            dark
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.M
+        ) {
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility and
+                android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }
+
+        fun rounded(
+            color: Int,
+            radius: Float
+        ): android.graphics.drawable.GradientDrawable {
+
+            return android.graphics.drawable.GradientDrawable().apply {
+                shape =
+                    android.graphics.drawable.GradientDrawable.RECTANGLE
+
+                setColor(color)
+
+                cornerRadius =
+                    dp(radius.toInt()).toFloat()
+            }
+        }
+
+        // =========================================
+        // ROOT
+        // =========================================
+
+        val root =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setBackgroundColor(
+                    softGreen
+                )
+            }
+
+        // =========================================
+        // HEADER
+        // =========================================
+
+        val header =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(20),
+                    dp(22),
+                    dp(20),
+                    dp(20)
+                )
+
+                background =
+                    rounded(
+       
+    var movement =
+                java.math.BigDecimal.ZERO
+
+            val financeRecords =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            financeRecords.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                val txId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                if (txId in transactionIds) {
+
+                    val type =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    val amount =
+                        parseMoney(
+                            p.getOrNull(3)
+                                ?: "0"
+                        )
+
+                    when (type) {
+
+                        "INCOME" ->
+                            movement =
+                                movement.add(amount)
+
+                        "EXPENSE" ->
+                            movement =
+                                movement.subtract(amount)
+                    }
+                }
+            }
+
+            // =============================================
+            // PHASE 2C - JOB INCOME LINKED TO WALLET
+            // =============================================
+
+            val jobLinks =
+                prefs.getStringSet(
+                    "money_manager_job_links",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            val linkedJobIds =
+                jobLinks.mapNotNull { link ->
+
+                    val p =
+                        link.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 2
+                        )
+
+                    val jobId =
+                        p.getOrNull(0)
+                            ?.trim()
+                            .orEmpty()
+
+                    val linkedWalletId =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    if (
+                        jobId.isNotBlank() &&
+                        linkedWalletId == walletId
+                    ) {
+                        jobId
+                    } else {
+                        null
+                    }
+
+                }.toSet()
+
+            var jobIncomeMovement =
+                java.math.BigDecimal.ZERO
+
+            val jobs =
+                prefs.getStringSet(
+                    "flight_jobs",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            jobs.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 9
+                    )
+
+                val jobId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                val total =
+                    parseMoney(
+                        p.getOrNull(6)
+                            ?: "0"
+                    )
+
+                val status =
+                    p.getOrNull(7)
+                        ?.trim()
+                        .orEmpty()
+
+                if (
+                    jobId in linkedJobIds &&
+                    status == "เสร็จแล้ว"
+                ) {
+                    jobIncomeMovement =
+                        jobIncomeMovement.add(
+                            total
+        
+ =
+            wallets.fold(
+                java.math.BigDecimal.ZERO
+            ) { total, wallet ->
+
+                val openingBalance =
+                    parseMoney(
+                        wallet.getOrNull(3)
+                            ?: "0"
+                    )
+
+                val walletId =
+                    wallet.getOrNull(0)
+                        .orEmpty()
+
+                total.add(
+                    computedWalletBalance(
+                        walletId,
+                        openingBalance
+                    )
+                )
+            }
+
+        // PC_DRONE_PHASE_2FA_STEP1A
+        var auditManualIncome = java.math.BigDecimal.ZERO
+        var auditManualExpense = java.math.BigDecimal.ZERO
+        var auditCompletedJobIncome = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (type == "INCOME") auditManualIncome = auditManualIncome.add(amount)
+            if (type == "EXPENSE") auditManualExpense = auditManualExpense.add(amount)
+        }
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+            if (status == "เสร็จแล้ว") auditCompletedJobIncome = auditCompletedJobIncome.add(amount)
+        }
+
+        val auditBusinessNet = auditCompletedJobIncome.add(auditManualIncome).subtract(auditManualExpense)
+
+        // PC_DRONE_PHASE_2FA_STEP1B
+        val auditFinanceLinks = prefs.getStringSet("money_manager_links", emptySet()).orEmpty()
+        val auditLinkedFinanceIds = auditFinanceLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedIncomeCount = 0
+        var auditUnlinkedIncomeAmount = java.math.BigDecimal.ZERO
+        var auditUnlinkedExpenseCount = 0
+        var auditUnlinkedExpenseAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (transactionId.isNotEmpty() && transactionId !in auditLinkedFinanceIds) {
+                if (type == "INCOME") {
+                    auditUnlinkedIncomeCount++
+                    auditUnlinkedIncomeAmount = auditUnlinkedIncomeAmount.add(amount)
+                }
+                if (type == "EXPENSE") {
+                    auditUnlinkedExpenseCount++
+                    auditUnlinkedExpenseAmount = auditUnlinkedExpenseAmount.add(amount)
+                }
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1C
+        val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+        val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedCompletedJobCount = 0
+        var auditUnlinkedCompletedJobAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+ 
+SE_2FA_STEP1B
+        val auditFinanceLinks = prefs.getStringSet("money_manager_links", emptySet()).orEmpty()
+        val auditLinkedFinanceIds = auditFinanceLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedIncomeCount = 0
+        var auditUnlinkedIncomeAmount = java.math.BigDecimal.ZERO
+        var auditUnlinkedExpenseCount = 0
+        var auditUnlinkedExpenseAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (transactionId.isNotEmpty() && transactionId !in auditLinkedFinanceIds) {
+                if (type == "INCOME") {
+                    auditUnlinkedIncomeCount++
+                    auditUnlinkedIncomeAmount = auditUnlinkedIncomeAmount.add(amount)
+                }
+                if (type == "EXPENSE") {
+                    auditUnlinkedExpenseCount++
+                    auditUnlinkedExpenseAmount = auditUnlinkedExpenseAmount.add(amount)
+                }
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1C
+        val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+        val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedCompletedJobCount = 0
+        var auditUnlinkedCompletedJobAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val jobId = parts.getOrNull(0)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+
+            if (status == "เสร็จแล้ว" && jobId.isNotEmpty() && jobId !in auditLinkedJobIds) {
+                auditUnlinkedCompletedJobCount++
+                auditUnlinkedCompletedJobAmount = auditUnlinkedCompletedJobAmount.add(amount)
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1D
+        val auditValidWalletIds = wallets.map { it[0] }.toSet()
+
+        val auditOpeningTotal = wallets.fold(java.math.BigDecimal.ZERO) { sum, wallet ->
+            sum.add(parseMoney(wallet[3]))
+        }
+
+        val auditFinanceTransactionIds =
+            prefs.getStringSet("finance_transactions", emptySet()).orEmpty().mapNotNull { record ->
+                record.split("|||", ignoreCase = false, limit = 5)
+                    .getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+            }.toSet()
+
+        var auditOrphanFinanceLinkCount = 0
+
+        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+            val parts = link.split("|||", ignoreCase = false, limit = 2)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val walletId = parts.getOrNull(1)?.trim().orEmpty()
+
+            if (
+                transactionId.isEmpty() ||
+                walletId.isEmpty() ||
+                transactionId !in auditFinanceTransactionIds ||
+                walletId !in auditValidWalletIds
+            ) {
+                auditOrphanFinanceLinkCount++
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1E
+        val auditFlightJobStatusById =
+            prefs.getStringSet("flight_jobs", emptySet()).orEmpty().mapNotNull { record ->
+ 0L
+
+            val type =
+                p.getOrNull(1)
+                    ?.trim()
+                    .orEmpty()
+
+            val category =
+                p.getOrNull(2)
+                    ?.trim()
+                    .orEmpty()
+
+            val amount =
+                parseMoney(
+                    p.getOrNull(3)
+                        ?: "0"
+                )
+
+            val note =
+                p.getOrNull(4)
+                    ?.trim()
+                    .orEmpty()
+
+            if (type == "INCOME") {
+
+                totalIncome =
+                    totalIncome.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            if (category.isBlank()) {
+                                "รายรับ"
+                            } else {
+                                category
+                            },
+                        detail = note,
+                        amount = amount,
+                        isIncome = true
+                    )
+                )
+
+            } else if (
+                type == "EXPENSE"
+            ) {
+
+                totalExpense =
+                    totalExpense.add(
+                        amount
+                    )
+
+                history.add(
+                    WalletHistoryRow(
+                        time = time,
+                        title =
+                            if (category.isBlank()) {
+                                "รายจ่าย"
+                            } else {
+                                category
+                            },
+                        detail = note,
+                        amount = amount,
+                        isIncome = false
+                    )
+                )
+            }
+        }
+
+        // ==========================================
+        // FLIGHT JOB LINKS
+        // ==========================================
+
+        val jobLinks =
+            prefs.getStringSet(
+                "money_manager_job_links",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        val linkedJobIds =
+            jobLinks.mapNotNull { link ->
+
+                val p =
+                    link.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 2
+                    )
+
+                val jobId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                val linkedWalletId =
+                    p.getOrNull(1)
+                        ?.trim()
+                        .orEmpty()
+
+                if (
+                    jobId.isNotBlank() &&
+                    linkedWalletId == walletId
+                ) {
+                    jobId
+                } else {
+                    null
+                }
+
+            }.toSet()
+
+        val jobs =
+            prefs.getStringSet(
+                "flight_jobs",
+                emptySet()
+            )?.toList()
+                ?: emptyList()
+
+        jobs.forEach { record ->
+
+            val p =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 9
+                )
+
+            val jobId =
+                p.getOrNull(0)
+                    ?.trim()
+                    .orEmpty()
+
+            if (
+                jobId !in linkedJobIds
+            ) {
+                return@forEach
+            }
+
+            val status =
+                p.getOrNull(7)
+                    ?.trim()
+                    .orEmpty()
+
+            if (
+                status != "เสร็จแล้ว"
+            ) {
+                return@forEach
+         
+   var manualIncome =
+                java.math.BigDecimal.ZERO
+
+            var totalExpense =
+                java.math.BigDecimal.ZERO
+
+            sortedTransactions.forEach { record ->
+
+                val parts =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                if (parts.size < 4) {
+                    return@forEach
+                }
+
+                val time =
+                    parts.getOrNull(0)
+                        ?.toLongOrNull()
+                        ?: 0L
+
+                val type =
+                    parts.getOrNull(1)
+                        ?: ""
+
+                val category =
+                    parts.getOrNull(2)
+                        ?: "-"
+
+                val amount =
+                    parseMoney(
+                        parts.getOrNull(3)
+                    )
+
+                val note =
+                    parts.getOrNull(4)
+                        ?: ""
+
+                if (type == "INCOME") {
+
+                    manualIncome =
+                        manualIncome.add(amount)
+
+                } else if (type == "EXPENSE") {
+
+                    totalExpense =
+                        totalExpense.add(amount)
+                }
+
+                val dateText =
+                    if (time > 0L) {
+
+                        java.text.SimpleDateFormat(
+                            "dd/MM/yyyy HH:mm",
+                            java.util.Locale.getDefault()
+                        ).format(
+                            java.util.Date(time)
+                        )
+
+                    } else {
+                        "-"
+                    }
+
+                val card =
+                    android.widget.LinearLayout(
+                        this@MainActivity
+                    ).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+
+                        setPadding(
+                            dp(12),
+                            dp(12),
+                            dp(12),
+                            dp(12)
+                        )
+
+                        setBackgroundColor(
+                            android.graphics.Color.rgb(
+                                247,
+                                247,
+                                247
+                            )
+                        )
+
+                        val lp =
+                            android.widget.LinearLayout.LayoutParams(
+                                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+
+                        lp.setMargins(
+                            0,
+                            0,
+                            0,
+                            dp(10)
+                        )
+
+                        layoutParams = lp
+                    }
+
+                val isIncome =
+                    type == "INCOME"
+
+                card.addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text =
+                            if (isIncome) {
+                                "รายรับ +${moneyFormat.format(amount)} บาท"
+                            } else {
+                                "รายจ่าย -${moneyFormat.format(amount)} บาท"
+                            }
+
+                        textSize = 18f
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+
+                        setTextColor(
+                            if (i
+       )
+                    }
+                )
+            }
+        }
+
+        val saveButton =
+            android.widget.Button(this).apply {
+
+                text = "บันทึกรายการ"
+
+                textSize = 18f
+
+                setOnClickListener {
+
+                    val amount =
+                        parseMoney(
+                            amountInput.text
+                                .toString()
+                        )
+
+                    if (
+                        amount.compareTo(
+                            java.math.BigDecimal.ZERO
+                        ) <= 0
+                    ) {
+
+                        amountInput.error =
+                            "กรุณากรอกจำนวนเงินมากกว่า 0"
+
+                        return@setOnClickListener
+                    }
+
+                    val selectedType =
+                        typeSpinner.selectedItem
+                            .toString()
+
+                    val typeCode =
+                        if (
+                            selectedType ==
+                            "รายรับอื่น"
+                        ) {
+                            "INCOME"
+                        } else {
+                            "EXPENSE"
+                        }
+
+                    val category =
+                        safeText(
+                            categorySpinner
+                                .selectedItem
+                                .toString()
+                        )
+
+                    val note =
+                        safeText(
+                            noteInput.text
+                                .toString()
+                        )
+
+                    val record =
+                        listOf(
+                            System.currentTimeMillis()
+                                .toString(),
+                            typeCode,
+                            category,
+                            amount
+                                .stripTrailingZeros()
+                                .toPlainString(),
+                            note
+                        ).joinToString(
+                            "|||"
+                        )
+
+                    val current =
+                        prefs.getStringSet(
+                            "finance_transactions",
+                            emptySet()
+                        )?.toMutableSet()
+                            ?: mutableSetOf()
+
+                    current.add(
+                        record
+                    )
+
+                    prefs.edit()
+                        .putStringSet(
+                            "finance_transactions",
+                            current
+                        )
+                        .apply()
+
+                    // PHASE 2B:
+                    // ผูกรายการเงินกับกระเป๋า โดยไม่แก้ schema เดิม
+                    if (financeWallets.isNotEmpty()) {
+
+                        val walletIndex =
+                            walletSpinner.selectedItemPosition
+                                .coerceIn(
+                                    0,
+                                    financeWallets.lastIndex
+                                )
+
+                        val walletId =
+                            financeWallets[
+                                walletIndex
+                            ].id
+
+                        val transactionId =
+                            record.split(
+                                "|||",
+                                ignoreCase = false,
+                                limit = 2
+                            ).getOrNull(0)
+                                ?.trim()
+                                .orEmpty()
+
+                        if (
+                            transactionId.isNotBlank() &&
+                            walletId.isN
+      root,
+                    android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                )
+            }
+
+        setContentView(
+            scrollView
+        )
+    }
+
+
+    private fun showEditFinanceTransaction(
+        originalRecord: String,
+        onSaved: () -> Unit
+    ) {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val parts =
+            originalRecord.split(
+                "|||",
+                ignoreCase = false,
+                limit = 5
+            )
+
+        if (parts.size < 4) {
+
+            android.widget.Toast.makeText(
+                this,
+                "ไม่สามารถอ่านรายการเงินนี้ได้",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        val originalTime =
+            parts.getOrNull(0)
+                ?.toLongOrNull()
+                ?: System.currentTimeMillis()
+
+        val originalType =
+            parts.getOrNull(1)
+                ?: "EXPENSE"
+
+        val originalCategory =
+            parts.getOrNull(2)
+                ?: "อื่น ๆ"
+
+        val originalAmount =
+            parts.getOrNull(3)
+                ?: ""
+
+        val originalNote =
+            parts.getOrNull(4)
+                ?: ""
+
+        val form =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(20),
+                    dp(8),
+                    dp(20),
+                    dp(8)
+                )
+            }
+
+        // --------------------------------------------------
+        // TYPE
+        // --------------------------------------------------
+
+        val typeLabel =
+            android.widget.TextView(this).apply {
+
+                text = "ประเภทรายการ"
+
+                textSize = 15f
+
+                setTextColor(
+                    android.graphics.Color.BLACK
+                )
+
+                setPadding(
+                    0,
+                    dp(4),
+                    0,
+                    dp(4)
+                )
+            }
+
+        val typeSpinner =
+            android.widget.Spinner(this)
+
+        val types =
+            arrayOf(
+                "รายจ่าย",
+                "รายรับอื่น"
+            )
+
+        typeSpinner.adapter =
+            android.widget.ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                types
+            )
+
+        if (originalType == "INCOME") {
+            typeSpinner.setSelection(1)
+        } else {
+            typeSpinner.setSelection(0)
+        }
+
+        // --------------------------------------------------
+        // CATEGORY
+        // --------------------------------------------------
+
+        val categoryLabel =
+            android.widget.TextView(this).apply {
+
+                text = "หมวดหมู่"
+
+                textSize = 15f
+
+                setTextColor(
+                    android.graphics.Color.BLACK
+                )
+
+                setPadding(
+                    0,
+                    dp(10),
+                    0,
+                    dp(4)
+                )
+            }
+
+        val categorySpinner =
+            android.widget.Spinner(this)
+
+        val categories =
+            arrayOf(
+                "ค่าน้ำมัน",
+                "ค่าอาหาร",
+                "ค่าแรง",
+                "ค่าซ่อมบำรุง",
+                "ค่าอะไหล่",
+                "ค่างวดโดรน",
+                "ค่างวด/หนี้",
+                "ค่าเดินทาง",
+                "ซื้ออุปกรณ์",
+   
+               dialog.getButton(
+                    android.app.AlertDialog.BUTTON_POSITIVE
+                )
+
+            positiveButton.setOnClickListener {
+
+                val amountText =
+                    amountInput.text
+                        .toString()
+                        .trim()
+
+                val amount =
+                    try {
+
+                        java.math.BigDecimal(
+                            amountText
+                        )
+
+                    } catch (_: Exception) {
+
+                        java.math.BigDecimal.ZERO
+                    }
+
+                if (
+                    amount.compareTo(
+                        java.math.BigDecimal.ZERO
+                    ) <= 0
+                ) {
+
+                    amountInput.error =
+                        "กรุณากรอกจำนวนเงินมากกว่า 0"
+
+                    return@setOnClickListener
+                }
+
+                val typeCode =
+                    if (
+                        typeSpinner.selectedItem
+                            .toString() ==
+                        "รายรับอื่น"
+                    ) {
+                        "INCOME"
+                    } else {
+                        "EXPENSE"
+                    }
+
+                val category =
+                    categorySpinner
+                        .selectedItem
+                        .toString()
+                        .replace(
+                            "|||",
+                            " "
+                        )
+                        .replace(
+                            "\n",
+                            " "
+                        )
+                        .trim()
+
+                val note =
+                    noteInput.text
+                        .toString()
+                        .replace(
+                            "|||",
+                            " "
+                        )
+                        .replace(
+                            "\n",
+                            " "
+                        )
+                        .trim()
+
+                val updatedRecord =
+                    listOf(
+                        originalTime.toString(),
+                        typeCode,
+                        category,
+                        amount
+                            .stripTrailingZeros()
+                            .toPlainString(),
+                        note
+                    ).joinToString(
+                        "|||"
+                    )
+
+                val current =
+                    prefs.getStringSet(
+                        "finance_transactions",
+                        emptySet()
+                    )?.toMutableSet()
+                        ?: mutableSetOf()
+
+                /*
+                 * ลบรายการเดิมก่อน
+                 * แล้วเพิ่มรายการที่แก้ไข
+                 *
+                 * จึงไม่เกิดยอดซ้ำ
+                 */
+                current.remove(
+                    originalRecord
+                )
+
+                current.add(
+                    updatedRecord
+                )
+
+                prefs.edit()
+                    .putStringSet(
+                        "finance_transactions",
+                        current
+                    )
+                    .apply()
+
+                android.widget.Toast.makeText(
+                    this@MainActivity,
+                    "แก้ไขรายการเงินเรียบร้อย",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
+                dialog.dismiss()
+
+                onSaved()
+            }
+        }
+
+        dialog.show()
+    }
+
+
+
+    private fun createBackButton(): android.widget.Button {
+
+        return android.widget.Button(this).apply {
+
+            text = "←  ย้อนกลับ"
+            textSize = 18f
+            isAllCaps = false
+
+            setTextColor(
+
+
+===== TextWatcher =====
+("0000", 4)
+
+            val shortParams =
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    dp(58),
+                    1f
+                )
+
+            val yearParams =
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    dp(58),
+                    1.7f
+                )
+
+            fun slash() =
+                android.widget.TextView(this).apply {
+                    text = "/"
+                    textSize = 24f
+                    gravity = android.view.Gravity.CENTER
+                }
+
+            row.addView(day, shortParams)
+
+            row.addView(
+                slash(),
+                android.widget.LinearLayout.LayoutParams(
+                    dp(30),
+                    dp(58)
+                )
+            )
+
+            row.addView(month, shortParams)
+
+            row.addView(
+                slash(),
+                android.widget.LinearLayout.LayoutParams(
+                    dp(30),
+                    dp(58)
+                )
+            )
+
+            row.addView(year, yearParams)
+
+            day.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            month.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            month.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            year.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            return Pair(
+                row,
+                Triple(day, month, year)
+            )
+        }
+
+        root.addView(sectionLabel("จากวันที่"))
+
+        val from = dateRow()
+        root.addView(from.first)
+
+        root.addView(sectionLabel("ถึงวันที่"))
+
+        val to = dateRow()
+        root.addView(to.first)
+
+        val now =
+            java.util.Calendar.getInstance(tz)
+
+        val todayDay =
+            now.get(java.util.Calendar.DAY_OF_MONTH)
+
+        val todayMonth =
+            now.get(java.util.Calendar.MONTH) + 1
+
+        val todayYear =
+            now.get(java.util.Calendar.YEAR) + 543
+
+        fun setToday(
+            fields: Triple<
+                android.widget.EditText,
+                android.widget.EditText,
+                android.widget.EditText
+            >
+        ) {
+
+            fields.first.setText(
+                "%02d".format(todayDay)
+            )
+
+            fields.second.setText(
+                "%02d".format(todayMo
+   row.addView(month, shortParams)
+
+            row.addView(
+                slash(),
+                android.widget.LinearLayout.LayoutParams(
+                    dp(30),
+                    dp(58)
+                )
+            )
+
+            row.addView(year, yearParams)
+
+            day.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            month.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            month.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            year.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            return Pair(
+                row,
+                Triple(day, month, year)
+            )
+        }
+
+        root.addView(sectionLabel("จากวันที่"))
+
+        val from = dateRow()
+        root.addView(from.first)
+
+        root.addView(sectionLabel("ถึงวันที่"))
+
+        val to = dateRow()
+        root.addView(to.first)
+
+        val now =
+            java.util.Calendar.getInstance(tz)
+
+        val todayDay =
+            now.get(java.util.Calendar.DAY_OF_MONTH)
+
+        val todayMonth =
+            now.get(java.util.Calendar.MONTH) + 1
+
+        val todayYear =
+            now.get(java.util.Calendar.YEAR) + 543
+
+        fun setToday(
+            fields: Triple<
+                android.widget.EditText,
+                android.widget.EditText,
+                android.widget.EditText
+            >
+        ) {
+
+            fields.first.setText(
+                "%02d".format(todayDay)
+            )
+
+            fields.second.setText(
+                "%02d".format(todayMonth)
+            )
+
+            fields.third.setText(
+                todayYear.toString()
+            )
+        }
+
+        setToday(from.second)
+        setToday(to.second)
+
+        fun parseDate(
+            fields: Triple<
+                android.widget.EditText,
+                android.widget.EditText,
+                android.widget.EditText
+            >,
+            endOfDay: Boolean
+        ): Long? {
+
+            val day =
+                fields.first.text.toString()
+                    .toIntOrNull()
+                    ?: return null
+
+            val month =
+                fields.second.text.toString()
+                    .toIntOrNull()
+                    ?: return null
+
+            var year =
+                fields.third.text.toString()
+                    .toIntOrNull()
+                    ?: return null
+
+            // ร
+droid.text.InputFilter.LengthFilter(2)
+                    )
+            }
+
+        val monthSearchInput =
+            android.widget.EditText(this).apply {
+
+                hint = "เดือน"
+                textSize = 15f
+                isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(2)
+                    )
+            }
+
+        val yearSearchInput =
+            android.widget.EditText(this).apply {
+
+                hint = "ปี"
+                textSize = 15f
+                isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(4)
+                    )
+            }
+
+        // Auto jump: วัน -> เดือน -> ปี
+        daySearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        monthSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        monthSearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        yearSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        // ถ้ากรอกวัน/เดือนหลักเดียวแล้วกด Next
+        // เติม 0 ด้านหน้าให้อัตโนมัติ
+        daySearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        monthSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        yearSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
+
+        daySearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    daySearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    daySearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                monthSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
+        monthSearchInput.setOnEditorActionListener {
+    
+                android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(4)
+                    )
+            }
+
+        // Auto jump: วัน -> เดือน -> ปี
+        daySearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        monthSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        monthSearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        yearSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        // ถ้ากรอกวัน/เดือนหลักเดียวแล้วกด Next
+        // เติม 0 ด้านหน้าให้อัตโนมัติ
+        daySearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        monthSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        yearSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
+
+        daySearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    daySearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    daySearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                monthSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
+        monthSearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    monthSearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    monthSearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                yearSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
+        val searchButton =
+            android.widget.Button(this).apply {
+
+                text = "ค้นหา"
+                isAllCaps = false
+
+                setTextColor(
+      
+
+===== addTextChangedListener =====
+   val month = dateBox("00", 2)
+            val year = dateBox("0000", 4)
+
+            val shortParams =
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    dp(58),
+                    1f
+                )
+
+            val yearParams =
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    dp(58),
+                    1.7f
+                )
+
+            fun slash() =
+                android.widget.TextView(this).apply {
+                    text = "/"
+                    textSize = 24f
+                    gravity = android.view.Gravity.CENTER
+                }
+
+            row.addView(day, shortParams)
+
+            row.addView(
+                slash(),
+                android.widget.LinearLayout.LayoutParams(
+                    dp(30),
+                    dp(58)
+                )
+            )
+
+            row.addView(month, shortParams)
+
+            row.addView(
+                slash(),
+                android.widget.LinearLayout.LayoutParams(
+                    dp(30),
+                    dp(58)
+                )
+            )
+
+            row.addView(year, yearParams)
+
+            day.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            month.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            month.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            year.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            return Pair(
+                row,
+                Triple(day, month, year)
+            )
+        }
+
+        root.addView(sectionLabel("จากวันที่"))
+
+        val from = dateRow()
+        root.addView(from.first)
+
+        root.addView(sectionLabel("ถึงวันที่"))
+
+        val to = dateRow()
+        root.addView(to.first)
+
+        val now =
+            java.util.Calendar.getInstance(tz)
+
+        val todayDay =
+            now.get(java.util.Calendar.DAY_OF_MONTH)
+
+        val todayMonth =
+            now.get(java.util.Calendar.MONTH) + 1
+
+        val todayYear =
+            now.get(java.util.Calendar.YEAR) + 543
+
+        fun setToday(
+            fields: Triple<
+                android.widget.EditText,
+                android.widget.EditText,
+                android.widget.EditText
+            >
+        ) {
+
+            fields.first.setText(
+                "%02d".format(todayDay)
+            )
+
+          
+             dp(58)
+                )
+            )
+
+            row.addView(month, shortParams)
+
+            row.addView(
+                slash(),
+                android.widget.LinearLayout.LayoutParams(
+                    dp(30),
+                    dp(58)
+                )
+            )
+
+            row.addView(year, yearParams)
+
+            day.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            month.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            month.addTextChangedListener(
+                object : android.text.TextWatcher {
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {}
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (s?.length == 2) {
+                            year.requestFocus()
+                        }
+                    }
+
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            return Pair(
+                row,
+                Triple(day, month, year)
+            )
+        }
+
+        root.addView(sectionLabel("จากวันที่"))
+
+        val from = dateRow()
+        root.addView(from.first)
+
+        root.addView(sectionLabel("ถึงวันที่"))
+
+        val to = dateRow()
+        root.addView(to.first)
+
+        val now =
+            java.util.Calendar.getInstance(tz)
+
+        val todayDay =
+            now.get(java.util.Calendar.DAY_OF_MONTH)
+
+        val todayMonth =
+            now.get(java.util.Calendar.MONTH) + 1
+
+        val todayYear =
+            now.get(java.util.Calendar.YEAR) + 543
+
+        fun setToday(
+            fields: Triple<
+                android.widget.EditText,
+                android.widget.EditText,
+                android.widget.EditText
+            >
+        ) {
+
+            fields.first.setText(
+                "%02d".format(todayDay)
+            )
+
+            fields.second.setText(
+                "%02d".format(todayMonth)
+            )
+
+            fields.third.setText(
+                todayYear.toString()
+            )
+        }
+
+        setToday(from.second)
+        setToday(to.second)
+
+        fun parseDate(
+            fields: Triple<
+                android.widget.EditText,
+                android.widget.EditText,
+                android.widget.EditText
+            >,
+            endOfDay: Boolean
+        ): Long? {
+
+            val day =
+                fields.first.text.toString()
+                    .toIntOrNull()
+                    ?: return null
+
+            val month =
+                fields.second.text.toString()
+                    .toIntOrNull()
+                    ?: return null
+
+            var year =
+                fields.third.text.toString()
+                    .toIn
+ =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(2)
+                    )
+            }
+
+        val monthSearchInput =
+            android.widget.EditText(this).apply {
+
+                hint = "เดือน"
+                textSize = 15f
+                isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(2)
+                    )
+            }
+
+        val yearSearchInput =
+            android.widget.EditText(this).apply {
+
+                hint = "ปี"
+                textSize = 15f
+                isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(4)
+                    )
+            }
+
+        // Auto jump: วัน -> เดือน -> ปี
+        daySearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        monthSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        monthSearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        yearSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        // ถ้ากรอกวัน/เดือนหลักเดียวแล้วกด Next
+        // เติม 0 ด้านหน้าให้อัตโนมัติ
+        daySearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        monthSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        yearSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
+
+        daySearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    daySearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    daySearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                monthSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
+       isSingleLine = true
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                inputType =
+                    android.text.InputType.TYPE_CLASS_NUMBER
+
+                filters =
+                    arrayOf(
+                        android.text.InputFilter.LengthFilter(4)
+                    )
+            }
+
+        // Auto jump: วัน -> เดือน -> ปี
+        daySearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        monthSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        monthSearchInput.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    if (s?.length == 2) {
+                        yearSearchInput.requestFocus()
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) = Unit
+            }
+        )
+
+        // ถ้ากรอกวัน/เดือนหลักเดียวแล้วกด Next
+        // เติม 0 ด้านหน้าให้อัตโนมัติ
+        daySearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        monthSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+
+        yearSearchInput.imeOptions =
+            android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
+
+        daySearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    daySearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    daySearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                monthSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
+        monthSearchInput.setOnEditorActionListener {
+            _, actionId, _ ->
+
+            if (
+                actionId ==
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            ) {
+
+                val value =
+                    monthSearchInput.text
+                        .toString()
+                        .trim()
+
+                if (value.length == 1) {
+                    monthSearchInput.setText(
+                        value.padStart(2, '0')
+                    )
+                }
+
+                yearSearchInput.requestFocus()
+                true
+
+            } else {
+                false
+            }
+        }
+
+        val searchButton =
+            android.widget.Button(this).apply {
+
+                text = "ค้นหา"
+             
+
+===== SimpleDateFormat =====
+ }
+        )
+
+        root.addView(summary)
+
+        root.addView(
+            android.widget.TextView(this).apply {
+
+                text = "ประวัติรายการ"
+                textSize = 19f
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(2),
+                    dp(5),
+                    0,
+                    dp(10)
+                )
+            }
+        )
+
+        if (
+            history.isEmpty()
+        ) {
+
+            root.addView(
+                android.widget.TextView(this).apply {
+
+                    text =
+                        "ยังไม่มีรายการรับ-จ่ายในกระเป๋านี้"
+
+                    textSize = 14f
+
+                    gravity =
+                        android.view.Gravity.CENTER
+
+                    setTextColor(gray)
+
+                    setPadding(
+                        dp(10),
+                        dp(24),
+                        dp(10),
+                        dp(24)
+                    )
+                }
+            )
+
+        } else {
+
+            val dateFormat =
+                java.text.SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm",
+                    java.util.Locale.getDefault()
+                )
+
+            history.forEach { row ->
+
+                val card =
+                    android.widget.LinearLayout(this).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.HORIZONTAL
+
+                        gravity =
+                            android.view.Gravity.CENTER_VERTICAL
+
+                        setPadding(
+                            dp(14),
+                            dp(12),
+                            dp(14),
+                            dp(12)
+                        )
+
+                        background =
+                            rounded(
+                                android.graphics.Color.WHITE,
+                                14
+                            )
+                    }
+
+                val left =
+                    android.widget.LinearLayout(this).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+                    }
+
+                left.addView(
+                    android.widget.TextView(this).apply {
+
+                        text = row.title
+                        textSize = 15f
+                        setTextColor(dark)
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                    }
+                )
+
+                if (
+                    row.detail.isNotBlank()
+                ) {
+
+                    left.addView(
+                        android.widget.TextView(this).apply {
+
+                            text = row.detail
+                            textSize = 12f
+                            setTextColor(gray)
+                        }
+                    )
+                }
+
+                left.addView(
+                    android.widget.TextView(this).apply {
+
+                        text =
+                            if (
+                                row.time > 0L
+                            ) {
+                                dateFormat.format(
+                                    java.util.Date(
+                                        row.time
+                                    )
+                                )
+                            } else {
+                                "-"
+                            }
+
+                        textSize = 11f
+                        setTextColor(gray)
+                    }
+                )
+
+           
+View(
+                        cell(
+                            money(runningBalance),
+                            true,
+                            android.view.Gravity.END
+                        )
+                    )
+
+                    /*
+                     * ส่งผลรายงานชุดเดียวกับหน้าจอไปให้ PDF
+                     */
+                    var pdfRunningBalance = 0.0
+
+                    reportRows
+                        .filter { it.time < fromMillis }
+                        .forEach { row ->
+                            pdfRunningBalance +=
+                                row.income - row.expense
+                        }
+
+                    val preparedPdfRows =
+                        mutableListOf<Array<String>>()
+
+                    selected.forEachIndexed { index, reportRow ->
+
+                        pdfRunningBalance +=
+                            reportRow.income -
+                                reportRow.expense
+
+                        preparedPdfRows.add(
+                            arrayOf(
+                                (index + 1).toString(),
+                                thaiDate(reportRow.time) + " " +
+                                    java.text.SimpleDateFormat(
+                                        "HH:mm",
+                                        java.util.Locale("th", "TH")
+                                    ).apply {
+                                        timeZone =
+                                            java.util.TimeZone.getTimeZone(
+                                                "Asia/Bangkok"
+                                            )
+                                    }.format(
+                                        java.util.Date(reportRow.time)
+                                    ),
+                                reportRow.item.ifBlank { "-" },
+                                if (reportRow.income > 0.0) {
+                                    money(reportRow.income)
+                                } else {
+                                    "-"
+                                },
+                                if (reportRow.expense > 0.0) {
+                                    money(reportRow.expense)
+                                } else {
+                                    "-"
+                                },
+                                money(pdfRunningBalance)
+                            )
+                        )
+                    }
+
+                    pdfFromMillis = fromMillis
+                    pdfToMillis = toMillis
+                    pdfRows = preparedPdfRows.toList()
+                    pdfTotalIncome = totalIncome
+                    pdfTotalExpense = totalExpense
+                    pdfEndingBalance = runningBalance
+
+                    table.addView(totalRow)
+
+                    summaryText.text =
+                        "รายงาน " +
+                        thaiDate(fromMillis) +
+                        " ถึง " +
+                        thaiDate(toMillis) +
+                        "\n" +
+                        "จำนวนรายการ: " +
+                        selected.size +
+                        "\n" +
+                        "รายรับ: " +
+                        money(totalIncome) +
+                        " บาท" +
+                        "\n" +
+                        "รายจ่าย: " +
+                        money(totalExpense) +
+                        " บาท" +
+                        "\n" +
+                        "คงเหลือ: " +
+                        money(runningBalance) +
+                        " บาท"
+
+                    if (selected.isEmpty()) {
+
+                        android.widget.Toast.makeText(
+                            this@MainActivity,
+                            "ไม่พบรายการในช่วงวันที่ที่เลือก",
+                            androi
+                  }
+
+                    try {
+                        val reportDir =
+                            java.io.File(
+                                cacheDir,
+                                "finance_reports"
+                            ).apply {
+                                mkdirs()
+                            }
+
+                        val pdfFile =
+                            java.io.File(
+                                reportDir,
+                                "PC-Drone-Finance-Report.pdf"
+                            )
+
+                        val document =
+                            android.graphics.pdf.PdfDocument()
+
+                        val pageWidth = 595
+                        val pageHeight = 842
+
+                        val rowsPerPage = 17
+
+                        val pageCount =
+                            maxOf(
+                                1,
+                                (pdfRows.size + rowsPerPage - 1) /
+                                    rowsPerPage
+                            )
+
+                        val now =
+                            java.util.Date()
+
+                        val printDate =
+                            java.text.SimpleDateFormat(
+                                "dd/MM/yyyy",
+                                java.util.Locale("th", "TH")
+                            ).apply {
+                                timeZone =
+                                    java.util.TimeZone.getTimeZone(
+                                        "Asia/Bangkok"
+                                    )
+                            }.format(now)
+
+                        val printTime =
+                            java.text.SimpleDateFormat(
+                                "HH:mm",
+                                java.util.Locale("th", "TH")
+                            ).apply {
+                                timeZone =
+                                    java.util.TimeZone.getTimeZone(
+                                        "Asia/Bangkok"
+                                    )
+                            }.format(now)
+
+                        val paint =
+                            android.graphics.Paint(
+                                android.graphics.Paint.ANTI_ALIAS_FLAG
+                            ).apply {
+                                color =
+                                    android.graphics.Color.BLACK
+                            }
+
+                        fun drawText(
+                            canvas: android.graphics.Canvas,
+                            text: String,
+                            x: Float,
+                            y: Float,
+                            size: Float,
+                            bold: Boolean = false,
+                            align: android.graphics.Paint.Align =
+                                android.graphics.Paint.Align.LEFT
+                        ) {
+                            paint.textSize = size
+                            paint.textAlign = align
+                            paint.style =
+                                android.graphics.Paint.Style.FILL
+                            paint.typeface =
+                                if (bold) {
+                                    android.graphics.Typeface.DEFAULT_BOLD
+                                } else {
+                                    android.graphics.Typeface.DEFAULT
+                                }
+
+                            canvas.drawText(
+                                text,
+                                x,
+                                y,
+                                paint
+                            )
+                        }
+
+                        fun line(
+                            canvas: android.graphics.Canvas,
+                            x1: Float,
+   
+C-Drone-Finance-Report.pdf"
+                            )
+
+                        val document =
+                            android.graphics.pdf.PdfDocument()
+
+                        val pageWidth = 595
+                        val pageHeight = 842
+
+                        val rowsPerPage = 17
+
+                        val pageCount =
+                            maxOf(
+                                1,
+                                (pdfRows.size + rowsPerPage - 1) /
+                                    rowsPerPage
+                            )
+
+                        val now =
+                            java.util.Date()
+
+                        val printDate =
+                            java.text.SimpleDateFormat(
+                                "dd/MM/yyyy",
+                                java.util.Locale("th", "TH")
+                            ).apply {
+                                timeZone =
+                                    java.util.TimeZone.getTimeZone(
+                                        "Asia/Bangkok"
+                                    )
+                            }.format(now)
+
+                        val printTime =
+                            java.text.SimpleDateFormat(
+                                "HH:mm",
+                                java.util.Locale("th", "TH")
+                            ).apply {
+                                timeZone =
+                                    java.util.TimeZone.getTimeZone(
+                                        "Asia/Bangkok"
+                                    )
+                            }.format(now)
+
+                        val paint =
+                            android.graphics.Paint(
+                                android.graphics.Paint.ANTI_ALIAS_FLAG
+                            ).apply {
+                                color =
+                                    android.graphics.Color.BLACK
+                            }
+
+                        fun drawText(
+                            canvas: android.graphics.Canvas,
+                            text: String,
+                            x: Float,
+                            y: Float,
+                            size: Float,
+                            bold: Boolean = false,
+                            align: android.graphics.Paint.Align =
+                                android.graphics.Paint.Align.LEFT
+                        ) {
+                            paint.textSize = size
+                            paint.textAlign = align
+                            paint.style =
+                                android.graphics.Paint.Style.FILL
+                            paint.typeface =
+                                if (bold) {
+                                    android.graphics.Typeface.DEFAULT_BOLD
+                                } else {
+                                    android.graphics.Typeface.DEFAULT
+                                }
+
+                            canvas.drawText(
+                                text,
+                                x,
+                                y,
+                                paint
+                            )
+                        }
+
+                        fun line(
+                            canvas: android.graphics.Canvas,
+                            x1: Float,
+                            y1: Float,
+                            x2: Float,
+                            y2: Float
+                        ) {
+                            paint.style =
+                                android.graphics.Paint.Style.STROKE
+                            paint.strokeWidth = 0.8f
+
+                            canvas.drawLine(
+                                x1,
+                                y1,
+                                x2,
+                              
+               appointmentCalendar.get(
+                                java.util.Calendar.DAY_OF_MONTH
+                            ),
+                            appointmentCalendar.get(
+                                java.util.Calendar.MONTH
+                            ) + 1,
+                            appointmentCalendar.get(
+                                java.util.Calendar.YEAR
+                            ) + 543,
+                            appointmentCalendar.get(
+                                java.util.Calendar.HOUR_OF_DAY
+                            ),
+                            appointmentCalendar.get(
+                                java.util.Calendar.MINUTE
+                            )
+                        )
+
+                    } else {
+                        "ไม่มีข้อมูลนัดหมาย"
+                    }
+
+                val reminderText =
+                    if (reminderEnabled) {
+                        "เปิด"
+                    } else {
+                        "ปิด"
+                    }
+
+                totalRai += rai
+                totalValue += total
+
+                val dateText =
+                    if (time > 0L) {
+                        java.text.SimpleDateFormat(
+                            "dd/MM/yyyy HH:mm",
+                            java.util.Locale.getDefault()
+                        ).format(
+                            java.util.Date(time)
+                        )
+                    } else {
+                        "-"
+                    }
+
+                val card =
+                    android.widget.LinearLayout(
+                        this@MainActivity
+                    ).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+
+                        setPadding(
+                            dp(14),
+                            dp(14),
+                            dp(14),
+                            dp(14)
+                        )
+
+                        val cardColor =
+                            when (status) {
+                                "เสร็จแล้ว" ->
+                                    android.graphics.Color.rgb(76, 175, 80)
+
+                                "รอทำงาน" ->
+                                    android.graphics.Color.rgb(255, 193, 7)
+
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.rgb(239, 83, 80)
+
+                                else ->
+                                    android.graphics.Color.rgb(224, 224, 224)
+                            }
+
+                        val cardBorderColor =
+                            when (status) {
+                                "เสร็จแล้ว" ->
+                                    android.graphics.Color.rgb(27, 94, 32)
+
+                                "รอทำงาน" ->
+                                    android.graphics.Color.rgb(245, 127, 23)
+
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.rgb(183, 28, 28)
+
+                                else ->
+                                    android.graphics.Color.rgb(97, 97, 97)
+                            }
+
+                        val cardTextColor =
+                            when (status) {
+                                "เสร็จแล้ว",
+                                "กำลังดำเนินงาน" ->
+                                    android.graphics.Color.WHITE
+
+                                else ->
+                                    android.graphics.Color.BLACK
+                            }
+
+                        background =
+                            android.graphics.drawable.GradientDrawable().apply {
+                                setColor(cardColor)
+
+                                cornerRadius =
+    
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                if (parts.size < 4) {
+                    return@forEach
+                }
+
+                val time =
+                    parts.getOrNull(0)
+                        ?.toLongOrNull()
+                        ?: 0L
+
+                val type =
+                    parts.getOrNull(1)
+                        ?: ""
+
+                val category =
+                    parts.getOrNull(2)
+                        ?: "-"
+
+                val amount =
+                    parseMoney(
+                        parts.getOrNull(3)
+                    )
+
+                val note =
+                    parts.getOrNull(4)
+                        ?: ""
+
+                if (type == "INCOME") {
+
+                    manualIncome =
+                        manualIncome.add(amount)
+
+                } else if (type == "EXPENSE") {
+
+                    totalExpense =
+                        totalExpense.add(amount)
+                }
+
+                val dateText =
+                    if (time > 0L) {
+
+                        java.text.SimpleDateFormat(
+                            "dd/MM/yyyy HH:mm",
+                            java.util.Locale.getDefault()
+                        ).format(
+                            java.util.Date(time)
+                        )
+
+                    } else {
+                        "-"
+                    }
+
+                val card =
+                    android.widget.LinearLayout(
+                        this@MainActivity
+                    ).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+
+                        setPadding(
+                            dp(12),
+                            dp(12),
+                            dp(12),
+                            dp(12)
+                        )
+
+                        setBackgroundColor(
+                            android.graphics.Color.rgb(
+                                247,
+                                247,
+                                247
+                            )
+                        )
+
+                        val lp =
+                            android.widget.LinearLayout.LayoutParams(
+                                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+
+                        lp.setMargins(
+                            0,
+                            0,
+                            0,
+                            dp(10)
+                        )
+
+                        layoutParams = lp
+                    }
+
+                val isIncome =
+                    type == "INCOME"
+
+                card.addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text =
+                            if (isIncome) {
+                                "รายรับ +${moneyFormat.format(amount)} บาท"
+                            } else {
+                                "รายจ่าย -${moneyFormat.format(amount)} บาท"
+                            }
+
+                        textSize = 18f
+
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+
+                        setTextColor(
+                            if (isIncome) {
+                                android.graphics.Color.rgb(
+                                    0,
+                                    115,
+                                    55
+                             
