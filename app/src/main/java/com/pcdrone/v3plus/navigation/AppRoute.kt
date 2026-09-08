@@ -9,6 +9,7 @@ enum class AppRoute(
     CUSTOMERS("ลูกค้า"),
     JOBS("บันทึกงานบิน"),
     FINANCE("รายรับ - รายจ่าย"),
+    MONEY_MANAGER("บริหารเงิน"),
     HISTORY("ประวัติงาน"),
     REPORTS("รายงาน"),
     SETTINGS("ตั้งค่า")

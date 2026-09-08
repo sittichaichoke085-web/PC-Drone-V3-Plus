@@ -83,10 +83,10 @@ class MainActivity : Activity() {
 
 
     private fun showScreen(route: AppRoute) {
-        if (route == AppRoute.DASHBOARD) {
-            showDashboard()
-        } else {
-            showPlaceholder(route)
+        when (route) {
+            AppRoute.DASHBOARD -> showDashboard()
+            AppRoute.MONEY_MANAGER -> showMoneyManager()
+            else -> showPlaceholder(route)
         }
     }
 
@@ -769,35 +769,27 @@ class MainActivity : Activity() {
         )
 
         val row3 =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.HORIZONTAL
-
-                setPadding(
-                    0,
-                    dp(12),
-                    0,
-                    0
+            menuRow(
+                menuCard(
+                    "฿",
+                    "บริหารเงิน",
+                    "กระเป๋าและเงินทุน",
+                    AppRoute.MONEY_MANAGER
+                ),
+                menuCard(
+                    "⚙",
+                    "ตั้งค่า",
+                    "ข้อมูลและระบบ",
+                    AppRoute.SETTINGS
                 )
+            )
 
-                val settingsCard =
-                    menuCard(
-                        "⚙",
-                        "ตั้งค่า",
-                        "ข้อมูลและระบบ",
-                        AppRoute.SETTINGS
-                    )
-
-                addView(
-                    settingsCard,
-                    android.widget.LinearLayout.LayoutParams(
-                        0,
-                        dp(145),
-                        1f
-                    )
-                )
-            }
+        row3.setPadding(
+            0,
+            dp(12),
+            0,
+            0
+        )
 
         content.addView(
             row3
@@ -1026,6 +1018,357 @@ class MainActivity : Activity() {
         )
     }
 
+
+
+
+    private fun showMoneyManager() {
+
+        val dark = android.graphics.Color.rgb(17, 17, 17)
+        val green = android.graphics.Color.rgb(0, 145, 70)
+        val greenDark = android.graphics.Color.rgb(0, 91, 45)
+        val pageBg = android.graphics.Color.rgb(245, 248, 246)
+        val gray = android.graphics.Color.rgb(100, 105, 102)
+
+        fun rounded(
+            color: Int,
+            radius: Int
+        ): android.graphics.drawable.GradientDrawable {
+
+            return android.graphics.drawable.GradientDrawable().apply {
+                shape =
+                    android.graphics.drawable.GradientDrawable.RECTANGLE
+                setColor(color)
+                cornerRadius = dp(radius).toFloat()
+            }
+        }
+
+        val root =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(16),
+                    dp(18),
+                    dp(16),
+                    dp(32)
+                )
+
+                setBackgroundColor(pageBg)
+            }
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "‹  กลับ"
+                textSize = 17f
+                setTextColor(greenDark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(4),
+                    dp(8),
+                    dp(8),
+                    dp(12)
+                )
+
+                isClickable = true
+                isFocusable = true
+
+                setOnClickListener {
+                    showScreen(AppRoute.DASHBOARD)
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "บริหารเงิน"
+                textSize = 28f
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "จัดการกระเป๋าเงินและเงินทุนของธุรกิจ"
+                textSize = 14f
+                setTextColor(gray)
+
+                setPadding(
+                    0,
+                    dp(4),
+                    0,
+                    dp(16)
+                )
+            }
+        )
+
+        val totalBox =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(18),
+                    dp(18),
+                    dp(18),
+                    dp(18)
+                )
+
+                background =
+                    rounded(
+                        greenDark,
+                        18
+                    )
+            }
+
+        totalBox.addView(
+            android.widget.TextView(this).apply {
+                text = "ยอดรวมทุกกระเป๋า"
+                textSize = 15f
+                setTextColor(android.graphics.Color.WHITE)
+            }
+        )
+
+        totalBox.addView(
+            android.widget.TextView(this).apply {
+                text = "0.00 บาท"
+                textSize = 28f
+                setTextColor(android.graphics.Color.WHITE)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    0,
+                    dp(5),
+                    0,
+                    0
+                )
+            }
+        )
+
+        root.addView(totalBox)
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "กระเป๋าเงิน"
+                textSize = 20f
+                setTextColor(dark)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(2),
+                    dp(22),
+                    0,
+                    dp(10)
+                )
+            }
+        )
+
+        fun walletCard(
+            icon: String,
+            title: String,
+            subtitle: String
+        ): android.widget.LinearLayout {
+
+            return android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+
+                setPadding(
+                    dp(14),
+                    dp(14),
+                    dp(14),
+                    dp(14)
+                )
+
+                background =
+                    rounded(
+                        android.graphics.Color.WHITE,
+                        16
+                    )
+
+                elevation = dp(2).toFloat()
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+                        text = icon
+                        textSize = 25f
+                        gravity =
+                            android.view.Gravity.CENTER
+                    },
+                    android.widget.LinearLayout.LayoutParams(
+                        dp(48),
+                        dp(48)
+                    )
+                )
+
+                val textBox =
+                    android.widget.LinearLayout(
+                        this@MainActivity
+                    ).apply {
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+
+                        setPadding(
+                            dp(10),
+                            0,
+                            0,
+                            0
+                        )
+
+                        addView(
+                            android.widget.TextView(
+                                this@MainActivity
+                            ).apply {
+                                text = title
+                                textSize = 17f
+                                setTextColor(dark)
+
+                                setTypeface(
+                                    typeface,
+                                    android.graphics.Typeface.BOLD
+                                )
+                            }
+                        )
+
+                        addView(
+                            android.widget.TextView(
+                                this@MainActivity
+                            ).apply {
+                                text = subtitle
+                                textSize = 13f
+                                setTextColor(gray)
+                            }
+                        )
+                    }
+
+                addView(
+                    textBox,
+                    android.widget.LinearLayout.LayoutParams(
+                        0,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                        1f
+                    )
+                )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+                        text = "›"
+                        textSize = 26f
+                        setTextColor(green)
+                    }
+                )
+            }
+        }
+
+        val wallets =
+            listOf(
+                Triple("฿", "เงินสด", "เงินสดที่ถืออยู่"),
+                Triple("▣", "บัญชีธนาคาร", "เงินในบัญชี"),
+                Triple("⛽", "ค่าน้ำมัน", "งบเชื้อเพลิง"),
+                Triple("⚙", "ซ่อมบำรุง", "โดรน รถ และอุปกรณ์"),
+                Triple("♟", "ค่าแรง", "ลูกน้องและทีมงาน"),
+                Triple("✓", "เงินงานลูกค้า", "เงินจากงานบิน"),
+                Triple("★", "เงินเก็บ / ลงทุน", "เงินสำรองธุรกิจ"),
+                Triple("…", "อื่น ๆ", "ค่าใช้จ่ายหรือเงินกองอื่น")
+            )
+
+        wallets.forEach { item ->
+            val card =
+                walletCard(
+                    item.first,
+                    item.second,
+                    item.third
+                )
+
+            root.addView(
+                card,
+                android.widget.LinearLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = dp(10)
+                }
+            )
+        }
+
+        val addWallet =
+            android.widget.TextView(this).apply {
+                text = "+  เพิ่มกระเป๋า"
+                textSize = 17f
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(android.graphics.Color.WHITE)
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                setPadding(
+                    dp(12),
+                    dp(15),
+                    dp(12),
+                    dp(15)
+                )
+
+                background =
+                    rounded(
+                        green,
+                        14
+                    )
+            }
+
+        root.addView(
+            addWallet,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(4)
+            }
+        )
+
+        val scroll =
+            android.widget.ScrollView(this).apply {
+                isFillViewport = true
+
+                addView(
+                    root,
+                    android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                )
+            }
+
+        setContentView(scroll)
+    }
 
 
     private fun showReports() {
