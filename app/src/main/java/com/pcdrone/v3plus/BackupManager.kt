@@ -1,6 +1,7 @@
 package com.pcdrone.v3plus
 
 import android.content.Context
+import android.net.Uri
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -132,6 +133,56 @@ object BackupManager {
             Charsets.UTF_8
         )
 
+
         return file
+    }
+
+    fun shareBackup(
+        context: Context
+    ) {
+
+        val file =
+            createBackup(context)
+
+        val uri =
+            Uri.Builder()
+                .scheme(
+                    android.content.ContentResolver
+                        .SCHEME_CONTENT
+                )
+                .authority(
+                    context.packageName +
+                        ".backup-files"
+                )
+                .appendPath(
+                    file.name
+                )
+                .build()
+
+        val intent =
+            android.content.Intent(
+                android.content.Intent.ACTION_SEND
+            ).apply {
+
+                type =
+                    "application/octet-stream"
+
+                putExtra(
+                    android.content.Intent.EXTRA_STREAM,
+                    uri
+                )
+
+                addFlags(
+                    android.content.Intent
+                        .FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+
+        context.startActivity(
+            android.content.Intent.createChooser(
+                intent,
+                "แชร์ไฟล์สำรอง PC Drone"
+            )
+        )
     }
 }

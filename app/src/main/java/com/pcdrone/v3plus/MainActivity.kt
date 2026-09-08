@@ -4009,6 +4009,52 @@ class MainActivity : Activity() {
 
         content.addView(reportCard)
 
+        content.addView(
+            sectionTitle("สำรองและกู้คืนข้อมูล")
+        )
+
+        val backupCard = card()
+
+        backupCard.addView(
+            android.widget.Button(this).apply {
+
+                text = "เปิดเมนูสำรองข้อมูล"
+
+                textSize = 16f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                background =
+                    rounded(
+                        green,
+                        12
+                    )
+
+                setOnClickListener {
+
+                    startActivity(
+                        android.content.Intent(
+                            this@MainActivity,
+                            BackupActivity::class.java
+                        )
+                    )
+                }
+            },
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(54)
+            )
+        )
+
+        content.addView(backupCard)
+
         // =========================================
         // PROFILE
         // =========================================
