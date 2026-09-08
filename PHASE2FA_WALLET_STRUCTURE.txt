@@ -1,0 +1,56 @@
+1087-                )
+1088-
+1089-            prefs.edit()
+1090-                .putStringSet(
+1091-                    walletKey,
+1092-                    defaults
+1093-                )
+1094-                .apply()
+1095-        }
+1096-
+1097:        fun loadWallets(): MutableList<List<String>> {
+1098-
+1099-            return prefs
+1100-                .getStringSet(
+1101-                    walletKey,
+1102-                    emptySet()
+1103-                )
+1104-                .orEmpty()
+1105-                .mapNotNull { record ->
+1106-
+1107-                    val parts =
+1108-                        record.split(
+1109-                            delimiter
+1110-                        )
+1111-
+1112-                    if (parts.size >= 5) {
+1113-                        listOf(
+1114-                            parts[0],
+1115-                            parts[1],
+1116-                            parts[2],
+1117-                            parts[3],
+1118-                            parts.subList(
+1119-                                4,
+1120-                                parts.size
+1121-                            ).joinToString(" ")
+1122-                        )
+1123-                    } else {
+1124-                        null
+1125-                    }
+1126-                }
+1127-                .sortedBy { it[0] }
+1128-                .toMutableList()
+1129-        }
+1130-
+1131-        fun saveWallets(
+1132-            wallets: List<List<String>>
+1133-        ) {
+1134-
+1135-            val encoded =
+1136-                wallets.map { item ->
+1137-                    listOf(
+1138-                        clean(item[0]),
+1139-                        clean(item[1]),
+1140-                        clean(item[2]),
+1141-                        clean(item[3]),
+1142-                        clean(item[4])
