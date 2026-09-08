@@ -1477,15 +1477,122 @@ class MainActivity : Activity() {
         val wallets =
             loadWallets()
 
+        fun computedWalletBalance(
+            walletId: String,
+            openingBalance: java.math.BigDecimal
+        ): java.math.BigDecimal {
+
+            val links =
+                prefs.getStringSet(
+                    "money_manager_links",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            val transactionIds =
+                links.mapNotNull { link ->
+
+                    val p =
+                        link.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 2
+                        )
+
+                    val txId =
+                        p.getOrNull(0)
+                            ?.trim()
+                            .orEmpty()
+
+                    val linkedWalletId =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    if (
+                        txId.isNotBlank() &&
+                        linkedWalletId == walletId
+                    ) {
+                        txId
+                    } else {
+                        null
+                    }
+                }.toSet()
+
+            var movement =
+                java.math.BigDecimal.ZERO
+
+            val financeRecords =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            financeRecords.forEach { record ->
+
+                val p =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                val txId =
+                    p.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                if (txId in transactionIds) {
+
+                    val type =
+                        p.getOrNull(1)
+                            ?.trim()
+                            .orEmpty()
+
+                    val amount =
+                        parseMoney(
+                            p.getOrNull(3)
+                                ?: "0"
+                        )
+
+                    when (type) {
+
+                        "INCOME" ->
+                            movement =
+                                movement.add(amount)
+
+                        "EXPENSE" ->
+                            movement =
+                                movement.subtract(amount)
+                    }
+                }
+            }
+
+            return openingBalance.add(
+                movement
+            )
+        }
+
         val totalBalance =
             wallets.fold(
                 java.math.BigDecimal.ZERO
             ) { total, wallet ->
 
-                total.add(
+                val openingBalance =
                     parseMoney(
                         wallet.getOrNull(3)
                             ?: "0"
+                    )
+
+                val walletId =
+                    wallet.getOrNull(0)
+                        .orEmpty()
+
+                total.add(
+                    computedWalletBalance(
+                        walletId,
+                        openingBalance
                     )
                 )
             }
@@ -1685,10 +1792,16 @@ class MainActivity : Activity() {
                 wallet.getOrNull(2)
                     ?: "อื่น ๆ"
 
-            val balance =
+            val openingBalance =
                 parseMoney(
                     wallet.getOrNull(3)
                         ?: "0"
+                )
+
+            val balance =
+                computedWalletBalance(
+                    id,
+                    openingBalance
                 )
 
             val note =
@@ -1940,8 +2053,8 @@ class MainActivity : Activity() {
             android.widget.TextView(this).apply {
 
                 text =
-                    "Phase 2A: ยอดกระเป๋าเป็นยอดตั้งต้น/ยอดจัดสรร " +
-                    "ยังไม่บันทึกเป็นรายรับหรือรายจ่าย"
+                    "Phase 2B: ยอดกระเป๋า = ยอดตั้งต้น + รายรับ - รายจ่าย " +
+                    "ที่เลือกผูกกับกระเป๋านั้น"
 
                 textSize = 11f
                 gravity =
@@ -9269,6 +9382,101 @@ class MainActivity : Activity() {
                 categories
             )
 
+
+        // =================================================
+        // PHASE 2B - WALLET SELECTOR
+        // =================================================
+
+        data class FinanceWallet(
+            val id: String,
+            val name: String
+        )
+
+        fun loadFinanceWallets(): List<FinanceWallet> {
+
+            val raw =
+                prefs.getStringSet(
+                    "money_manager_wallets",
+                    emptySet()
+                )?.toList()
+                    ?: emptyList()
+
+            return raw.mapNotNull { record ->
+
+                val parts =
+                    record.split(
+                        "|||",
+                        ignoreCase = false,
+                        limit = 5
+                    )
+
+                val id =
+                    parts.getOrNull(0)
+                        ?.trim()
+                        .orEmpty()
+
+                val name =
+                    parts.getOrNull(1)
+                        ?.trim()
+                        .orEmpty()
+
+                if (
+                    id.isBlank() ||
+                    name.isBlank()
+                ) {
+                    null
+                } else {
+                    FinanceWallet(
+                        id = id,
+                        name = name
+                    )
+                }
+            }.sortedBy {
+                it.name
+            }
+        }
+
+        val financeWallets =
+            loadFinanceWallets()
+
+        val walletSpinner =
+            android.widget.Spinner(this)
+
+        val walletNames =
+            if (financeWallets.isEmpty()) {
+                listOf("ยังไม่มีกระเป๋า")
+            } else {
+                financeWallets.map {
+                    it.name
+                }
+            }
+
+        walletSpinner.adapter =
+            android.widget.ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                walletNames
+            )
+
+        val walletLabel =
+            android.widget.TextView(this).apply {
+
+                text = "กระเป๋าเงิน"
+
+                textSize = 15f
+
+                setTextColor(
+                    android.graphics.Color.BLACK
+                )
+
+                setPadding(
+                    0,
+                    dp(10),
+                    0,
+                    dp(4)
+                )
+            }
+
         val amountInput =
             android.widget.EditText(this).apply {
 
@@ -9310,6 +9518,8 @@ class MainActivity : Activity() {
 
         root.addView(typeSpinner)
         root.addView(categorySpinner)
+        root.addView(walletLabel)
+        root.addView(walletSpinner)
         root.addView(amountInput)
         root.addView(noteInput)
 
@@ -9654,6 +9864,45 @@ class MainActivity : Activity() {
                                         )
                                         .apply()
 
+                                    val deletedTransactionId =
+                                        record.split(
+                                            "|||",
+                                            ignoreCase = false,
+                                            limit = 2
+                                        ).getOrNull(0)
+                                            ?.trim()
+                                            .orEmpty()
+
+                                    if (
+                                        deletedTransactionId.isNotBlank()
+                                    ) {
+
+                                        val links =
+                                            prefs.getStringSet(
+                                                "money_manager_links",
+                                                emptySet()
+                                            )?.toMutableSet()
+                                                ?: mutableSetOf()
+
+                                        links.removeAll { link ->
+
+                                            link.split(
+                                                "|||",
+                                                ignoreCase = false,
+                                                limit = 2
+                                            ).getOrNull(0)
+                                                ?.trim() ==
+                                                deletedTransactionId
+                                        }
+
+                                        prefs.edit()
+                                            .putStringSet(
+                                                "money_manager_links",
+                                                links.toSet()
+                                            )
+                                            .apply()
+                                    }
+
                                     android.widget.Toast.makeText(
                                         this@MainActivity,
                                         "ลบรายการแล้ว",
@@ -9864,6 +10113,69 @@ class MainActivity : Activity() {
                             current
                         )
                         .apply()
+
+                    // PHASE 2B:
+                    // ผูกรายการเงินกับกระเป๋า โดยไม่แก้ schema เดิม
+                    if (financeWallets.isNotEmpty()) {
+
+                        val walletIndex =
+                            walletSpinner.selectedItemPosition
+                                .coerceIn(
+                                    0,
+                                    financeWallets.lastIndex
+                                )
+
+                        val walletId =
+                            financeWallets[
+                                walletIndex
+                            ].id
+
+                        val transactionId =
+                            record.split(
+                                "|||",
+                                ignoreCase = false,
+                                limit = 2
+                            ).getOrNull(0)
+                                ?.trim()
+                                .orEmpty()
+
+                        if (
+                            transactionId.isNotBlank() &&
+                            walletId.isNotBlank()
+                        ) {
+
+                            val links =
+                                prefs.getStringSet(
+                                    "money_manager_links",
+                                    emptySet()
+                                )?.toMutableSet()
+                                    ?: mutableSetOf()
+
+                            links.removeAll { link ->
+
+                                link.split(
+                                    "|||",
+                                    ignoreCase = false,
+                                    limit = 2
+                                ).getOrNull(0)
+                                    ?.trim() ==
+                                    transactionId
+                            }
+
+                            links.add(
+                                transactionId +
+                                    "|||" +
+                                    walletId
+                            )
+
+                            prefs.edit()
+                                .putStringSet(
+                                    "money_manager_links",
+                                    links.toSet()
+                                )
+                                .apply()
+                        }
+                    }
 
                     amountInput.text.clear()
                     noteInput.text.clear()
