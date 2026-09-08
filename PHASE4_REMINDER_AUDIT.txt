@@ -1,0 +1,1116 @@
+]633;E;echo "===== REMINDER / ALARM AUDIT =====";8c53bbd3-6613-43b8-81fb-0be61dd85038]633;C===== REMINDER / ALARM AUDIT =====
+
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-189-    private fun showJobs(start: Long, end: Long) {
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-190-        resultBox.removeAllViews()
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-191-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-192-        val prefs =
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-193-            getSharedPreferences("pc_drone_v3_data", MODE_PRIVATE)
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-194-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-195-        val jobs =
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-196-            prefs.getStringSet("flight_jobs", emptySet())
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-197-                ?.toList()
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-198-                ?: emptyList()
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-199-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-200-        val appointments =
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt:201:            prefs.getStringSet("job_appointments", emptySet())
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-202-                ?.mapNotNull {
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-203-                    val p = it.split("|||")
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-204-                    if (p.size >= 2) {
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-205-                        val id = p[0].toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-206-                        val time = p[1].toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-207-                        if (id != null && time != null) id to time else null
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-208-                    } else null
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-209-                }?.toMap()
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-210-                ?: emptyMap()
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-211-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-212-        data class Row(
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-213-            val date: Long,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-214-            val customer: String,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-215-            val service: String,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-216-            val location: String,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-217-            val rai: Double,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-218-            val rate: Double,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-219-            val total: Double,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-220-            val status: String
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-221-        )
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-222-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-223-        val rows = jobs.mapNotNull { raw ->
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-224-            val p = raw.split("|||", ignoreCase = false, limit = 9)
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-225-            if (p.size < 9) return@mapNotNull null
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-226-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-227-            val id = p[0].toLongOrNull() ?: return@mapNotNull null
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-228-            val effectiveDate = appointments[id] ?: id
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-229-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-230-            if (effectiveDate !in start..end)
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-231-                return@mapNotNull null
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-232-
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-233-            Row(
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-234-                effectiveDate,
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-235-                p[1],
+app/src/main/java/com/pcdrone/v3plus/HistoryReportActivity.kt-236-                p[2],
+--
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-34-        try {
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-35-            val prefs = context.getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-36-                "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-37-                Context.MODE_PRIVATE
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-38-            )
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-39-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-40-            val jobs = prefs
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-41-                .getStringSet("flight_jobs", emptySet())
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-42-                ?.toList()
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-43-                ?: emptyList()
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-44-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-45-            val appointments = prefs
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt:46:                .getStringSet("job_appointments", emptySet())
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-47-                ?.mapNotNull {
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-48-                    val p = it.split("|||")
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-49-                    if (p.size >= 2) {
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-50-                        val id = p[0].toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-51-                        val time = p[1].toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-52-                        if (id != null && time != null) {
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-53-                            id to time
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-54-                        } else null
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-55-                    } else null
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-56-                }
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-57-                ?.toMap()
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-58-                ?: emptyMap()
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-59-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-60-            val rows = jobs.mapNotNull { raw ->
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-61-                val p = raw.split(
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-62-                    "|||",
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-63-                    ignoreCase = false,
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-64-                    limit = 9
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-65-                )
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-66-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-67-                if (p.size < 9) return@mapNotNull null
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-68-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-69-                val id =
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-70-                    p[0].toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-71-                        ?: return@mapNotNull null
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-72-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-73-                val effectiveDate =
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-74-                    appointments[id] ?: id
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-75-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-76-                if (effectiveDate !in start..end) {
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-77-                    return@mapNotNull null
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-78-                }
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-79-
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-80-                Row(
+app/src/main/java/com/pcdrone/v3plus/HistoryPdfExporter.kt-81-                    date = effectiveDate,
+--
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-1-package com.pcdrone.v3plus
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-2-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:3:class JobNotificationReceiver :
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-4-    android.content.BroadcastReceiver() {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-5-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-6-    override fun onReceive(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-7-        context: android.content.Context,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-8-        intent: android.content.Intent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-9-    ) {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-10-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-11-        val settings =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-12-            context.getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-13-                "pc_drone_settings",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-14-                android.content.Context.MODE_PRIVATE
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-15-            )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-16-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-17-        if (
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-18-            !settings.getBoolean(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-19-                "notifications_enabled",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-20-                true
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-21-            )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-22-        ) {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-23-            return
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-24-        }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-25-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-26-        val soundEnabled =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-27-            settings.getBoolean(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-28-                "sound_enabled",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-29-                true
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-30-            ) &&
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-31-            settings.getBoolean(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-32-                "sound_job_notification",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-33-                true
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-34-            )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-35-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-36-        val vibrationEnabled =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-37-            settings.getBoolean(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-38-                "notification_vibration",
+--
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-170-                context,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-171-                MainActivity::class.java
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-172-            ).apply {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-173-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-174-                flags =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-175-                    android.content.Intent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-176-                        .FLAG_ACTIVITY_NEW_TASK or
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-177-                    android.content.Intent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-178-                        .FLAG_ACTIVITY_CLEAR_TOP
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-179-            }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-180-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-181-        val contentIntent =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:182:            android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-183-                .getActivity(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-184-                    context,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-185-                    notificationId(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-186-                        jobId
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-187-                    ),
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-188-                    openIntent,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:189:                    android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-190-                        .FLAG_UPDATE_CURRENT or
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:191:                    android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-192-                        .FLAG_IMMUTABLE
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-193-                )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-194-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-195-        val notification =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-196-            android.app.Notification
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-197-                .Builder(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-198-                    context,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-199-                    channelId
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-200-                )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-201-                .setSmallIcon(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-202-                    android.R.drawable
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-203-                        .ic_popup_reminder
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-204-                )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-205-                .setContentTitle(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-206-                    "PC Drone • เตือนงานบิน"
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-207-                )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-208-                .setContentText(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-209-                    "$customer • $appointmentText"
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-210-                )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-211-                .setStyle(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-212-                    android.app.Notification
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-213-                        .BigTextStyle()
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-214-                        .setBigContentTitle(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-215-                            "PC Drone • เตือนงานบิน"
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-216-                        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-217-                        .bigText(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-218-                            detail
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-219-                        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-220-                        .setSummaryText(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-221-                            "แตะเพื่อเปิดรายละเอียดงาน"
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-222-                        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-223-                )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-224-                .setPriority(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-225-                    android.app.Notification.PRIORITY_MAX
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-226-                )
+--
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-254-        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-255-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-256-        val isRepeat =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-257-            intent.getBooleanExtra(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-258-                "is_repeat",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-259-                false
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-260-            )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-261-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-262-        if (!isRepeat) {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-263-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-264-            val repeatMinutes =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-265-                settings.getInt(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:266:                    "notification_repeat_minutes",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-267-                    0
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-268-                )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-269-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-270-            if (repeatMinutes > 0) {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-271-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-272-                val repeatIntent =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-273-                    android.content.Intent(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-274-                        context,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:275:                        JobNotificationReceiver::class.java
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-276-                    ).apply {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-277-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-278-                        putExtras(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-279-                            intent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-280-                        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-281-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-282-                        putExtra(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-283-                            "is_repeat",
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-284-                            true
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-285-                        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-286-                    }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-287-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:288:                val repeatPendingIntent =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:289:                    android.app.PendingIntent.getBroadcast(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-290-                        context,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-291-                        notificationId(jobId) + 100000,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-292-                        repeatIntent,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:293:                        android.app.PendingIntent.FLAG_UPDATE_CURRENT or
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:294:                            android.app.PendingIntent.FLAG_IMMUTABLE
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-295-                    )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-296-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:297:                val alarmManager =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-298-                    context.getSystemService(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-299-                        android.content.Context.ALARM_SERVICE
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:300:                    ) as android.app.AlarmManager
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-301-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-302-                val triggerAt =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-303-                    System.currentTimeMillis() +
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-304-                        repeatMinutes * 60_000L
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-305-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-306-                if (
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-307-                    android.os.Build.VERSION.SDK_INT >=
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-308-                    android.os.Build.VERSION_CODES.S
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-309-                ) {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-310-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-311-                    if (
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:312:                        alarmManager.canScheduleExactAlarms()
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-313-                    ) {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:314:                        alarmManager.setExactAndAllowWhileIdle(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:315:                            android.app.AlarmManager.RTC_WAKEUP,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-316-                            triggerAt,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:317:                            repeatPendingIntent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-318-                        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-319-                    } else {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:320:                        alarmManager.setAndAllowWhileIdle(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:321:                            android.app.AlarmManager.RTC_WAKEUP,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-322-                            triggerAt,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:323:                            repeatPendingIntent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-324-                        )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-325-                    }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-326-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-327-                } else {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-328-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:329:                    alarmManager.setExactAndAllowWhileIdle(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:330:                        android.app.AlarmManager.RTC_WAKEUP,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-331-                        triggerAt,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt:332:                        repeatPendingIntent
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-333-                    )
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-334-                }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-335-            }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-336-        }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-337-    }
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-338-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-339-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-340-    private fun createChannel(
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-341-        context: android.content.Context,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-342-        soundUri: android.net.Uri?,
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-343-        vibrationEnabled: Boolean
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-344-    ): String {
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-345-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-346-        /*
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-347-         * Channel ของ Android เปลี่ยนเสียงหลังสร้างแล้ว
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-348-         * ไม่ได้อย่างน่าเชื่อถือ
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-349-         *
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-350-         * จึงสร้าง Channel ID ตามเสียง + สั่น
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-351-         * เมื่อผู้ใช้เปลี่ยนเสียงจะได้ Channel ใหม่ทันที
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-352-         */
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-353-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-354-        val identity =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-355-            (
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-356-                soundUri?.toString()
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-357-                    ?: "silent"
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-358-            ) +
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-359-            "_" +
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-360-            vibrationEnabled
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-361-
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-362-        val channelId =
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-363-            "pc_drone_job_" +
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-364-            identity.hashCode()
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-365-                .toUInt()
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-366-                .toString()
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt-367-
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3749-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3750-                    return when (value) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3751-                        3 -> "3 นาที"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3752-                        5 -> "5 นาที"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3753-                        10 -> "10 นาที"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3754-                        15 -> "15 นาที"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3755-                        else -> "ปิด"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3756-                    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3757-                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3758-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3759-                var current =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3760-                    prefs.getInt(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3761:                        "notification_repeat_minutes",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3762-                        0
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3763-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3764-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3765-                text =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3766-                    repeatLabel(current)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3767-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3768-                textSize =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3769-                    13f
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3770-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3771-                setOnClickListener {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3772-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3773-                    current =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3774-                        when (current) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3775-                            0 -> 3
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3776-                            3 -> 5
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3777-                            5 -> 10
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3778-                            10 -> 15
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3779-                            else -> 0
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3780-                        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3781-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3782-                    prefs.edit()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3783-                        .putInt(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:3784:                            "notification_repeat_minutes",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3785-                            current
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3786-                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3787-                        .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3788-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3789-                    text =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3790-                        repeatLabel(current)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3791-                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3792-            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3793-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3794-        repeatWrap.addView(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3795-            repeatButton,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3796-            android.widget.LinearLayout.LayoutParams(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3797-                dp(105),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3798-                dp(46)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3799-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3800-        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3801-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3802-        soundCard.addView(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3803-            repeatWrap
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3804-        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3805-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3806-        addDivider(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3807-            soundCard
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3808-        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3809-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3810-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3811-        val volumeWrap =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3812-            android.widget.LinearLayout(this).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3813-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3814-                orientation =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3815-                    android.widget.LinearLayout.VERTICAL
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3816-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3817-                setPadding(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3818-                    dp(2),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-3819-                    dp(12),
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5027-                    root,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5028-                    android.view.ViewGroup.LayoutParams(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5029-                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5030-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5031-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5032-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5033-            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5034-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5035-        setContentView(scrollView)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5036-    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5037-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5038-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5039:    private fun scheduleJobReminder(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5040-        jobId: Long,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5041-        appointmentMillis: Long,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5042-        customer: String,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5043-        service: String,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5044-        location: String,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5045-        rai: Double
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5046-    ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5047-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5048-        val settingsPrefs =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5049-            getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5050-                "pc_drone_settings",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5051-                android.content.Context.MODE_PRIVATE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5052-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5053-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5054-        val notificationsEnabled =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5055-            settingsPrefs.getBoolean(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5056-                "notifications_enabled",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5057-                true
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5058-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5059-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5060-        if (!notificationsEnabled) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5061-            return
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5062-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5063-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5064-        /*
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5065-         * รองรับทั้ง Int / Long / String
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5066-         * เผื่อ Settings รุ่นก่อนบันทึกคนละชนิด
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5067-         */
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5068-        val advanceValue =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5069-            settingsPrefs.all[
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5070-                "notify_advance_minutes"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5071-            ]
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5072-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5073-        val advanceMinutes =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5074-            when (advanceValue) {
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5105-         * ถ้าเลยเวลาเตือนล่วงหน้าแล้ว
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5106-         * ให้เตือนภายในประมาณ 5 วินาที
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5107-         * แทนที่จะไม่เตือนเลย
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5108-         */
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5109-        if (triggerAt <= now) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5110-            triggerAt =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5111-                now + 5_000L
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5112-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5113-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5114-        val intent =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5115-            android.content.Intent(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5116-                this,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5117:                JobNotificationReceiver::class.java
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5118-            ).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5119-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5120-                putExtra(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5121-                    "job_id",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5122-                    jobId
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5123-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5124-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5125-                putExtra(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5126-                    "appointment_millis",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5127-                    appointmentMillis
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5128-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5129-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5130-                putExtra(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5131-                    "customer",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5132-                    customer
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5133-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5134-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5135-                putExtra(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5136-                    "service",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5137-                    service
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5138-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5139-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5140-                putExtra(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5141-                    "location",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5142-                    location
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5143-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5144-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5145-                putExtra(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5146-                    "rai",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5147-                    rai
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5148-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5149-            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5150-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5151-        val requestCode =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5152-            (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5153-                jobId xor
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5154-                    (jobId ushr 32)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5155-                ).toInt() and 0x7fffffff
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5156-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5157:        val pendingIntent =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5158:            android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5159-                .getBroadcast(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5160-                    this,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5161-                    requestCode,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5162-                    intent,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5163:                    android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5164-                        .FLAG_UPDATE_CURRENT or
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5165:                        android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5166-                            .FLAG_IMMUTABLE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5167-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5168-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5169:        val alarmManager =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5170-            getSystemService(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5171-                android.content.Context.ALARM_SERVICE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5172:            ) as android.app.AlarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5173-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5174-        if (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5175-            android.os.Build.VERSION.SDK_INT >=
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5176-            android.os.Build.VERSION_CODES.S
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5177-        ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5178-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5179-            if (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5180:                alarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5181-                    .canScheduleExactAlarms()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5182-            ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5183-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5184:                alarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5185:                    .setExactAndAllowWhileIdle(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5186:                        android.app.AlarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5187-                            .RTC_WAKEUP,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5188-                        triggerAt,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5189:                        pendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5190-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5191-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5192-            } else {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5193-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5194-                /*
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5195-                 * ไม่มีสิทธิ์ Exact Alarm
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5196-                 * ใช้ alarm ปกติแทน
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5197-                 */
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5198:                alarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5199:                    .setAndAllowWhileIdle(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5200:                        android.app.AlarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5201-                            .RTC_WAKEUP,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5202-                        triggerAt,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5203:                        pendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5204-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5205-            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5206-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5207-        } else {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5208-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5209:            alarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5210:                .setExactAndAllowWhileIdle(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5211:                    android.app.AlarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5212-                        .RTC_WAKEUP,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5213-                    triggerAt,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5214:                    pendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5215-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5216-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5217-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5218-        /*
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5219-         * Android 13+
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5220-         * ขอสิทธิ์ Notification จากผู้ใช้
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5221-         */
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5222-        if (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5223-            android.os.Build.VERSION.SDK_INT >= 33 &&
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5224-            checkSelfPermission(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5225-                "android.permission.POST_NOTIFICATIONS"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5226-            ) !=
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5227-            android.content.pm.PackageManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5228-                .PERMISSION_GRANTED
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5229-        ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5230-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5231-            requestPermissions(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5232-                arrayOf(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5233-                    "android.permission.POST_NOTIFICATIONS"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5234-                ),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5235-                5501
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5236-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5237-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5238-    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5239-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5240-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5241:    private fun cancelJobReminder(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5242-        jobId: Long
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5243-    ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5244-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5245-        val intent =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5246-            android.content.Intent(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5247-                this,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5248:                JobNotificationReceiver::class.java
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5249-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5250-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5251-        val requestCode =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5252-            (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5253-                jobId xor
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5254-                    (jobId ushr 32)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5255-                ).toInt() and 0x7fffffff
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5256-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5257:        val pendingIntent =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5258:            android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5259-                .getBroadcast(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5260-                    this,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5261-                    requestCode,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5262-                    intent,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5263:                    android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5264-                        .FLAG_NO_CREATE or
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5265:                        android.app.PendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5266-                            .FLAG_IMMUTABLE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5267-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5268-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5269:        if (pendingIntent != null) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5270-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5271:            val alarmManager =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5272-                getSystemService(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5273-                    android.content.Context.ALARM_SERVICE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5274:                ) as android.app.AlarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5275-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5276:            alarmManager.cancel(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5277:                pendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5278-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5279-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5280:            pendingIntent.cancel()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5281-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5282-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5283:        val repeatPendingIntent =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5284:            android.app.PendingIntent.getBroadcast(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5285-                this,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5286-                requestCode + 100000,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5287-                intent,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5288:                android.app.PendingIntent.FLAG_NO_CREATE or
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5289:                    android.app.PendingIntent.FLAG_IMMUTABLE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5290-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5291-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5292:        if (repeatPendingIntent != null) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5293-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5294:            val alarmManager =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5295-                getSystemService(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5296-                    android.content.Context.ALARM_SERVICE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5297:                ) as android.app.AlarmManager
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5298-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5299:            alarmManager.cancel(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5300:                repeatPendingIntent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5301-            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5302-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5303:            repeatPendingIntent.cancel()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5304-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5305-    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5306-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5307-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5308-    private fun showJobs() {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5309-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5310-        val prefs = getSharedPreferences(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5311-            "pc_drone_v3_data",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5312-            android.content.Context.MODE_PRIVATE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5313-        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5314-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5315-        val root = android.widget.LinearLayout(this).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5316-            orientation = android.widget.LinearLayout.VERTICAL
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5317-            setPadding(dp(20), dp(20), dp(20), dp(28))
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5318-            setBackgroundColor(android.graphics.Color.WHITE)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5319-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5320-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5321-        // ---------- TITLE ----------
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5322-        root.addView(createBackButton())
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5323-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5324-        root.addView(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5325-            android.widget.TextView(this).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5326-                text = "บันทึกงานบิน"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5327-                textSize = 28f
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5328-                setTextColor(android.graphics.Color.BLACK)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5329-                setTypeface(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5330-                    typeface,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5331-                    android.graphics.Typeface.BOLD
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5332-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5333-            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5334-        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5335-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5336-        root.addView(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5337-            android.widget.TextView(this).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5338-                text = "กรอกรายละเอียดงานให้ครบก่อนบันทึก"
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5775-                     */
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5776-                    val appointmentRecord =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5777-                        listOf(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5778-                            time.toString(),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5779-                            appointmentCal.timeInMillis
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5780-                                .toString(),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5781-                            reminderSwitch.isChecked
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5782-                                .toString()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5783-                        ).joinToString("|||")
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5784-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5785-                    val appointmentSet =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5786-                        prefs.getStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5787:                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5788-                            emptySet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5789-                        )?.toMutableSet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5790-                            ?: mutableSetOf()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5791-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5792-                    appointmentSet.add(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5793-                        appointmentRecord
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5794-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5795-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5796-                    prefs.edit()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5797-                        .putStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5798:                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5799-                            appointmentSet
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5800-                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5801-                        .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5802-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5803-                    // PC_DRONE_NOTIFICATION_SCHEDULED
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5804-                    if (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5805-                        reminderSwitch.isChecked &&
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5806-                        status != "เสร็จแล้ว" &&
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5807-                        status != "ยกเลิก"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5808-                    ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5809-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5810:                        scheduleJobReminder(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5811-                            jobId = time,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5812-                            appointmentMillis =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5813-                                appointmentCal.timeInMillis,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5814-                            customer = customer,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5815-                            service = service,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5816-                            location = location,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5817-                            rai = rai
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5818-                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5819-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5820-                    } else {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5821-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:5822:                        cancelJobReminder(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5823-                            time
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5824-                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5825-                    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5826-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5827-                    val appointmentText =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5828-                        "%02d/%02d/%04d %02d:%02d".format(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5829-                            appointmentCal.get(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5830-                                java.util.Calendar.DAY_OF_MONTH
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5831-                            ),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5832-                            appointmentCal.get(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5833-                                java.util.Calendar.MONTH
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5834-                            ) + 1,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5835-                            appointmentCal.get(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5836-                                java.util.Calendar.YEAR
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5837-                            ) + 543,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5838-                            appointmentCal.get(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5839-                                java.util.Calendar.HOUR_OF_DAY
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5840-                            ),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5841-                            appointmentCal.get(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5842-                                java.util.Calendar.MINUTE
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5843-                            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5844-                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5845-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5846-                    resultText.text =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5847-                        "บันทึกสำเร็จ\n" +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5848-                        "ลูกค้า: $customer\n" +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5849-                        "งาน: $service\n" +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5850-                        "จำนวน: %.2f ไร่\n".format(rai) +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5851-                        "ราคา: %.2f บาท/ไร่\n".format(rate) +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5852-                        "รวม: %.2f บาท\n".format(total) +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5853-                        "สถานะ: $status\n" +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5854-                        "นัดหมาย: $appointmentText\n" +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5855-                        "แจ้งเตือน: " +
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5856-                        if (reminderSwitch.isChecked) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-5857-                            "เปิด"
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6396-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6397-            listContainer.removeAllViews()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6398-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6399-            val records =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6400-                prefs.getStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6401-                    "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6402-                    emptySet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6403-                )?.toList()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6404-                    ?: emptyList()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6405-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6406-            val appointmentRecords =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6407-                prefs.getStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6408:                    "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6409-                    emptySet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6410-                )?.toList()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6411-                    ?: emptyList()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6412-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6413-            val appointmentMap =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6414-                appointmentRecords
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6415-                    .mapNotNull { appointmentRecord ->
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6416-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6417-                        val appointmentParts =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6418-                            appointmentRecord.split(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6419-                                "|||",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6420-                                ignoreCase = false,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6421-                                limit = 3
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6422-                            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6423-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6424-                        val appointmentJobId =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6425-                            appointmentParts
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6426-                                .getOrNull(0)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6427-                                ?.toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6428-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6429-                        if (appointmentJobId != null) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6430-                            appointmentJobId to appointmentParts
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6431-                        } else {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6432-                            null
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6433-                        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6434-                    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6435-                    .toMap()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6436-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6437-            val allSortedRecords =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6438-                records.sortedByDescending { record ->
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6439-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6440-                    val parts =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6441-                        record.split(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6442-                            "|||",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6443-                            ignoreCase = false,
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6877-                                current.remove(record)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6878-                                current.add(completedRecord)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6879-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6880-                                prefs.edit()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6881-                                    .putStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6882-                                        "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6883-                                        current
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6884-                                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6885-                                    .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6886-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6887-                                val appointmentCurrent =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6888-                                    prefs.getStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6889:                                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6890-                                        emptySet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6891-                                    )?.toMutableSet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6892-                                        ?: mutableSetOf()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6893-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6894-                                appointmentCurrent.removeAll {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6895-                                    appointmentRecord ->
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6896-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6897-                                    appointmentRecord
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6898-                                        .split(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6899-                                            "|||",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6900-                                            ignoreCase = false,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6901-                                            limit = 3
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6902-                                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6903-                                        .getOrNull(0)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6904-                                        ?.toLongOrNull() ==
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6905-                                        time
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6906-                                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6907-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6908-                                if (appointmentMillis > 0L) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6909-                                    appointmentCurrent.add(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6910-                                        listOf(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6911-                                            time.toString(),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6912-                                            appointmentMillis.toString(),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6913-                                            "false"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6914-                                        ).joinToString("|||")
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6915-                                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6916-                                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6917-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6918-                                prefs.edit()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6919-                                    .putStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6920:                                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6921-                                        appointmentCurrent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6922-                                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6923-                                    .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6924-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6925:                                cancelJobReminder(time)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6926-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6927-                                android.widget.Toast.makeText(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6928-                                    this@MainActivity,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6929-                                    "บันทึกงานเป็นเสร็จแล้ว",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6930-                                    android.widget.Toast.LENGTH_SHORT
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6931-                                ).show()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6932-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6933-                                reloadHistory()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6934-                            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6935-                        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6936-                    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6937-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6938-                val editButton =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6939-                    android.widget.Button(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6940-                        this@MainActivity
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6941-                    ).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6942-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6943-                        text = "แก้ไข"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6944-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6945-                        setOnClickListener {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6946-                            showEditJobDialog(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6947-                                record
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6948-                            ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6949-                                reloadHistory()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6950-                            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6951-                        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6952-                    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6953-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6954-                val deleteButton =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6955-                    android.widget.Button(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6956-                        this@MainActivity
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6957-                    ).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6958-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6959-                        text = "ลบ"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6960-
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6984-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6985-                                    current.remove(record)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6986-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6987-                                    prefs.edit()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6988-                                        .putStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6989-                                            "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6990-                                            current
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6991-                                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6992-                                        .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6993-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6994-                                    val appointmentCurrent =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6995-                                        prefs.getStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:6996:                                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6997-                                            emptySet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6998-                                        )?.toMutableSet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-6999-                                            ?: mutableSetOf()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7000-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7001-                                    appointmentCurrent.removeAll {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7002-                                        appointmentRecord ->
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7003-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7004-                                        appointmentRecord
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7005-                                            .split(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7006-                                                "|||",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7007-                                                ignoreCase = false,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7008-                                                limit = 3
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7009-                                            )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7010-                                            .getOrNull(0)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7011-                                            ?.toLongOrNull() ==
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7012-                                            time
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7013-                                    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7014-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7015-                                    prefs.edit()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7016-                                        .putStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7017:                                            "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7018-                                            appointmentCurrent
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7019-                                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7020-                                        .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7021-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7022:                                    cancelJobReminder(time)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7023-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7024-                                    android.widget.Toast.makeText(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7025-                                        this@MainActivity,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7026-                                        "ลบรายการแล้ว",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7027-                                        android.widget.Toast.LENGTH_SHORT
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7028-                                    ).show()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7029-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7030-                                    reloadHistory()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7031-                                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7032-                                .show()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7033-                        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7034-                    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7035-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7036-                if (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7037-                    status != "เสร็จแล้ว" &&
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7038-                    status != "ยกเลิก"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7039-                ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7040-                    buttonRow.addView(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7041-                        completeButton,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7042-                        android.widget.LinearLayout.LayoutParams(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7043-                            0,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7044-                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7045-                            1f
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7046-                        ).apply {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7047-                            marginEnd = dp(4)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7048-                        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7049-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7050-                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7051-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7052-                buttonRow.addView(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7053-                    editButton,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7054-                    android.widget.LinearLayout.LayoutParams(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7055-                        0,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7056-                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7057-                        1f
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7345-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7346-        val originalTime =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7347-            parts.getOrNull(0)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7348-                ?.toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7349-                ?: System.currentTimeMillis()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7350-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7351-        // ==========================================
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7352-        // โหลดข้อมูลนัดหมายเดิม
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7353-        // ==========================================
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7354-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7355-        val appointmentSet =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7356-            prefs.getStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7357:                "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7358-                emptySet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7359-            )?.toMutableSet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7360-                ?: mutableSetOf()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7361-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7362-        val oldAppointmentRecord =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7363-            appointmentSet.firstOrNull {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7364-                record ->
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7365-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7366-                record.split(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7367-                    "|||",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7368-                    ignoreCase = false,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7369-                    limit = 3
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7370-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7371-                    .getOrNull(0)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7372-                    ?.toLongOrNull() ==
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7373-                    originalTime
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7374-            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7375-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7376-        val appointmentParts =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7377-            oldAppointmentRecord
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7378-                ?.split(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7379-                    "|||",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7380-                    ignoreCase = false,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7381-                    limit = 3
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7382-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7383-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7384-        val oldAppointmentMillis =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7385-            appointmentParts
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7386-                ?.getOrNull(1)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7387-                ?.toLongOrNull()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7388-                ?: 0L
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7389-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7390-        val oldReminderEnabled =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7391-            appointmentParts
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7392-                ?.getOrNull(2)
+--
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7964-                    .putStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7965-                        "flight_jobs",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7966-                        currentJobs
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7967-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7968-                    .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7969-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7970-                // ======================================
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7971-                // อัปเดต appointment metadata
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7972-                // ======================================
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7973-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7974-                val currentAppointments =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7975-                    prefs.getStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:7976:                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7977-                        emptySet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7978-                    )?.toMutableSet()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7979-                        ?: mutableSetOf()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7980-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7981-                currentAppointments.removeAll {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7982-                    appointmentRecord ->
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7983-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7984-                    appointmentRecord
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7985-                        .split(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7986-                            "|||",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7987-                            ignoreCase = false,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7988-                            limit = 3
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7989-                        )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7990-                        .getOrNull(0)
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7991-                        ?.toLongOrNull() ==
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7992-                        originalTime
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7993-                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7994-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7995-                val newAppointmentRecord =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7996-                    listOf(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7997-                        originalTime.toString(),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7998-                        appointmentCal
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-7999-                            .timeInMillis
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8000-                            .toString(),
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8001-                        reminderSwitch
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8002-                            .isChecked
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8003-                            .toString()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8004-                    ).joinToString(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8005-                        "|||"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8006-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8007-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8008-                currentAppointments.add(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8009-                    newAppointmentRecord
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8010-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8011-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8012-                prefs.edit()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8013-                    .putStringSet(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8014:                        "job_appointments",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8015-                        currentAppointments
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8016-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8017-                    .apply()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8018-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8019-                // ======================================
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8020-                // ยกเลิก Alarm เก่า
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8021-                // แล้วตั้ง Alarm ใหม่
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8022-                // ======================================
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8023-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8024:                cancelJobReminder(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8025-                    originalTime
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8026-                )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8027-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8028-                if (
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8029-                    reminderSwitch.isChecked &&
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8030-                    status != "เสร็จแล้ว" &&
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8031-                    status != "ยกเลิก"
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8032-                ) {
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8033-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:8034:                    scheduleJobReminder(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8035-                        jobId =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8036-                            originalTime,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8037-                        appointmentMillis =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8038-                            appointmentCal
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8039-                                .timeInMillis,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8040-                        customer =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8041-                            customer,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8042-                        service =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8043-                            service,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8044-                        location =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8045-                            location,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8046-                        rai =
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8047-                            rai
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8048-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8049-                }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8050-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8051-                android.widget.Toast
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8052-                    .makeText(
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8053-                        this@MainActivity,
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8054-                        "แก้ไขงานและนัดหมายเรียบร้อย",
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8055-                        android.widget.Toast.LENGTH_SHORT
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8056-                    )
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8057-                    .show()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8058-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8059-                dialog.dismiss()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8060-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8061-                onSaved()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8062-            }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8063-        }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8064-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8065-        dialog.show()
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8066-    }
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8067-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8068-
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt-8069-    private fun showFinance() {
