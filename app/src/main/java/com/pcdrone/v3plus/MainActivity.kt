@@ -4240,6 +4240,7 @@ class MainActivity : Activity() {
             priorCard.isClickable = true
             priorCard.isFocusable = true
             priorCard.setOnClickListener {
+
                 val thaiMonths =
                     listOf(
                         "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.",
@@ -4252,7 +4253,7 @@ class MainActivity : Activity() {
                         java.util.Locale("th", "TH")
                     )
 
-                val detailText =
+                val sortedOutstanding =
                     priorOutstandingItems
                         .sortedWith(
                             compareByDescending<
@@ -4262,55 +4263,202 @@ class MainActivity : Activity() {
                                 >
                             > { it.first[2] }
                                 .thenBy {
-                                    it.first[5].toIntOrNull()
-                                        ?: 31
+                                    it.first[5].toIntOrNull() ?: 31
                                 }
                         )
-                        .joinToString(
-                            System.lineSeparator() +
-                                System.lineSeparator()
-                        ) { pair ->
-                            val item = pair.first
-                            val remaining = pair.second
-                            val parts = item[2].split("-")
 
-                            val monthText =
-                                if (parts.size == 2) {
-                                    val y =
-                                        parts[0].toIntOrNull()
-                                    val m =
-                                        parts[1].toIntOrNull()
+                val labels =
+                    sortedOutstanding.map { pair ->
+                        val item = pair.first
+                        val remaining = pair.second
+                        val parts = item[2].split("-")
 
-                                    if (
-                                        y != null &&
-                                        m != null &&
-                                        m in 1..12
-                                    ) {
-                                        thaiMonths[m - 1] +
-                                            " " +
-                                            (y + 543)
-                                    } else {
-                                        item[2]
-                                    }
+                        val monthLabel =
+                            if (parts.size == 2) {
+                                val y = parts[0].toIntOrNull()
+                                val m = parts[1].toIntOrNull()
+
+                                if (
+                                    y != null &&
+                                    m != null &&
+                                    m in 1..12
+                                ) {
+                                    thaiMonths[m - 1] +
+                                        " " +
+                                        (y + 543)
                                 } else {
                                     item[2]
                                 }
+                            } else {
+                                item[2]
+                            }
 
-                            monthText +
-                                System.lineSeparator() +
-                                item[3] +
-                                System.lineSeparator() +
-                                "คงเหลือ " +
-                                moneyFormat.format(remaining) +
-                                " บาท"
-                        }
+                        monthLabel +
+                            " • " +
+                            item[3] +
+                            " • คงเหลือ " +
+                            moneyFormat.format(remaining) +
+                            " บาท"
+                    }.toTypedArray()
 
                 android.app.AlertDialog.Builder(
                     this@MainActivity
                 )
-                    .setTitle("รายละเอียดหนี้ค้าง")
-                    .setMessage(detailText)
-                    .setPositiveButton("ปิด", null)
+                    .setTitle("ยอดค้างจากเดือนก่อน")
+                    .setItems(labels) { _, which ->
+
+                        val selectedPair =
+                            sortedOutstanding[which]
+
+                        val item =
+                            selectedPair.first
+
+                        val remaining =
+                            selectedPair.second
+
+                        val monthItemId =
+                            item[0]
+
+                        val form =
+                            android.widget.LinearLayout(
+                                this@MainActivity
+                            ).apply {
+                                orientation =
+                                    android.widget.LinearLayout.VERTICAL
+                                setPadding(
+                                    dp(20),
+                                    dp(8),
+                                    dp(20),
+                                    0
+                                )
+                            }
+
+                        val amountInput =
+                            android.widget.EditText(
+                                this@MainActivity
+                            ).apply {
+                                hint =
+                                    "จำนวนเงินที่จ่าย (คงเหลือ " +
+                                    moneyFormat.format(remaining) +
+                                    " บาท)"
+
+                                inputType =
+                                    android.text.InputType.TYPE_CLASS_NUMBER or
+                                    android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                            }
+
+                        val noteInput =
+                            android.widget.EditText(
+                                this@MainActivity
+                            ).apply {
+                                hint = "หมายเหตุ (ถ้ามี)"
+                                inputType =
+                                    android.text.InputType.TYPE_CLASS_TEXT
+                            }
+
+                        form.addView(amountInput)
+                        form.addView(noteInput)
+
+                        val paymentDialog =
+                            android.app.AlertDialog.Builder(
+                                this@MainActivity
+                            )
+                                .setTitle(
+                                    "ชำระยอดค้าง • " +
+                                    item[3]
+                                )
+                                .setView(form)
+                                .setPositiveButton(
+                                    "บันทึก",
+                                    null
+                                )
+                                .setNegativeButton(
+                                    "ยกเลิก",
+                                    null
+                                )
+                                .create()
+
+                        paymentDialog.setOnShowListener {
+
+                            paymentDialog.getButton(
+                                android.app.AlertDialog.BUTTON_POSITIVE
+                            ).setOnClickListener {
+
+                                val amount =
+                                    amountInput.text.toString()
+                                        .trim()
+                                        .toBigDecimalOrNull()
+
+                                val note =
+                                    noteInput.text.toString()
+                                        .replace(
+                                            obligationDelimiter,
+                                            " "
+                                        )
+                                        .trim()
+
+                                when {
+                                    amount == null ||
+                                        amount.compareTo(
+                                            java.math.BigDecimal.ZERO
+                                        ) <= 0 -> {
+                                            amountInput.error =
+                                                "จำนวนเงินต้องมากกว่า 0"
+                                        }
+
+                                    amount.compareTo(
+                                        remaining
+                                    ) > 0 -> {
+                                        amountInput.error =
+                                            "จำนวนเงินเกินยอดคงเหลือ"
+                                    }
+
+                                    else -> {
+                                        // PC_DRONE_MONTHLY_OBLIGATIONS_PRIOR_PAYMENT
+                                        val payments =
+                                            loadObligationPayments()
+
+                                        payments.add(
+                                            listOf(
+                                                "obligation_payment_" +
+                                                    java.util.UUID
+                                                        .randomUUID()
+                                                        .toString(),
+                                                monthItemId,
+                                                amount
+                                                    .stripTrailingZeros()
+                                                    .toPlainString(),
+                                                System
+                                                    .currentTimeMillis()
+                                                    .toString(),
+                                                note
+                                            )
+                                        )
+
+                                        saveObligationPayments(
+                                            payments
+                                        )
+
+                                        paymentDialog.dismiss()
+
+                                        android.widget.Toast.makeText(
+                                            this@MainActivity,
+                                            "บันทึกการชำระยอดค้างแล้ว",
+                                            android.widget.Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        showMonthlyObligations()
+                                    }
+                                }
+                            }
+                        }
+
+                        paymentDialog.show()
+                    }
+                    .setNegativeButton(
+                        "ปิด",
+                        null
+                    )
                     .show()
             }
 
