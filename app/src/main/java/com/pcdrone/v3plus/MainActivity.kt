@@ -3884,6 +3884,38 @@ class MainActivity : Activity() {
             saveObligationMonths(obligationMonths)
         }
 
+        // PC_DRONE_OBLIGATION_NOTIFICATION_CURRENT_MONTH_SCHEDULE
+        obligationMonths
+            .filter { item ->
+                item.size == 7 &&
+                    item[2] == currentMonthKey
+            }
+            .forEach { item ->
+                val planned =
+                    item[4].toBigDecimalOrNull()
+
+                val dueDay =
+                    item[5].toIntOrNull()
+
+                if (
+                    planned != null &&
+                    planned.compareTo(
+                        java.math.BigDecimal.ZERO
+                    ) > 0 &&
+                    dueDay != null &&
+                    dueDay in 1..31
+                ) {
+                    ObligationReminderScheduler.schedule(
+                        context = this,
+                        monthItemId = item[0],
+                        monthKey = item[2],
+                        name = item[3],
+                        planned = planned,
+                        dueDay = dueDay
+                    )
+                }
+            }
+
         val monthNames = arrayOf(
             "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
             "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
