@@ -1,0 +1,260 @@
+
+01884:                 dialog
+01885:                     .getButton(
+01886:                         android.app.AlertDialog.BUTTON_POSITIVE
+01887:                     )
+01888:                     .setOnClickListener {
+01889: 
+01890:                         val walletName =
+01891:                             clean(
+01892:                                 nameInput.text
+01893:                                     .toString()
+01894:                             )
+01895: 
+
+01897: 
+01898:                             nameInput.error =
+01899:                                 "กรุณาใส่ชื่อกระเป๋า"
+01900: 
+01901:                             return@setOnClickListener
+01902:                         }
+01903: 
+01904:                         val rawBalance =
+01905:                             balanceInput.text
+01906:                                 .toString()
+01907:                                 .replace(",", "")
+01908:                                 .trim()
+
+01918: 
+01919:                                 balanceInput.error =
+01920:                                     "ยอดเงินไม่ถูกต้อง"
+01921: 
+01922:                                 return@setOnClickListener
+01923:                             }
+01924: 
+01925:                         val type =
+01926:                             clean(
+01927:                                 typeSpinner.selectedItem
+01928:                                     ?.toString()
+01929:                                     ?: "อื่น ๆ"
+
+01953: 
+01954:                             nameInput.error =
+01955:                                 "มีกระเป๋าชื่อนี้แล้ว"
+01956: 
+01957:                             return@setOnClickListener
+01958:                         }
+01959: 
+01960:                         val updated =
+01961:                             currentWallets
+01962:                                 .filterNot {
+01963:                                     it[0] == id
+01964:                                 }
+
+02449:                     dialog.getButton(
+02450:                         android.app.AlertDialog.BUTTON_POSITIVE
+02451:                     )
+02452: 
+02453:                 saveButton.setOnClickListener {
+02454: 
+02455:                     val fromIndex =
+02456:                         fromSpinner.selectedItemPosition
+02457: 
+02458:                     val toIndex =
+02459:                         toSpinner.selectedItemPosition
+02460: 
+
+02461:                     if (
+02462:                         fromIndex !in wallets.indices ||
+02463:                         toIndex !in wallets.indices
+02464:                     ) {
+02465:                         return@setOnClickListener
+02466:                     }
+02467: 
+02468:                     if (
+02469:                         fromIndex == toIndex
+02470:                     ) {
+02471: 
+02472:                         android.widget.Toast.makeText(
+
+02474:                             "กระเป๋าต้นทางและปลายทางต้องไม่ใช่ใบเดียวกัน",
+02475:                             android.widget.Toast.LENGTH_LONG
+02476:                         ).show()
+02477: 
+02478:                         return@setOnClickListener
+02479:                     }
+02480: 
+02481:                     val amount =
+02482:                         parseMoney(
+02483:                             amountInput.text
+02484:                                 ?.toString()
+02485:                                 .orEmpty()
+
+02496:                             "กรุณาใส่จำนวนเงินมากกว่า 0",
+02497:                             android.widget.Toast.LENGTH_LONG
+02498:                         ).show()
+02499: 
+02500:                         return@setOnClickListener
+02501:                     }
+02502: 
+02503:                     val fromWallet =
+02504:                         wallets[fromIndex]
+02505: 
+02506:                     val toWallet =
+02507:                         wallets[toIndex]
+
+02537:                             "ยอดเงินในกระเป๋าต้นทางไม่เพียงพอ",
+02538:                             android.widget.Toast.LENGTH_LONG
+02539:                         ).show()
+02540: 
+02541:                         return@setOnClickListener
+02542:                     }
+02543: 
+02544:                     val transferId =
+02545:                         System.currentTimeMillis()
+02546:                             .toString()
+02547: 
+02548:                     val note =
+
+02799:             auditUnlinkedCompletedJobCount == 0 &&
+02800:             auditAnomalyCount == 0 &&
+02801:             auditDifference.compareTo(java.math.BigDecimal.ZERO) == 0
+02802: 
+02803:         val root =
+02804:             android.widget.LinearLayout(this).apply {
+02805:                 orientation =
+02806:                     android.widget.LinearLayout.VERTICAL
+02807: 
+02808:                 setPadding(
+02809:                     dp(16),
+02810:                     dp(18),
+
+02835: 
+02836:                 isClickable = true
+02837:                 isFocusable = true
+02838: 
+02839:                 setOnClickListener {
+02840:                     showScreen(
+02841:                         AppRoute.DASHBOARD
+02842:                     )
+02843:                 }
+02844:             }
+02845:         )
+02846: 
+
+02970:                                     rounded(
+02971:                                         android.graphics.Color.rgb(239, 108, 0),
+02972:                                         dp(10)
+02973:                                     )
+02974:                                 setOnClickListener {
+02975:                                     showMonthlyExpenseReport()
+02976:                                 }
+02977:                             },
+02978:                             android.widget.LinearLayout.LayoutParams(
+02979:                                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+02980:                                 dp(42)
+02981:                             )
+
+03075:                     dp(10),
+03076:                     dp(12),
+03077:                     dp(10)
+03078:                 )
+03079:                 setOnClickListener {
+03080:                     android.app.AlertDialog.Builder(this@MainActivity)
+03081:                         .setTitle("รายการที่ต้องจ่ายประจำเดือน")
+03082:                         .setMessage("กำลังเตรียมระบบติดตามยอดที่ต้องจ่าย จ่ายแล้ว คงเหลือ และประวัติรายเดือน")
+03083:                         .setPositiveButton("ตกลง", null)
+03084:                         .show()
+03085:                 }
+03086:             }
+
+03356: 
+03357:                     isClickable = true
+03358:                     isFocusable = true
+03359: 
+03360:                     setOnClickListener {
+03361:                         showWalletEditor(id)
+03362:                     }
+03363: 
+03364:                     setOnLongClickListener {
+03365:                         confirmDeleteWallet(
+03366:                             id,
+03367:                             name
+
+03512: 
+03513:                     isClickable = true
+03514:                     isFocusable = true
+03515: 
+03516:                     setOnClickListener {
+03517:                         showWalletDetail(
+03518:                             walletId = id,
+03519:                             walletName = name,
+03520:                             openingBalance = openingBalance
+03521:                         )
+03522:                     }
+03523:                 },
+
+03596: 
+03597:                 isClickable = true
+03598:                 isFocusable = true
+03599: 
+03600:                 setOnClickListener {
+03601:                     showWalletEditor()
+03602:                 }
+03603:             }
+03604: 
+03605:         root.addView(
+03606:             addWallet,
+03607:             android.widget.LinearLayout.LayoutParams(
+
+03646: 
+03647:                 isClickable = true
+03648:                 isFocusable = true
+03649: 
+03650:                 setOnClickListener {
+03651:                     showWalletTransferDialog()
+03652:                 }
+03653:             }
+03654: 
+03655:         root.addView(
+03656:             transferWallet,
+03657:             android.widget.LinearLayout.LayoutParams(
+
+03685: 
+03686:         root.addView(phaseNote)
+03687: 
+03688:         val scroll =
+03689:             android.widget.ScrollView(this).apply {
+03690: 
+03691:                 isFillViewport = true
+03692: 
+03693:                 addView(
+03694:                     root,
+03695:                     android.view.ViewGroup.LayoutParams(
+03696:                         android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+
+03698:                     )
+03699:                 )
+03700:             }
+03701: 
+03702:         setContentView(scroll)
+03703:     }
+03704: 
+03705: 
+03706: 
+03707:     // =====================================================
+03708:     // PHASE 2D - WALLET DETAIL / WALLET HISTORY
+03709:     // =====================================================
+
+04267:         // ==========================================
+04268:         // UI
+04269:         // ==========================================
+04270: 
+04271:         val root =
+04272:             android.widget.LinearLayout(this).apply {
+04273: 
+04274:                 orientation =
+04275:                     android.widget.LinearLayout.VERTICAL
+04276: 
+04277:                 setPadding(
+04278:                     dp(16),
