@@ -4743,6 +4743,13 @@ class MainActivity : Activity() {
                     }
                 )
 
+                // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_MONTH_CLICK
+                card.isClickable = true
+                card.isFocusable = true
+                card.setOnClickListener {
+                    showMonthlyObligationHistoryDetail(monthKey)
+                }
+
                 content.addView(
                     card,
                     android.widget.LinearLayout.LayoutParams(
@@ -4754,6 +4761,115 @@ class MainActivity : Activity() {
                 )
             }
         }
+
+        setContentView(root)
+    }
+
+
+    // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_DETAIL_SCREEN
+    private fun showMonthlyObligationHistoryDetail(monthKey: String) {
+        val parts = monthKey.split("-")
+        val year = parts.getOrNull(0)?.toIntOrNull()
+        val month = parts.getOrNull(1)?.toIntOrNull()
+
+        if (
+            parts.size != 2 ||
+            year == null ||
+            month == null ||
+            month !in 1..12
+        ) {
+            android.widget.Toast.makeText(
+                this,
+                "ข้อมูลเดือนไม่ถูกต้อง",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+            showMonthlyObligationHistory()
+            return
+        }
+
+        val thaiMonths =
+            listOf(
+                "มกราคม", "กุมภาพันธ์", "มีนาคม",
+                "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน",
+                "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            )
+
+        val root =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                setPadding(dp(16), dp(16), dp(16), dp(16))
+                setBackgroundColor(
+                    android.graphics.Color.rgb(245, 248, 246)
+                )
+            }
+
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "← กลับ"
+                isAllCaps = false
+                setOnClickListener {
+                    showMonthlyObligationHistory()
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text =
+                    "รายละเอียด " +
+                    thaiMonths[month - 1] +
+                    " " +
+                    (year + 543)
+                textSize = 23f
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+                setTextColor(
+                    android.graphics.Color.rgb(17, 17, 17)
+                )
+                setPadding(0, dp(18), 0, dp(8))
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "รายการที่ต้องจ่ายและประวัติการชำระของเดือนนี้"
+                textSize = 15f
+                setTextColor(
+                    android.graphics.Color.rgb(100, 105, 102)
+                )
+                setPadding(0, 0, 0, dp(16))
+            }
+        )
+
+        val content =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+            }
+
+        content.addView(
+            android.widget.TextView(this).apply {
+                text = "กำลังเตรียมรายละเอียดรายการ"
+                textSize = 16f
+                setTextColor(
+                    android.graphics.Color.rgb(100, 105, 102)
+                )
+                setPadding(0, dp(20), 0, dp(20))
+            }
+        )
+
+        root.addView(
+            android.widget.ScrollView(this).apply {
+                addView(content)
+            },
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+        )
 
         setContentView(root)
     }
