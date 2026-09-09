@@ -4244,6 +4244,28 @@ class MainActivity : Activity() {
                     }
                 )
 
+                
+                // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_STATUS_UI
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text = "สถานะ: " + paymentStatus
+                        textSize = 15f
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                        setTextColor(
+                            when (paymentStatus) {
+                                "จ่ายแล้ว" -> green
+                                "เกินกำหนด" -> android.graphics.Color.rgb(180, 35, 35)
+                                "จ่ายบางส่วน" -> dark
+                                else -> gray
+                            }
+                        )
+                        setPadding(0, dp(6), 0, dp(2))
+                    }
+                )
+
                 // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_HISTORY
                 val paymentHistory =
                     loadObligationPayments()
