@@ -3859,7 +3859,7 @@ class MainActivity : Activity() {
                         .setView(form)
                         .setPositiveButton("บันทึก") { _, _ ->
                             val name =
-                                nameInput.text.toString().trim()
+                                nameInput.text.toString().replace(obligationDelimiter, " ").trim()
 
                             val amount =
                                 amountInput.text.toString()
@@ -3872,7 +3872,7 @@ class MainActivity : Activity() {
                                     .toIntOrNull()
 
                             val note =
-                                noteInput.text.toString().trim()
+                                noteInput.text.toString().replace(obligationDelimiter, " ").trim()
 
                             when {
                                 name.isBlank() -> {
