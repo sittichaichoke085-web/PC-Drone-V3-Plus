@@ -4195,6 +4195,115 @@ class MainActivity : Activity() {
                     }
                 )
 
+                // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_BUTTON
+                if (remaining.compareTo(java.math.BigDecimal.ZERO) > 0) {
+                    card.addView(
+                        android.widget.Button(this).apply {
+                            text = "บันทึกการชำระ"
+                            isAllCaps = false
+                            setOnClickListener {
+                                val form =
+                                    android.widget.LinearLayout(this@MainActivity).apply {
+                                        orientation = android.widget.LinearLayout.VERTICAL
+                                        setPadding(dp(20), dp(8), dp(20), 0)
+                                    }
+
+                                val amountInput =
+                                    android.widget.EditText(this@MainActivity).apply {
+                                        hint = "จำนวนเงินที่จ่าย"
+                                        inputType =
+                                            android.text.InputType.TYPE_CLASS_NUMBER or
+                                            android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                                    }
+
+                                val noteInput =
+                                    android.widget.EditText(this@MainActivity).apply {
+                                        hint = "หมายเหตุ (ถ้ามี)"
+                                        inputType =
+                                            android.text.InputType.TYPE_CLASS_TEXT
+                                    }
+
+                                form.addView(amountInput)
+                                form.addView(noteInput)
+
+                                val dialog =
+                                    android.app.AlertDialog.Builder(this@MainActivity)
+                                        .setTitle("บันทึกการชำระ")
+                                        .setView(form)
+                                        .setPositiveButton("บันทึก", null)
+                                        .setNegativeButton("ยกเลิก", null)
+                                        .create()
+
+                                dialog.setOnShowListener {
+                                    dialog.getButton(
+                                        android.app.AlertDialog.BUTTON_POSITIVE
+                                    ).setOnClickListener {
+                                        val amount =
+                                            amountInput.text.toString()
+                                                .trim()
+                                                .toBigDecimalOrNull()
+
+                                        val note =
+                                            noteInput.text.toString()
+                                                .replace(obligationDelimiter, " ")
+                                                .trim()
+
+                                        when {
+                                            amount == null ||
+                                                amount.compareTo(java.math.BigDecimal.ZERO) <= 0 -> {
+                                                amountInput.error =
+                                                    "จำนวนเงินต้องมากกว่า 0"
+                                            }
+
+                                            amount.compareTo(remaining) > 0 -> {
+                                                amountInput.error =
+                                                    "จำนวนเงินเกินยอดคงเหลือ"
+                                            }
+
+                                            else -> {
+                                                // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_SAVE
+                                                val payments =
+                                                    loadObligationPayments()
+
+                                                payments.add(
+                                                    listOf(
+                                                        "obligation_payment_" +
+                                                            java.util.UUID.randomUUID().toString(),
+                                                        monthItemId,
+                                                        amount.stripTrailingZeros()
+                                                            .toPlainString(),
+                                                        System.currentTimeMillis().toString(),
+                                                        note
+                                                    )
+                                                )
+
+                                                saveObligationPayments(payments)
+                                                dialog.dismiss()
+
+                                                android.widget.Toast.makeText(
+                                                    this@MainActivity,
+                                                    "บันทึกการชำระแล้ว",
+                                                    android.widget.Toast.LENGTH_SHORT
+                                                ).show()
+
+                                                showMonthlyObligations()
+                                            }
+                                        }
+                                    }
+                                }
+
+                                dialog.show()
+                            }
+                        },
+                        android.widget.LinearLayout.LayoutParams(
+                            android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                            dp(48)
+                        ).apply {
+                            topMargin = dp(10)
+                        }
+                    )
+                }
+
                 root.addView(
                     card,
                     android.widget.LinearLayout.LayoutParams(
