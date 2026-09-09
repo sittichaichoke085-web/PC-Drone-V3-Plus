@@ -4914,11 +4914,43 @@ class MainActivity : Activity() {
                         java.math.BigDecimal.ZERO
                     )
 
+                // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_DETAIL_OVERDUE
+                val dueCalendar =
+                    java.util.Calendar.getInstance().apply {
+                        clear()
+                        set(
+                            year,
+                            month - 1,
+                            1,
+                            23,
+                            59,
+                            59
+                        )
+                        val lastDay =
+                            getActualMaximum(
+                                java.util.Calendar.DAY_OF_MONTH
+                            )
+                        set(
+                            java.util.Calendar.DAY_OF_MONTH,
+                            dueDay.coerceIn(1, lastDay)
+                        )
+                        set(
+                            java.util.Calendar.MILLISECOND,
+                            999
+                        )
+                    }
+
+                val isOverdue =
+                    System.currentTimeMillis() >
+                        dueCalendar.timeInMillis
+
                 val status =
                     when {
                         remaining.compareTo(
                             java.math.BigDecimal.ZERO
                         ) == 0 -> "จ่ายแล้ว"
+
+                        isOverdue -> "เกินกำหนด"
 
                         paid.compareTo(
                             java.math.BigDecimal.ZERO
