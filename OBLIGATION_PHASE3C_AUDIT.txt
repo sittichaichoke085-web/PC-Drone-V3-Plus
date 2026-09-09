@@ -1,0 +1,102 @@
+// PC_DRONE_MONTHLY_OBLIGATIONS_TEMPLATE_STORAGE
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val obligationTemplateKey =
+            "money_manager_obligation_templates"
+
+        val obligationDelimiter = "|||"
+
+        fun loadObligationTemplates(): MutableList<List<String>> {
+            return prefs
+                .getStringSet(
+                    obligationTemplateKey,
+                    emptySet()
+                )
+                .orEmpty()
+                .mapNotNull { record ->
+                    val parts =
+                        record.split(obligationDelimiter)
+
+                    if (parts.size == 7) parts
+                    else null
+                }
+                .sortedBy { it[6].toLongOrNull() ?: 0L }
+                .toMutableList()
+        }
+
+        fun saveObligationTemplates(
+            templates: List<List<String>>
+        ) {
+            val records =
+                templates.map { parts ->
+                    parts.joinToString(obligationDelimiter)
+                }.toSet()
+
+            prefs.edit()
+                .putStringSet(
+                    obligationTemplateKey,
+                    records
+                )
+                .apply()
+        }
+
+        val now = java.util.Calendar.getInstance()
+        val monthNames = arrayOf(
+            "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
+            "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
+            "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+        )
+        val monthText =
+            monthNames[now.get(java.util.Calendar.MONTH)] +
+            " " +
+            (now.get(java.util.Calendar.YEAR) + 543)
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(16), dp(18), dp(16), dp(24))
+            setBackgroundColor(pageBg)
+        }
+
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "← กลับ"
+                isAllCaps = false
+                setOnClickListener {
+                    showMoneyManager()
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "รายการที่ต้องจ่ายประจำเดือน"
+                textSize = 24f
+                setTextColor(dark)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, dp(20), 0, dp(6))
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = monthText
+                textSize = 18f
+                setTextColor(green)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "ติดตามยอดที่ต้องจ่าย • จ่ายแล้ว • คงเหลือ • ประวัติการชำระ"
+                textSize = 14f
+                setTextColor(gray)
+                setPadding(0, dp(8), 0, dp(20))
+            }
+        )
+
+        
