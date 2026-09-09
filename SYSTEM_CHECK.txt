@@ -1,0 +1,8 @@
+]633;E;free -h;b80e0761-ce64-4cd6-ab94-f446a1a7303c]633;C               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       2.1Gi       155Mi        63Mi       5.9Gi       5.7Gi
+Swap:             0B          0B          0B
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/loop4       32G   12G   18G  41% /workspaces
+openjdk version "25.0.2" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13053558 (build 25.0.2+10-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13053558 (build 25.0.2+10-LTS, mixed mode, sharing)
