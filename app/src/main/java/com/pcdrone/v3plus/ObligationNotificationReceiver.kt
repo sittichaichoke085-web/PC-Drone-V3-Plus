@@ -7,6 +7,56 @@ class ObligationNotificationReceiver :
         context: android.content.Context,
         intent: android.content.Intent
     ) {
+        // PC_DRONE_OBLIGATION_NOTIFICATION_SETTINGS
+        val settings =
+            context.getSharedPreferences(
+                "pc_drone_settings",
+                android.content.Context.MODE_PRIVATE
+            )
+
+        if (
+            !settings.getBoolean(
+                "notifications_enabled",
+                true
+            )
+        ) {
+            return
+        }
+
+        val soundEnabled =
+            settings.getBoolean(
+                "sound_enabled",
+                true
+            ) &&
+            settings.getBoolean(
+                "sound_job_notification",
+                true
+            )
+
+        val vibrationEnabled =
+            settings.getBoolean(
+                "notification_vibration",
+                true
+            )
+
+        val savedSound =
+            settings.getString(
+                "notification_sound_uri",
+                null
+            )
+
+        val soundUri =
+            if (soundEnabled) {
+                if (savedSound.isNullOrBlank()) {
+                    android.provider.Settings.System
+                        .DEFAULT_NOTIFICATION_URI
+                } else {
+                    android.net.Uri.parse(savedSound)
+                }
+            } else {
+                null
+            }
+
         val monthItemId =
             intent.getStringExtra("month_item_id")
                 ?: return
@@ -88,8 +138,16 @@ class ObligationNotificationReceiver :
         val message =
             "$name • คงเหลือ $money บาท"
 
+        val channelIdentity =
+            (soundUri?.toString() ?: "silent") +
+                "_" +
+                vibrationEnabled
+
         val channelId =
-            "pc_drone_obligation_reminders"
+            "pc_drone_obligation_" +
+                channelIdentity.hashCode()
+                    .toUInt()
+                    .toString()
 
         val manager =
             context.getSystemService(
@@ -108,7 +166,37 @@ class ObligationNotificationReceiver :
                 ).apply {
                     description =
                         "แจ้งเตือนวันครบกำหนดและรายการค้างชำระ"
-                    enableVibration(true)
+
+                    if (vibrationEnabled) {
+                        enableVibration(true)
+                    } else {
+                        enableVibration(false)
+                    }
+
+                    if (soundUri != null) {
+                        val audioAttributes =
+                            android.media.AudioAttributes
+                                .Builder()
+                                .setUsage(
+                                    android.media.AudioAttributes
+                                        .USAGE_NOTIFICATION
+                                )
+                                .setContentType(
+                                    android.media.AudioAttributes
+                                        .CONTENT_TYPE_SONIFICATION
+                                )
+                                .build()
+
+                        setSound(
+                            soundUri,
+                            audioAttributes
+                        )
+                    } else {
+                        setSound(
+                            null,
+                            null
+                        )
+                    }
                 }
 
             manager.createNotificationChannel(channel)
