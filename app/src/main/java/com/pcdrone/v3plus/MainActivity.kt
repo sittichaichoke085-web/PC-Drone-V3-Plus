@@ -4232,28 +4232,19 @@ class MainActivity : Activity() {
 
                         val paymentDateText =
                             if (paidAt > 0L) {
-                                val formatter =
-                                    java.text.SimpleDateFormat(
-                                        "dd/MM/yyyy HH:mm",
-                                        java.util.Locale("th", "TH")
-                                    )
-
                                 val calendar =
                                     java.util.Calendar.getInstance().apply {
                                         timeInMillis = paidAt
                                     }
 
-                                val christianYear =
-                                    calendar.get(java.util.Calendar.YEAR)
-
-                                val buddhistYear =
-                                    christianYear + 543
-
-                                formatter.format(
-                                    java.util.Date(paidAt)
-                                ).replace(
-                                    christianYear.toString(),
-                                    buddhistYear.toString()
+                                String.format(
+                                    java.util.Locale.US,
+                                    "%02d/%02d/%04d %02d:%02d",
+                                    calendar.get(java.util.Calendar.DAY_OF_MONTH),
+                                    calendar.get(java.util.Calendar.MONTH) + 1,
+                                    calendar.get(java.util.Calendar.YEAR) + 543,
+                                    calendar.get(java.util.Calendar.HOUR_OF_DAY),
+                                    calendar.get(java.util.Calendar.MINUTE)
                                 )
                             } else {
                                 "ไม่พบวันเวลา"
