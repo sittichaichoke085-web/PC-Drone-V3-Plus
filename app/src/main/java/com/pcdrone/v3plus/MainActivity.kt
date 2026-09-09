@@ -4098,6 +4098,123 @@ class MainActivity : Activity() {
             }
         )
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_PRIOR_BALANCE_SUMMARY
+        val priorPayments = loadObligationPayments()
+
+        val priorOutstandingItems =
+            obligationMonths
+                .filter { it[2] < currentMonthKey }
+                .mapNotNull { item ->
+                    val planned =
+                        item[4].toBigDecimalOrNull()
+                            ?: java.math.BigDecimal.ZERO
+
+                    val paid =
+                        priorPayments
+                            .filter { payment ->
+                                payment[1] == item[0]
+                            }
+                            .fold(java.math.BigDecimal.ZERO) {
+                                    total,
+                                    payment ->
+                                total.add(
+                                    payment[2].toBigDecimalOrNull()
+                                        ?: java.math.BigDecimal.ZERO
+                                )
+                            }
+
+                    val remaining =
+                        planned.subtract(paid).max(
+                            java.math.BigDecimal.ZERO
+                        )
+
+                    if (
+                        remaining.compareTo(
+                            java.math.BigDecimal.ZERO
+                        ) > 0
+                    ) {
+                        item to remaining
+                    } else {
+                        null
+                    }
+                }
+
+        val priorOutstandingTotal =
+            priorOutstandingItems.fold(
+                java.math.BigDecimal.ZERO
+            ) { total, pair ->
+                total.add(pair.second)
+            }
+
+        if (priorOutstandingItems.isNotEmpty()) {
+            val priorCard =
+                android.widget.LinearLayout(this).apply {
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+                    setPadding(
+                        dp(16), dp(14), dp(16), dp(14)
+                    )
+                    background =
+                        android.graphics.drawable.GradientDrawable().apply {
+                            setColor(
+                                android.graphics.Color.rgb(
+                                    255, 247, 235
+                                )
+                            )
+                            cornerRadius = dp(14).toFloat()
+                            setStroke(
+                                dp(1),
+                                android.graphics.Color.rgb(
+                                    225, 145, 55
+                                )
+                            )
+                        }
+                }
+
+            priorCard.addView(
+                android.widget.TextView(this).apply {
+                    text = "ยอดค้างจากเดือนก่อน"
+                    textSize = 17f
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setTextColor(
+                        android.graphics.Color.rgb(
+                            145, 75, 20
+                        )
+                    )
+                }
+            )
+
+            priorCard.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        java.text.NumberFormat.getNumberInstance(
+                            java.util.Locale("th", "TH")
+                        ).format(priorOutstandingTotal) +
+                        " บาท" +
+                        System.lineSeparator() +
+                        "ค้าง " +
+                        priorOutstandingItems.size +
+                        " รายการ"
+                    textSize = 16f
+                    setTextColor(dark)
+                    setPadding(0, dp(6), 0, 0)
+                }
+            )
+
+            root.addView(
+                priorCard,
+                android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = dp(12)
+                }
+            )
+        }
+
         // PC_DRONE_MONTHLY_OBLIGATIONS_CURRENT_LIST
         val currentMonthItems =
             obligationMonths
