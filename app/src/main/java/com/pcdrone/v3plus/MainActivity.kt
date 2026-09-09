@@ -4682,6 +4682,22 @@ class MainActivity : Activity() {
                                                 )
 
                                                 saveObligationPayments(payments)
+
+                                                // PC_DRONE_OBLIGATION_NOTIFICATION_CANCEL_WHEN_PAID
+                                                val remainingAfterPayment =
+                                                    remaining.subtract(amount)
+
+                                                if (
+                                                    remainingAfterPayment.compareTo(
+                                                        java.math.BigDecimal.ZERO
+                                                    ) <= 0
+                                                ) {
+                                                    ObligationReminderScheduler.cancel(
+                                                        context = this@MainActivity,
+                                                        monthItemId = monthItemId
+                                                    )
+                                                }
+
                                                 dialog.dismiss()
 
                                                 android.widget.Toast.makeText(

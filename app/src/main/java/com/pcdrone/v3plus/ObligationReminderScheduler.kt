@@ -132,6 +132,43 @@ object ObligationReminderScheduler {
         }
     }
 
+    // PC_DRONE_OBLIGATION_NOTIFICATION_CANCEL
+    fun cancel(
+        context: android.content.Context,
+        monthItemId: String
+    ) {
+        val alarmManager =
+            context.getSystemService(
+                android.content.Context.ALARM_SERVICE
+            ) as android.app.AlarmManager
+
+        listOf(
+            "BEFORE",
+            "DUE",
+            "OVERDUE"
+        ).forEach { kind ->
+            val intent =
+                android.content.Intent(
+                    context,
+                    ObligationNotificationReceiver::class.java
+                )
+
+            val pendingIntent =
+                android.app.PendingIntent.getBroadcast(
+                    context,
+                    requestCode(monthItemId, kind),
+                    intent,
+                    android.app.PendingIntent.FLAG_NO_CREATE or
+                        android.app.PendingIntent.FLAG_IMMUTABLE
+                )
+
+            if (pendingIntent != null) {
+                alarmManager.cancel(pendingIntent)
+                pendingIntent.cancel()
+            }
+        }
+    }
+
     // PC_DRONE_OBLIGATION_NOTIFICATION_REQUEST_CODE
     private fun requestCode(
         monthItemId: String,
