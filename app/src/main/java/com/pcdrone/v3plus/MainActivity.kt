@@ -1021,6 +1021,563 @@ class MainActivity : Activity() {
 
 
 
+
+    // PC_DRONE_MONTHLY_EXPENSE_REPORT
+    private fun showMonthlyExpenseReport() {
+
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val dark = android.graphics.Color.rgb(17, 17, 17)
+        val pageBg = android.graphics.Color.rgb(245, 248, 246)
+        val red = android.graphics.Color.rgb(180, 35, 35)
+        val orange = android.graphics.Color.rgb(239, 108, 0)
+
+        val monthlyMoneyFormat =
+            java.text.NumberFormat.getNumberInstance(
+                java.util.Locale("th", "TH")
+            ).apply {
+                minimumFractionDigits = 2
+                maximumFractionDigits = 2
+            }
+
+        fun rounded(
+            color: Int,
+            radius: Int
+        ): android.graphics.drawable.GradientDrawable {
+            return android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+                setColor(color)
+                cornerRadius = dp(radius).toFloat()
+            }
+        }
+
+        val scroll = android.widget.ScrollView(this).apply {
+            setBackgroundColor(pageBg)
+        }
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(16), dp(24), dp(16), dp(32))
+        }
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "รายจ่ายต่อเดือน"
+                textSize = 26f
+                setTextColor(dark)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+            }
+        )
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP1
+        fun createDateInput(
+            hintText: String,
+            maxLength: Int
+        ) = android.widget.EditText(this).apply {
+            hint = hintText
+            textSize = 14f
+            isSingleLine = true
+            gravity = android.view.Gravity.CENTER
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            filters = arrayOf(
+                android.text.InputFilter.LengthFilter(maxLength)
+            )
+        }
+
+        val cal = java.util.Calendar.getInstance()
+
+        val firstDay = cal.clone() as java.util.Calendar
+        firstDay.set(java.util.Calendar.DAY_OF_MONTH, 1)
+        firstDay.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        firstDay.set(java.util.Calendar.MINUTE, 0)
+        firstDay.set(java.util.Calendar.SECOND, 0)
+        firstDay.set(java.util.Calendar.MILLISECOND, 0)
+
+        val lastDay = cal.clone() as java.util.Calendar
+        lastDay.set(
+            java.util.Calendar.DAY_OF_MONTH,
+            lastDay.getActualMaximum(java.util.Calendar.DAY_OF_MONTH)
+        )
+        lastDay.set(java.util.Calendar.HOUR_OF_DAY, 23)
+        lastDay.set(java.util.Calendar.MINUTE, 59)
+        lastDay.set(java.util.Calendar.SECOND, 59)
+        lastDay.set(java.util.Calendar.MILLISECOND, 999)
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP2
+        val fromDay = createDateInput("วัน", 2)
+        val fromMonth = createDateInput("เดือน", 2)
+        val fromYear = createDateInput("ปี", 4)
+
+        val toDay = createDateInput("วัน", 2)
+        val toMonth = createDateInput("เดือน", 2)
+        val toYear = createDateInput("ปี", 4)
+
+        fromDay.setText(
+            "%02d".format(firstDay.get(java.util.Calendar.DAY_OF_MONTH))
+        )
+        fromMonth.setText(
+            "%02d".format(firstDay.get(java.util.Calendar.MONTH) + 1)
+        )
+        fromYear.setText(
+            firstDay.get(java.util.Calendar.YEAR).toString()
+        )
+
+        toDay.setText(
+            "%02d".format(lastDay.get(java.util.Calendar.DAY_OF_MONTH))
+        )
+        toMonth.setText(
+            "%02d".format(lastDay.get(java.util.Calendar.MONTH) + 1)
+        )
+        toYear.setText(
+            lastDay.get(java.util.Calendar.YEAR).toString()
+        )
+
+        val dateOnly =
+            java.text.SimpleDateFormat(
+                "dd/MM/yyyy",
+                java.util.Locale.getDefault()
+            )
+
+        val header =
+            android.widget.TextView(this).apply {
+                text =
+                    "จากวันที่ ${dateOnly.format(firstDay.time)} ถึง ${dateOnly.format(lastDay.time)}"
+                textSize = 15f
+                setTextColor(dark)
+                setPadding(0, dp(8), 0, dp(14))
+            }
+
+        root.addView(header)
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP4
+        fun setupDateAutoJump(
+            day: android.widget.EditText,
+            month: android.widget.EditText,
+            year: android.widget.EditText
+        ) {
+            day.addTextChangedListener(
+                object : android.text.TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?, start: Int, count: Int, after: Int
+                    ) {}
+                    override fun onTextChanged(
+                        s: CharSequence?, start: Int, before: Int, count: Int
+                    ) {
+                        if (s?.length == 2) month.requestFocus()
+                    }
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            month.addTextChangedListener(
+                object : android.text.TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?, start: Int, count: Int, after: Int
+                    ) {}
+                    override fun onTextChanged(
+                        s: CharSequence?, start: Int, before: Int, count: Int
+                    ) {
+                        if (s?.length == 2) year.requestFocus()
+                    }
+                    override fun afterTextChanged(
+                        s: android.text.Editable?
+                    ) {}
+                }
+            )
+
+            day.imeOptions =
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            month.imeOptions =
+                android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+            year.imeOptions =
+                android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+
+            day.setOnEditorActionListener { _, actionId, _ ->
+                if (
+                    actionId ==
+                    android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+                ) {
+                    if (day.text.length == 1) {
+                        day.setText(day.text.toString().padStart(2, '0'))
+                    }
+                    month.requestFocus()
+                    true
+                } else false
+            }
+
+            month.setOnEditorActionListener { _, actionId, _ ->
+                if (
+                    actionId ==
+                    android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
+                ) {
+                    if (month.text.length == 1) {
+                        month.setText(month.text.toString().padStart(2, '0'))
+                    }
+                    year.requestFocus()
+                    true
+                } else false
+            }
+        }
+
+        setupDateAutoJump(fromDay, fromMonth, fromYear)
+        setupDateAutoJump(toDay, toMonth, toYear)
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP5
+        fun readDateRange(
+            day: android.widget.EditText,
+            month: android.widget.EditText,
+            year: android.widget.EditText,
+            endOfDay: Boolean
+        ): java.util.Calendar? {
+            val d = day.text.toString().trim().toIntOrNull()
+                ?: return null
+            val m = month.text.toString().trim().toIntOrNull()
+                ?: return null
+            val y = year.text.toString().trim().toIntOrNull()
+                ?: return null
+
+            if (y !in 1900..2500) return null
+            if (m !in 1..12) return null
+            if (d !in 1..31) return null
+
+            return try {
+                java.util.Calendar.getInstance().apply {
+                    isLenient = false
+                    clear()
+                    set(
+                        y,
+                        m - 1,
+                        d,
+                        if (endOfDay) 23 else 0,
+                        if (endOfDay) 59 else 0,
+                        if (endOfDay) 59 else 0
+                    )
+                    set(
+                        java.util.Calendar.MILLISECOND,
+                        if (endOfDay) 999 else 0
+                    )
+
+                    timeInMillis
+                }
+            } catch (_: Exception) {
+                null
+            }
+        }
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP3
+        fun addDateInputRow(
+            label: String,
+            day: android.widget.EditText,
+            month: android.widget.EditText,
+            year: android.widget.EditText
+        ) {
+            val row = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                setPadding(0, dp(4), 0, dp(4))
+            }
+
+            row.addView(
+                android.widget.TextView(this).apply {
+                    text = label
+                    textSize = 15f
+                    setTextColor(dark)
+                },
+                android.widget.LinearLayout.LayoutParams(
+                    dp(80),
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            )
+
+            row.addView(
+                day,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1f)
+            )
+            row.addView(
+                month,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1f)
+            )
+            row.addView(
+                year,
+                android.widget.LinearLayout.LayoutParams(0, dp(52), 1.4f)
+            )
+
+            root.addView(row)
+        }
+
+        addDateInputRow(
+            "จากวันที่",
+            fromDay,
+            fromMonth,
+            fromYear
+        )
+
+        addDateInputRow(
+            "ถึงวันที่",
+            toDay,
+            toMonth,
+            toYear
+        )
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP6C
+        val resultArea = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+        }
+
+        fun renderReport(
+            from: java.util.Calendar,
+            to: java.util.Calendar
+        ) {
+            // PC_DRONE_MONTHLY_DYNAMIC_HEADER
+            header.text =
+                "จากวันที่ ${dateOnly.format(from.time)} ถึง ${dateOnly.format(to.time)}"
+
+            resultArea.removeAllViews()
+
+            val rows =
+                prefs.getStringSet(
+                    "finance_transactions",
+                    emptySet()
+                ).orEmpty()
+                    .mapNotNull { record ->
+                        val parts = record.split(
+                            "|||",
+                            ignoreCase = false,
+                            limit = 5
+                        )
+
+                        val time =
+                            parts.getOrNull(0)
+                                ?.trim()
+                                ?.toLongOrNull()
+                                ?: return@mapNotNull null
+
+                        val type =
+                            parts.getOrNull(1)
+                                ?.trim()
+                                .orEmpty()
+
+                        if (type != "EXPENSE") {
+                            return@mapNotNull null
+                        }
+
+                        if (
+                            time < from.timeInMillis ||
+                            time > to.timeInMillis
+                        ) {
+                            return@mapNotNull null
+                        }
+
+                        val category =
+                            parts.getOrNull(2)
+                                ?.trim()
+                                .orEmpty()
+
+                        val amount =
+                            parts.getOrNull(3)
+                                ?.replace(",", "")
+                                ?.trim()
+                                ?.toBigDecimalOrNull()
+                                ?: java.math.BigDecimal.ZERO
+
+                        Triple(time, category, amount)
+                    }
+                    .sortedByDescending { it.first }
+
+            val total =
+                rows.fold(java.math.BigDecimal.ZERO) { sum, row ->
+                    sum.add(row.third)
+                }
+
+            resultArea.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        "รายจ่ายรวม ${monthlyMoneyFormat.format(total)} บาท   •   ${rows.size} รายการ"
+                    textSize = 18f
+                    setTextColor(red)
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setPadding(0, 0, 0, dp(14))
+                }
+            )
+
+            val table =
+                android.widget.LinearLayout(this).apply {
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+                    background =
+                        rounded(android.graphics.Color.WHITE, 14)
+                    setPadding(
+                        dp(12), dp(12), dp(12), dp(12)
+                    )
+                }
+
+            table.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        "วันที่ / เวลา        รายการ        จำนวนเงิน"
+                    textSize = 14f
+                    setTextColor(dark)
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setPadding(0, 0, 0, dp(8))
+                }
+            )
+
+            val fullDate =
+                java.text.SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm",
+                    java.util.Locale.getDefault()
+                )
+
+            if (rows.isEmpty()) {
+                table.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            "ไม่พบรายการรายจ่ายในช่วงนี้"
+                        textSize = 14f
+                        setTextColor(
+                            android.graphics.Color.GRAY
+                        )
+                        setPadding(
+                            0, dp(12), 0, dp(12)
+                        )
+                    }
+                )
+            } else {
+                rows.forEach { row ->
+                    table.addView(
+                        android.widget.TextView(this).apply {
+                            text =
+                                "${fullDate.format(java.util.Date(row.first))}   ${row.second}   ${monthlyMoneyFormat.format(row.third)} บาท"
+                            textSize = 14f
+                            setTextColor(dark)
+                            setPadding(
+                                0, dp(8), 0, dp(8)
+                            )
+                        }
+                    )
+                }
+            }
+
+            resultArea.addView(table)
+
+            resultArea.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        "รวมทั้งหมด ${monthlyMoneyFormat.format(total)} บาท"
+                    textSize = 18f
+                    setTextColor(red)
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setPadding(
+                        0, dp(14), 0, dp(8)
+                    )
+                }
+            )
+        }
+
+
+        // PC_DRONE_MONTHLY_DATE_RANGE_STEP6D
+        val searchButton =
+            android.widget.Button(this).apply {
+                text = "ค้นหา"
+                isAllCaps = false
+                setTextColor(android.graphics.Color.WHITE)
+                background = rounded(orange, 12)
+
+                setOnClickListener {
+                    val from =
+                        readDateRange(
+                            fromDay,
+                            fromMonth,
+                            fromYear,
+                            false
+                        )
+
+                    val to =
+                        readDateRange(
+                            toDay,
+                            toMonth,
+                            toYear,
+                            true
+                        )
+
+                    when {
+                        from == null || to == null -> {
+                            android.widget.Toast.makeText(
+                                this@MainActivity,
+                                "กรุณากรอกวันที่ให้ถูกต้อง",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        from.timeInMillis > to.timeInMillis -> {
+                            android.widget.Toast.makeText(
+                                this@MainActivity,
+                                "วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        else -> {
+                            renderReport(from, to)
+                        }
+                    }
+                }
+            }
+
+        root.addView(
+            searchButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(52)
+            ).apply {
+                setMargins(0, dp(6), 0, dp(12))
+            }
+        )
+
+        root.addView(resultArea)
+
+        // แสดงเดือนปัจจุบันทันทีเมื่อเปิดหน้า
+        renderReport(firstDay, lastDay)
+
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "ย้อนกลับ"
+                isAllCaps = false
+                setTextColor(android.graphics.Color.WHITE)
+                background = rounded(orange, 12)
+                setOnClickListener {
+                    showMoneyManager()
+                }
+            }
+        )
+
+        scroll.addView(
+            root,
+            android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        )
+
+        setContentView(scroll)
+    }
+
+
     private fun showMoneyManager() {
 
         // ============================================================
@@ -1439,32 +1996,52 @@ class MainActivity : Activity() {
             walletId: String,
             walletName: String
         ) {
+            // PC_DRONE_PHASE_2FA_DELETE_GUARD
+            val hasFinanceLink =
+                prefs.getStringSet("money_manager_links", emptySet()).orEmpty().any { link ->
+                    link.split("|||", ignoreCase = false, limit = 2)
+                        .getOrNull(1)?.trim() == walletId
+                }
+
+            val hasJobLink =
+                prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty().any { link ->
+                    link.split("|||", ignoreCase = false, limit = 2)
+                        .getOrNull(1)?.trim() == walletId
+                }
+
+            val hasTransferHistory =
+                prefs.getStringSet("money_manager_transfers", emptySet()).orEmpty().any { record ->
+                    val parts = record.split("|||", ignoreCase = false, limit = 5)
+                    parts.getOrNull(1)?.trim() == walletId ||
+                        parts.getOrNull(2)?.trim() == walletId
+                }
+
+            if (hasFinanceLink || hasJobLink || hasTransferHistory) {
+                android.app.AlertDialog.Builder(this)
+                    .setTitle("ยังลบกระเป๋านี้ไม่ได้")
+                    .setMessage(
+                        "กระเป๋า \"$walletName\" มีประวัติหรือหลักฐานทางการเงินเชื่อมอยู่\n\n" +
+                        "ระบบจึงป้องกันการลบ เพื่อไม่ให้รายการบัญชี งานบิน หรือประวัติโอนเงินขาดการเชื่อมโยง"
+                    )
+                    .setPositiveButton("ตกลง", null)
+                    .show()
+                return
+            }
 
             android.app.AlertDialog.Builder(this)
-                .setTitle(
-                    "ลบกระเป๋า"
-                )
+                .setTitle("ลบกระเป๋า")
                 .setMessage(
                     "ต้องการลบ \"$walletName\" ใช่หรือไม่?\n\n" +
-                    "Phase 2A ยังไม่มีรายการรับ–จ่ายในกระเป๋า " +
-                    "ดังนั้นการลบจะลบเฉพาะข้อมูลกระเป๋านี้"
+                    "กระเป๋านี้ไม่มีรายการทางการเงินหรืองานบินเชื่อมอยู่"
                 )
-                .setNegativeButton(
-                    "ยกเลิก",
-                    null
-                )
-                .setPositiveButton(
-                    "ลบ"
-                ) { _, _ ->
-
+                .setNegativeButton("ยกเลิก", null)
+                .setPositiveButton("ลบ") { _, _ ->
                     val updated =
-                        loadWallets()
-                            .filterNot {
-                                it[0] == walletId
-                            }
+                        loadWallets().filterNot {
+                            it[0] == walletId
+                        }
 
                     saveWallets(updated)
-
                     showMoneyManager()
                 }
                 .show()
@@ -2035,6 +2612,194 @@ class MainActivity : Activity() {
                 )
             }
 
+        // PC_DRONE_PHASE_2FA_STEP1A
+        var auditManualIncome = java.math.BigDecimal.ZERO
+        var auditManualExpense = java.math.BigDecimal.ZERO
+        var auditCompletedJobIncome = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (type == "INCOME") auditManualIncome = auditManualIncome.add(amount)
+            if (type == "EXPENSE") auditManualExpense = auditManualExpense.add(amount)
+        }
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+            if (status == "เสร็จแล้ว") auditCompletedJobIncome = auditCompletedJobIncome.add(amount)
+        }
+
+        val auditBusinessNet = auditCompletedJobIncome.add(auditManualIncome).subtract(auditManualExpense)
+
+        // PC_DRONE_PHASE_2FA_STEP1B
+        val auditFinanceLinks = prefs.getStringSet("money_manager_links", emptySet()).orEmpty()
+        val auditLinkedFinanceIds = auditFinanceLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedIncomeCount = 0
+        var auditUnlinkedIncomeAmount = java.math.BigDecimal.ZERO
+        var auditUnlinkedExpenseCount = 0
+        var auditUnlinkedExpenseAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+            if (transactionId.isNotEmpty() && transactionId !in auditLinkedFinanceIds) {
+                if (type == "INCOME") {
+                    auditUnlinkedIncomeCount++
+                    auditUnlinkedIncomeAmount = auditUnlinkedIncomeAmount.add(amount)
+                }
+                if (type == "EXPENSE") {
+                    auditUnlinkedExpenseCount++
+                    auditUnlinkedExpenseAmount = auditUnlinkedExpenseAmount.add(amount)
+                }
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1C
+        val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+        val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+            link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+        }.toSet()
+
+        var auditUnlinkedCompletedJobCount = 0
+        var auditUnlinkedCompletedJobAmount = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("flight_jobs", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 9)
+            val jobId = parts.getOrNull(0)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(6) ?: "0")
+            val status = parts.getOrNull(7)?.trim().orEmpty()
+
+            if (status == "เสร็จแล้ว" && jobId.isNotEmpty() && jobId !in auditLinkedJobIds) {
+                auditUnlinkedCompletedJobCount++
+                auditUnlinkedCompletedJobAmount = auditUnlinkedCompletedJobAmount.add(amount)
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1D
+        val auditValidWalletIds = wallets.map { it[0] }.toSet()
+
+        val auditOpeningTotal = wallets.fold(java.math.BigDecimal.ZERO) { sum, wallet ->
+            sum.add(parseMoney(wallet[3]))
+        }
+
+        val auditFinanceTransactionIds =
+            prefs.getStringSet("finance_transactions", emptySet()).orEmpty().mapNotNull { record ->
+                record.split("|||", ignoreCase = false, limit = 5)
+                    .getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+            }.toSet()
+
+        var auditOrphanFinanceLinkCount = 0
+
+        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+            val parts = link.split("|||", ignoreCase = false, limit = 2)
+            val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+            val walletId = parts.getOrNull(1)?.trim().orEmpty()
+
+            if (
+                transactionId.isEmpty() ||
+                walletId.isEmpty() ||
+                transactionId !in auditFinanceTransactionIds ||
+                walletId !in auditValidWalletIds
+            ) {
+                auditOrphanFinanceLinkCount++
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1E
+        val auditFlightJobStatusById =
+            prefs.getStringSet("flight_jobs", emptySet()).orEmpty().mapNotNull { record ->
+                val p = record.split("|||", ignoreCase = false, limit = 9)
+                val id = p.getOrNull(0)?.trim().orEmpty()
+                if (id.isNotEmpty()) id to p.getOrNull(7)?.trim().orEmpty() else null
+            }.toMap()
+
+        var auditOrphanJobLinkCount = 0
+        val auditJobLinkCounts = mutableMapOf<String, Int>()
+
+        auditJobLinks.forEach { link ->
+            val p = link.split("|||", ignoreCase = false, limit = 2)
+            val jobId = p.getOrNull(0)?.trim().orEmpty()
+            val walletId = p.getOrNull(1)?.trim().orEmpty()
+
+            if (jobId.isNotEmpty()) {
+                auditJobLinkCounts[jobId] = (auditJobLinkCounts[jobId] ?: 0) + 1
+            }
+
+            if (
+                jobId.isEmpty() ||
+                walletId.isEmpty() ||
+                jobId !in auditFlightJobStatusById ||
+                walletId !in auditValidWalletIds ||
+                auditFlightJobStatusById[jobId] != "เสร็จแล้ว"
+            ) {
+                auditOrphanJobLinkCount++
+            }
+        }
+
+        val auditDuplicateJobLinkCount =
+            auditJobLinkCounts.values.count { it > 1 }
+
+        val auditFinanceLinkCounts = mutableMapOf<String, Int>()
+        prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+            val id = link.split("|||", ignoreCase = false, limit = 2)
+                .getOrNull(0)?.trim().orEmpty()
+            if (id.isNotEmpty()) {
+                auditFinanceLinkCounts[id] = (auditFinanceLinkCounts[id] ?: 0) + 1
+            }
+        }
+
+        val auditDuplicateFinanceLinkCount =
+            auditFinanceLinkCounts.values.count { it > 1 }
+
+        var auditInvalidTransferCount = 0
+
+        prefs.getStringSet("money_manager_transfers", emptySet()).orEmpty().forEach { record ->
+            val p = record.split("|||", ignoreCase = false, limit = 5)
+            val transferId = p.getOrNull(0)?.trim().orEmpty()
+            val fromWalletId = p.getOrNull(1)?.trim().orEmpty()
+            val toWalletId = p.getOrNull(2)?.trim().orEmpty()
+            val amount = parseMoney(p.getOrNull(3) ?: "0")
+
+            if (
+                transferId.isEmpty() ||
+                fromWalletId.isEmpty() ||
+                toWalletId.isEmpty() ||
+                fromWalletId !in auditValidWalletIds ||
+                toWalletId !in auditValidWalletIds ||
+                fromWalletId == toWalletId ||
+                amount <= java.math.BigDecimal.ZERO
+            ) {
+                auditInvalidTransferCount++
+            }
+        }
+
+        // PC_DRONE_PHASE_2FA_STEP1F
+        val auditDifference =
+            auditBusinessNet.subtract(totalBalance)
+
+        val auditAnomalyCount =
+            auditOrphanFinanceLinkCount +
+            auditOrphanJobLinkCount +
+            auditDuplicateFinanceLinkCount +
+            auditDuplicateJobLinkCount +
+            auditInvalidTransferCount
+
+        val auditPass =
+            auditOpeningTotal.compareTo(java.math.BigDecimal.ZERO) == 0 &&
+            auditUnlinkedIncomeCount == 0 &&
+            auditUnlinkedExpenseCount == 0 &&
+            auditUnlinkedCompletedJobCount == 0 &&
+            auditAnomalyCount == 0 &&
+            auditDifference.compareTo(java.math.BigDecimal.ZERO) == 0
+
         val root =
             android.widget.LinearLayout(this).apply {
                 orientation =
@@ -2106,6 +2871,278 @@ class MainActivity : Activity() {
                     0,
                     dp(16)
                 )
+            }
+        )
+
+        // PC_DRONE_PHASE_2FB_SUMMARY_CARDS
+        val summaryContainer =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+            }
+
+        fun addSummaryRow(
+            leftTitle: String,
+            leftValue: String,
+            rightTitle: String,
+            rightValue: String
+        ) {
+            val row =
+                android.widget.LinearLayout(this).apply {
+                    orientation = android.widget.LinearLayout.HORIZONTAL
+                    weightSum = 2f
+                }
+
+            fun card(title: String, value: String) =
+                android.widget.LinearLayout(this).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                    setPadding(dp(14), dp(14), dp(14), dp(14))
+                    background = rounded(greenDark, dp(16))
+
+                    addView(
+                        android.widget.TextView(this@MainActivity).apply {
+                            text = title
+                            textSize = 13f
+                            setTextColor(android.graphics.Color.WHITE)
+                        }
+                    )
+
+                    addView(
+                        android.widget.TextView(this@MainActivity).apply {
+                            text = value
+                            textSize = 20f
+                            setTextColor(android.graphics.Color.WHITE)
+                            setTypeface(
+                                typeface,
+                                android.graphics.Typeface.BOLD
+                            )
+                            setPadding(0, dp(6), 0, 0)
+                        }
+                    )
+                }
+
+            row.addView(
+                card(leftTitle, leftValue),
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+                ).apply {
+                    rightMargin = dp(5)
+                }
+            )
+
+            // PC_DRONE_MONTHLY_EXPENSE_CARD
+            val rightCard =
+                if (rightTitle == "รายจ่ายต่อเดือน") {
+                    android.widget.LinearLayout(this).apply {
+                        orientation = android.widget.LinearLayout.VERTICAL
+                        setPadding(dp(14), dp(14), dp(14), dp(12))
+                        background = rounded(red, dp(16))
+
+                        addView(
+                            android.widget.TextView(this@MainActivity).apply {
+                                text = rightTitle
+                                textSize = 13f
+                                setTextColor(android.graphics.Color.WHITE)
+                            }
+                        )
+
+                        addView(
+                            android.widget.TextView(this@MainActivity).apply {
+                                text = rightValue
+                                textSize = 20f
+                                setTextColor(android.graphics.Color.WHITE)
+                                setTypeface(
+                                    typeface,
+                                    android.graphics.Typeface.BOLD
+                                )
+                                setPadding(0, dp(6), 0, dp(8))
+                            }
+                        )
+
+                        addView(
+                            android.widget.Button(this@MainActivity).apply {
+                                text = "รายละเอียด"
+                                isAllCaps = false
+                                textSize = 13f
+                                setTextColor(android.graphics.Color.WHITE)
+                                background =
+                                    rounded(
+                                        android.graphics.Color.rgb(239, 108, 0),
+                                        dp(10)
+                                    )
+                                setOnClickListener {
+                                    showMonthlyExpenseReport()
+                                }
+                            },
+                            android.widget.LinearLayout.LayoutParams(
+                                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                                dp(42)
+                            )
+                        )
+                    }
+                } else {
+                    card(rightTitle, rightValue)
+                }
+
+            row.addView(
+                rightCard,
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+                ).apply {
+                    leftMargin = dp(5)
+                }
+            )
+
+            summaryContainer.addView(
+                row,
+                android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = dp(10)
+                }
+            )
+        }
+
+        val nowCalendar = java.util.Calendar.getInstance()
+        val currentMonth = nowCalendar.get(java.util.Calendar.MONTH)
+        val currentYear = nowCalendar.get(java.util.Calendar.YEAR)
+
+        var monthlyExpenseTotal = java.math.BigDecimal.ZERO
+
+        prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+            val parts = record.split("|||", ignoreCase = false, limit = 5)
+            val txId = parts.getOrNull(0)?.trim().orEmpty()
+            val type = parts.getOrNull(1)?.trim().orEmpty()
+            val amount = parseMoney(parts.getOrNull(3) ?: "0")
+
+            val time = txId.toLongOrNull() ?: 0L
+
+            if (type == "EXPENSE" && time > 0L) {
+                val cal = java.util.Calendar.getInstance().apply {
+                    timeInMillis = time
+                }
+
+                if (
+                    cal.get(java.util.Calendar.MONTH) == currentMonth &&
+                    cal.get(java.util.Calendar.YEAR) == currentYear
+                ) {
+                    monthlyExpenseTotal = monthlyExpenseTotal.add(amount)
+                }
+            }
+        }
+
+        addSummaryRow(
+            "ธุรกิจมีเงินเท่าไร",
+            "${moneyFormat.format(auditBusinessNet)} บาท",
+            "รายจ่ายต่อเดือน",
+            "${moneyFormat.format(monthlyExpenseTotal)} บาท"
+        )
+
+        addSummaryRow(
+            "เงินพร้อมใช้จริง",
+            "${moneyFormat.format(totalBalance)} บาท",
+            "กำไรจริง",
+            "กำลังคำนวณ"
+        )
+
+        root.addView(
+            summaryContainer,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                bottomMargin = dp(6)
+            }
+        )
+
+        // PC_DRONE_PHASE_2FA_STEP2_AUDIT_UI
+        val auditBox =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                setPadding(dp(16), dp(16), dp(16), dp(16))
+                background = rounded(
+                    if (auditPass) android.graphics.Color.rgb(232, 245, 233)
+                    else android.graphics.Color.rgb(255, 243, 224),
+                    dp(16)
+                )
+            }
+
+        auditBox.addView(
+            android.widget.TextView(this).apply {
+                text = "ศูนย์ตรวจสอบการเงิน"
+                textSize = 20f
+                setTextColor(dark)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+            }
+        )
+
+        auditBox.addView(
+            android.widget.TextView(this).apply {
+                text =
+                    if (auditPass) "✓ บัญชีและกระเป๋าเงินตรงกัน"
+                    else "⚠ พบรายการที่ต้องตรวจสอบ"
+                textSize = 16f
+                setTextColor(if (auditPass) greenDark else red)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, dp(6), 0, dp(10))
+            }
+        )
+
+        val auditSummary =
+            buildString {
+                append("ยอดตามบัญชี: ฿")
+                append(moneyFormat.format(auditBusinessNet))
+                append("\nยอดรวมทุกกระเป๋า: ฿")
+                append(moneyFormat.format(totalBalance))
+                append("\nผลต่างบัญชี-กระเป๋า: ฿")
+                append(moneyFormat.format(auditDifference))
+
+                append("\n\nรายรับยังไม่ระบุกระเป๋า: ")
+                append(auditUnlinkedIncomeCount)
+                append(" รายการ  ฿")
+                append(moneyFormat.format(auditUnlinkedIncomeAmount))
+
+                append("\nรายจ่ายยังไม่ระบุกระเป๋าที่จ่าย: ")
+                append(auditUnlinkedExpenseCount)
+                append(" รายการ  ฿")
+                append(moneyFormat.format(auditUnlinkedExpenseAmount))
+
+                append("\nงานบินเสร็จแล้วยังไม่ระบุกระเป๋ารับเงิน: ")
+                append(auditUnlinkedCompletedJobCount)
+                append(" รายการ  ฿")
+                append(moneyFormat.format(auditUnlinkedCompletedJobAmount))
+
+                append("\nรายการเชื่อมโยง/โอนเงินผิดปกติ: ")
+                append(auditAnomalyCount)
+                append(" รายการ")
+
+                if (auditOpeningTotal.compareTo(java.math.BigDecimal.ZERO) != 0) {
+                    append("\nยอดตั้งต้นกระเป๋า: ฿")
+                    append(moneyFormat.format(auditOpeningTotal))
+                    append("  (ต้องตรวจสอบ)")
+                }
+            }
+
+        auditBox.addView(
+            android.widget.TextView(this).apply {
+                text = auditSummary
+                textSize = 14f
+                setTextColor(dark)
+                setLineSpacing(0f, 1.18f)
+            }
+        )
+
+        root.addView(
+            auditBox,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                bottomMargin = dp(16)
             }
         )
 
