@@ -4042,15 +4042,107 @@ class MainActivity : Activity() {
             }
         )
 
-        root.addView(
-            android.widget.TextView(this).apply {
-                text = "ยังไม่มีรายการที่ต้องจ่ายในเดือนนี้"
-                textSize = 16f
-                setTextColor(gray)
-                setPadding(dp(12), dp(20), dp(12), dp(20))
-                gravity = android.view.Gravity.CENTER
+        // PC_DRONE_MONTHLY_OBLIGATIONS_CURRENT_LIST
+        val currentMonthItems =
+            obligationMonths
+                .filter { it[2] == currentMonthKey }
+                .sortedBy { it[5].toIntOrNull() ?: 31 }
+
+        if (currentMonthItems.isEmpty()) {
+            root.addView(
+                android.widget.TextView(this).apply {
+                    text = "ยังไม่มีรายการที่ต้องจ่ายในเดือนนี้"
+                    textSize = 16f
+                    setTextColor(gray)
+                    setPadding(dp(12), dp(20), dp(12), dp(20))
+                    gravity = android.view.Gravity.CENTER
+                }
+            )
+        } else {
+            currentMonthItems.forEach { item ->
+                val name = item[3]
+                val planned =
+                    item[4].toBigDecimalOrNull()
+                        ?: java.math.BigDecimal.ZERO
+                val dueDay =
+                    item[5].toIntOrNull() ?: 0
+
+                val card =
+                    android.widget.LinearLayout(this).apply {
+                        orientation = android.widget.LinearLayout.VERTICAL
+                        setPadding(dp(16), dp(14), dp(16), dp(14))
+                        background =
+                            android.graphics.drawable.GradientDrawable().apply {
+                                setColor(android.graphics.Color.WHITE)
+                                cornerRadius = dp(14).toFloat()
+                                setStroke(
+                                    dp(1),
+                                    android.graphics.Color.rgb(220, 226, 222)
+                                )
+                            }
+                    }
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text = name
+                        textSize = 18f
+                        setTextColor(dark)
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                    }
+                )
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            "ยอดที่ต้องจ่าย " +
+                            java.text.NumberFormat.getNumberInstance(java.util.Locale("th", "TH")).format(planned) +
+                            " บาท"
+                        textSize = 16f
+                        setTextColor(dark)
+                        setPadding(0, dp(8), 0, 0)
+                    }
+                )
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            "จ่ายแล้ว 0.00 บาท\n" +
+                            "คงเหลือ " +
+                            java.text.NumberFormat.getNumberInstance(java.util.Locale("th", "TH")).format(planned) +
+                            " บาท"
+                        textSize = 15f
+                        setTextColor(gray)
+                        setPadding(0, dp(6), 0, 0)
+                    }
+                )
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            if (dueDay > 0)
+                                "กำหนดจ่ายวันที่ $dueDay"
+                            else
+                                "ไม่พบวันที่กำหนดจ่าย"
+                        textSize = 14f
+                        setTextColor(green)
+                        setPadding(0, dp(8), 0, 0)
+                    }
+                )
+
+                root.addView(
+                    card,
+                    android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin = dp(10)
+                    }
+                )
             }
-        )
+        }
 
         val scroll = android.widget.ScrollView(this).apply {
             isFillViewport = true
