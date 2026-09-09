@@ -1,0 +1,205 @@
+ M .gradle/8.13/checksums/checksums.lock
+ M .gradle/8.13/executionHistory/executionHistory.bin
+ M .gradle/8.13/executionHistory/executionHistory.lock
+ M .gradle/8.13/fileHashes/fileHashes.bin
+ M .gradle/8.13/fileHashes/fileHashes.lock
+ M .gradle/8.13/fileHashes/resourceHashesCache.bin
+ M .gradle/buildOutputCleanup/buildOutputCleanup.lock
+ M app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources/R.jar
+ M app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+ M app/build/intermediates/dex/debug/mergeProjectDexDebug/14/classes.dex
+ M app/build/intermediates/dex_archive_input_jar_hashes/debug/dexBuilderDebug/out
+ M app/build/intermediates/incremental/debug/mergeDebugResources/compile-file-map.properties
+ D app/build/intermediates/incremental/debug/mergeDebugResources/merged.dir/values/values.xml
+ M app/build/intermediates/incremental/debug/mergeDebugResources/merger.xml
+ M app/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+ D app/build/intermediates/incremental/debug/packageDebugResources/merged.dir/values/values.xml
+ M app/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/dex-renamer-state.txt
+ M app/build/intermediates/incremental/packageDebug/tmp/debug/zip-cache/androidResources
+ M app/build/intermediates/linked_resources_binary_format/debug/processDebugResources/linked-resources-binary-format-debug.ap_
+ M app/build/intermediates/linked_resources_binary_format/debug/processDebugResources/output-metadata.json
+ M app/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+ M app/build/intermediates/manifest_merge_blame_file/debug/processDebugMainManifest/manifest-merger-blame-debug-report.txt
+ M app/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml
+ M app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
+ M app/build/intermediates/merged_manifests/debug/processDebugManifest/output-metadata.json
+ M app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/AndroidManifest.xml
+ M app/build/intermediates/packaged_manifests/debug/processDebugManifestForPackage/output-metadata.json
+ M app/build/intermediates/project_dex_archive/debug/dexBuilderDebug/out/com/pcdrone/v3plus/MainActivity.dex
+ M app/build/intermediates/runtime_symbol_list/debug/processDebugResources/R.txt
+ M app/build/intermediates/stable_resource_ids_file/debug/processDebugResources/stableIds.txt
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/outputs-generated-for-plugins.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/compilerPluginFiles/sources-referenced-by-plugins.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/counters.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab_i
+ D app/build/kotlin/compileDebugKotlin/cacheable/caches-jvm/lookups/lookups.tab_i.len
+ D app/build/kotlin/compileDebugKotlin/cacheable/last-build.bin
+ D app/build/kotlin/compileDebugKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin
+ M app/build/outputs/apk/debug/app-debug.apk
+ M app/build/outputs/apk/debug/output-metadata.json
+ M app/build/outputs/logs/manifest-merger-debug-report.txt
+ D app/build/tmp/kotlin-classes/debug/META-INF/app_debug.kotlin_module
+ D app/build/tmp/kotlin-classes/debug/com/pcdrone/v3plus/MainActivity.class
+ M app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+?? LATEST_WORK_CHECK.txt
+?? PHASE2E_BASELINE_BUILD.txt
+?? PHASE2FA_BUILD2.txt
+?? PHASE2FA_PRECHECK.txt
+?? PHASE2FB_MONTHLY_DATE_PATCH_PRECHECK.txt
+?? app/build.gradle.kts.before_v301
+?? app/src/main/AndroidManifest.xml.before_icon
+?? app/src/main/java/com/pcdrone/v3plus/MainActivity.kt.before_v301
+?? app/src/main/java/com/pcdrone/v3plus/navigation/AppRoute.kt.before_v301
+?? backup_before_app_icon/
+?? final_build/FINAL.apk
+?? final_build/P4D.apk
+?? final_build/PC-Drone-V3-Plus-APP-ICON.apk
+?? final_build/PC-Drone-V3-Plus-FINAL.apk
+?? final_build/PC-Drone-V3-Plus-SOURCE-FINAL.zip
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2A.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2B-FIX1.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2C.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2D-FIX1.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2E-FIX1.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2E.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2F-A.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-PHASE-2FB.apk
+?? final_build/PC-Drone-V3.1-v3.0.1-UI-PHASE1.apk
+?? final_build/SOURCE.zip
+?? phase_backup_v301_2a/
+?? phase_backup_v301_2b/
+?? phase_backup_v301_2c/
+?? phase_backup_v301_2d/
+?? phase_backup_v301_2e/
+?? phase_backup_v301_2e_fix1/
+?? phase_backup_v301_2fa/
+?? phase_backup_v301_monthly_expense_report.txt
+?? phase_backup_v301_monthly_header_final.txt
+77ea261 Monthly header build check
+25c46d2 Retry monthly expense build in process
+b2e5812 Rebuild monthly expense header fix
+> Task :app:kspDebugKotlin UP-TO-DATE
+The message received from the daemon indicates that the daemon has disappeared.
+Build request sent: Build{id=14e8fd05-61b2-48c8-ad26-002ad2b66e5d, currentDir=/workspaces/PC-Drone-V3-Plus}
+Attempting to read last messages from the daemon log...
+Daemon pid: 605737
+  log file: /home/codespace/.gradle/daemon/8.13/daemon-605737.out.log
+----- Last 20 lines from daemon log file - daemon-605737.out.log -----
+2026-09-08T17:16:27.138+0000 [DEBUG] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] Command execution: started DaemonCommandExecution[command = Build{id=14e8fd05-61b2-48c8-ad26-002ad2b66e5d, currentDir=/workspaces/PC-Drone-V3-Plus}, connection = DefaultDaemonConnection: socket connection from /127.0.0.1:45687 to /127.0.0.1:42868] after 0.0026666666666666666 minutes of idle
+2026-09-08T17:16:27.138+0000 [INFO] [org.gradle.launcher.daemon.server.DaemonRegistryUpdater] Marking the daemon as busy, address: [f7d7d31e-af14-4c37-bb49-fdd58a811e5b port:45687, addresses:[localhost/127.0.0.1]]
+2026-09-08T17:16:27.138+0000 [DEBUG] [org.gradle.launcher.daemon.registry.PersistentDaemonRegistry] Marking busy by address: [f7d7d31e-af14-4c37-bb49-fdd58a811e5b port:45687, addresses:[localhost/127.0.0.1]]
+2026-09-08T17:16:27.139+0000 [DEBUG] [org.gradle.cache.internal.DefaultFileLockManager] Waiting to acquire exclusive lock on daemon addresses registry.
+2026-09-08T17:16:27.140+0000 [DEBUG] [org.gradle.cache.internal.DefaultFileLockManager] Lock acquired on daemon addresses registry.
+2026-09-08T17:16:27.140+0000 [DEBUG] [org.gradle.cache.internal.DefaultFileLockManager] Releasing lock on daemon addresses registry.
+2026-09-08T17:16:27.141+0000 [DEBUG] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] resetting idle timer
+2026-09-08T17:16:27.142+0000 [DEBUG] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] daemon is running. Sleeping until state changes.
+2026-09-08T17:16:27.142+0000 [INFO] [org.gradle.launcher.daemon.server.exec.StartBuildOrRespondWithBusy] Daemon is about to start building Build{id=14e8fd05-61b2-48c8-ad26-002ad2b66e5d, currentDir=/workspaces/PC-Drone-V3-Plus}. Dispatching build started information...
+2026-09-08T17:16:27.143+0000 [DEBUG] [org.gradle.launcher.daemon.server.SynchronizedDispatchConnection] thread 21: dispatching org.gradle.launcher.daemon.protocol.BuildStarted@74a5ccff
+2026-09-08T17:16:27.150+0000 [DEBUG] [org.gradle.launcher.daemon.server.exec.EstablishBuildEnvironment] Configuring env variables: [PATH, IRBRC, CODESPACES, CODESPACE_VSCODE_FOLDER, PROMPT_DIRTRIM, VSCODE_PYTHON_AUTOACTIVATE_GUARD, GITHUB_API_URL, COLORTERM, DOCKER_BUILDKIT, SDKMAN_DIR, rvm_version, VSCODE_GIT_ASKPASS_NODE, PWD, TERM_PROGRAM_VERSION, NVS_DIR, SDKMAN_BROKER_API, CONDA_SCRIPT, HUGO_ROOT, NVM_CD_FLAGS, LESSOPEN, RVM_PATH, SDKMAN_CANDIDATES_API, MY_RUBY_HOME, GITHUB_CODESPACE_TOKEN, ContainerVersion, rvm_path, RAILS_DEVELOPMENT_HOSTS, GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN, PYTHON_ROOT, NVM_SYMLINK_CURRENT, GITHUB_USER, SHLVL, DOTNET_RUNNING_IN_CONTAINER, GITHUB_SERVER_URL, JAVA_ROOT, JAVA_HOME, GIT_EDITOR, TERM, FEATURE_SPARK_POST_COMMIT_CREATE_ITERATION, GRADLE_HOME, NVM_INC, GITHUB_REPOSITORY, VSCODE_IPC_HOOK_CLI, _, NUGET_XMLDOC_MODE, RUBY_HOME, NODE_ROOT, ENABLE_DYNAMIC_INSTALL, TERM_PROGRAM, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, PHP_ROOT, RUBY_ROOT, GOROOT, JUPYTERLAB_PATH, GEM_PATH, NVM_BIN, GRADLE_OPTS, NVS_USE_XZ, DOTNET_USE_POLLING_FILE_WATCHER, VSCODE_GIT_IPC_HANDLE, PIPX_HOME, HUGO_DIR, MAVEN_ROOT, MAVEN_HOME, ORYX_PREFER_USER_INSTALLED_SDKS, GIT_ASKPASS, SHELL, GITHUB_TOKEN, GITHUB_GRAPHQL_URL, DEBIAN_FLAVOR, GOPATH, OLDPWD, GEM_HOME, PHP_PATH, DOTNET_ROOT, RUBY_VERSION, DEBUGINFOD_URLS, LS_COLORS, PIPX_BIN_DIR, ORYX_ENV_TYPE, LESSCLOSE, BROWSER, rvm_bin_path, CLOUDENV_ENVIRONMENT_ID, ORYX_SDK_STORAGE_BASE_URL, rvm_prefix, LANG, VSCODE_GIT_ASKPASS_MAIN, INTERNAL_VSCS_TARGET_URL, CONDA_DIR, VSCODE_GIT_ASKPASS_EXTRA_ARGS, SDKMAN_CANDIDATES_DIR, NVS_HOME, NVS_ROOT, NVM_DIR, NVS_OS, SHELL_LOGGED_IN, PYTHON_PATH, PYTHONIOENCODING, SDKMAN_PLATFORM, USER, ORYX_DIR, HOSTNAME, CODESPACE_NAME, NPM_GLOBAL, HOME, DYNAMIC_INSTALL_ROOT_DIR]
+2026-09-08T17:16:27.156+0000 [DEBUG] [org.gradle.launcher.daemon.server.exec.LogToClient] About to start relaying all logs to the client via the connection.
+2026-09-08T17:16:27.156+0000 [INFO] [org.gradle.launcher.daemon.server.exec.LogToClient] The client will now receive all logging from the daemon (pid: 605737). The daemon log file: /home/codespace/.gradle/daemon/8.13/daemon-605737.out.log
+2026-09-08T17:16:27.158+0000 [DEBUG] [org.gradle.launcher.daemon.server.exec.RequestStopIfSingleUsedDaemon] Requesting daemon stop after processing Build{id=14e8fd05-61b2-48c8-ad26-002ad2b66e5d, currentDir=/workspaces/PC-Drone-V3-Plus}
+2026-09-08T17:16:27.159+0000 [LIFECYCLE] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] Daemon will be stopped at the end of the build 
+2026-09-08T17:16:27.159+0000 [DEBUG] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] Stop as soon as idle requested. The daemon is busy
+2026-09-08T17:16:27.159+0000 [DEBUG] [org.gradle.launcher.daemon.server.DaemonStateCoordinator] daemon stop has been requested. Sleeping until state changes.
+2026-09-08T17:16:27.160+0000 [DEBUG] [org.gradle.launcher.daemon.server.exec.ExecuteBuild] The daemon has started executing the build.
+2026-09-08T17:16:27.160+0000 [DEBUG] [org.gradle.launcher.daemon.server.exec.ExecuteBuild] Executing build with daemon context: DefaultDaemonContext[uid=30f1c7e4-67ea-4d17-a345-8d0c46fbfa72,javaHome=/usr/lib/jvm/java-17-openjdk-amd64,javaVersion=17,javaVendor=Ubuntu,daemonRegistryDir=/home/codespace/.gradle/daemon,pid=605737,idleTimeout=120000,priority=NORMAL,applyInstrumentationAgent=true,nativeServicesMode=ENABLED,daemonOpts=-XX:MaxMetaspaceSize=384m,-Xmx1024m,-Dfile.encoding=UTF-8,-Duser.country,-Duser.language=en,-Duser.variant]
+Daemon vm is shutting down... The daemon has exited normally or was terminated in response to a user interrupt.----- End of the daemon log -----
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Gradle build daemon disappeared unexpectedly (it may have been killed or may have crashed)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+> Task :app:compileDebugKotlin
