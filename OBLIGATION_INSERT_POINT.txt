@@ -1,0 +1,200 @@
+02871:                     0,
+02872:                     dp(16)
+02873:                 )
+02874:             }
+02875:         )
+02876: 
+02877:         // PC_DRONE_PHASE_2FB_SUMMARY_CARDS
+02878:         val summaryContainer =
+02879:             android.widget.LinearLayout(this).apply {
+02880:                 orientation = android.widget.LinearLayout.VERTICAL
+02881:             }
+02882: 
+02883:         fun addSummaryRow(
+02884:             leftTitle: String,
+02885:             leftValue: String,
+02886:             rightTitle: String,
+02887:             rightValue: String
+02888:         ) {
+02889:             val row =
+02890:                 android.widget.LinearLayout(this).apply {
+02891:                     orientation = android.widget.LinearLayout.HORIZONTAL
+02892:                     weightSum = 2f
+02893:                 }
+02894: 
+02895:             fun card(title: String, value: String) =
+02896:                 android.widget.LinearLayout(this).apply {
+02897:                     orientation = android.widget.LinearLayout.VERTICAL
+02898:                     setPadding(dp(14), dp(14), dp(14), dp(14))
+02899:                     background = rounded(greenDark, dp(16))
+02900: 
+02901:                     addView(
+02902:                         android.widget.TextView(this@MainActivity).apply {
+02903:                             text = title
+02904:                             textSize = 13f
+02905:                             setTextColor(android.graphics.Color.WHITE)
+02906:                         }
+02907:                     )
+02908: 
+02909:                     addView(
+02910:                         android.widget.TextView(this@MainActivity).apply {
+02911:                             text = value
+02912:                             textSize = 20f
+02913:                             setTextColor(android.graphics.Color.WHITE)
+02914:                             setTypeface(
+02915:                                 typeface,
+02916:                                 android.graphics.Typeface.BOLD
+02917:                             )
+02918:                             setPadding(0, dp(6), 0, 0)
+02919:                         }
+02920:                     )
+02921:                 }
+02922: 
+02923:             row.addView(
+02924:                 card(leftTitle, leftValue),
+02925:                 android.widget.LinearLayout.LayoutParams(
+02926:                     0,
+02927:                     android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+02928:                     1f
+02929:                 ).apply {
+02930:                     rightMargin = dp(5)
+02931:                 }
+02932:             )
+02933: 
+02934:             // PC_DRONE_MONTHLY_EXPENSE_CARD
+02935:             val rightCard =
+02936:                 if (rightTitle == "รายจ่ายต่อเดือน") {
+02937:                     android.widget.LinearLayout(this).apply {
+02938:                         orientation = android.widget.LinearLayout.VERTICAL
+02939:                         setPadding(dp(14), dp(14), dp(14), dp(12))
+02940:                         background = rounded(red, dp(16))
+02941: 
+02942:                         addView(
+02943:                             android.widget.TextView(this@MainActivity).apply {
+02944:                                 text = rightTitle
+02945:                                 textSize = 13f
+02946:                                 setTextColor(android.graphics.Color.WHITE)
+02947:                             }
+02948:                         )
+02949: 
+02950:                         addView(
+02951:                             android.widget.TextView(this@MainActivity).apply {
+02952:                                 text = rightValue
+02953:                                 textSize = 20f
+02954:                                 setTextColor(android.graphics.Color.WHITE)
+02955:                                 setTypeface(
+02956:                                     typeface,
+02957:                                     android.graphics.Typeface.BOLD
+02958:                                 )
+02959:                                 setPadding(0, dp(6), 0, dp(8))
+02960:                             }
+02961:                         )
+02962: 
+02963:                         addView(
+02964:                             android.widget.Button(this@MainActivity).apply {
+02965:                                 text = "รายละเอียด"
+02966:                                 isAllCaps = false
+02967:                                 textSize = 13f
+02968:                                 setTextColor(android.graphics.Color.WHITE)
+02969:                                 background =
+02970:                                     rounded(
+02971:                                         android.graphics.Color.rgb(239, 108, 0),
+02972:                                         dp(10)
+02973:                                     )
+02974:                                 setOnClickListener {
+02975:                                     showMonthlyExpenseReport()
+02976:                                 }
+02977:                             },
+02978:                             android.widget.LinearLayout.LayoutParams(
+02979:                                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+02980:                                 dp(42)
+02981:                             )
+02982:                         )
+02983:                     }
+02984:                 } else {
+02985:                     card(rightTitle, rightValue)
+02986:                 }
+02987: 
+02988:             row.addView(
+02989:                 rightCard,
+02990:                 android.widget.LinearLayout.LayoutParams(
+02991:                     0,
+02992:                     android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+02993:                     1f
+02994:                 ).apply {
+02995:                     leftMargin = dp(5)
+02996:                 }
+02997:             )
+02998: 
+02999:             summaryContainer.addView(
+03000:                 row,
+03001:                 android.widget.LinearLayout.LayoutParams(
+03002:                     android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+03003:                     android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+03004:                 ).apply {
+03005:                     bottomMargin = dp(10)
+03006:                 }
+03007:             )
+03008:         }
+03009: 
+03010:         val nowCalendar = java.util.Calendar.getInstance()
+03011:         val currentMonth = nowCalendar.get(java.util.Calendar.MONTH)
+03012:         val currentYear = nowCalendar.get(java.util.Calendar.YEAR)
+03013: 
+03014:         var monthlyExpenseTotal = java.math.BigDecimal.ZERO
+03015: 
+03016:         prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+03017:             val parts = record.split("|||", ignoreCase = false, limit = 5)
+03018:             val txId = parts.getOrNull(0)?.trim().orEmpty()
+03019:             val type = parts.getOrNull(1)?.trim().orEmpty()
+03020:             val amount = parseMoney(parts.getOrNull(3) ?: "0")
+03021: 
+03022:             val time = txId.toLongOrNull() ?: 0L
+03023: 
+03024:             if (type == "EXPENSE" && time > 0L) {
+03025:                 val cal = java.util.Calendar.getInstance().apply {
+03026:                     timeInMillis = time
+03027:                 }
+03028: 
+03029:                 if (
+03030:                     cal.get(java.util.Calendar.MONTH) == currentMonth &&
+03031:                     cal.get(java.util.Calendar.YEAR) == currentYear
+03032:                 ) {
+03033:                     monthlyExpenseTotal = monthlyExpenseTotal.add(amount)
+03034:                 }
+03035:             }
+03036:         }
+03037: 
+03038:         addSummaryRow(
+03039:             "ธุรกิจมีเงินเท่าไร",
+03040:             "${moneyFormat.format(auditBusinessNet)} บาท",
+03041:             "รายจ่ายต่อเดือน",
+03042:             "${moneyFormat.format(monthlyExpenseTotal)} บาท"
+03043:         )
+03044: 
+03045:         addSummaryRow(
+03046:             "เงินพร้อมใช้จริง",
+03047:             "${moneyFormat.format(totalBalance)} บาท",
+03048:             "กำไรจริง",
+03049:             "กำลังคำนวณ"
+03050:         )
+03051: 
+03052:         root.addView(
+03053:             summaryContainer,
+03054:             android.widget.LinearLayout.LayoutParams(
+03055:                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+03056:                 android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+03057:             ).apply {
+03058:                 bottomMargin = dp(6)
+03059:             }
+03060:         )
+03061: 
+03062:         // PC_DRONE_PHASE_2FA_STEP2_AUDIT_UI
+03063:         val auditBox =
+03064:             android.widget.LinearLayout(this).apply {
+03065:                 orientation = android.widget.LinearLayout.VERTICAL
+03066:                 setPadding(dp(16), dp(16), dp(16), dp(16))
+03067:                 background = rounded(
+03068:                     if (auditPass) android.graphics.Color.rgb(232, 245, 233)
+03069:                     else android.graphics.Color.rgb(255, 243, 224),
+03070:                     dp(16)
