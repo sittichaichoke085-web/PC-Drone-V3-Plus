@@ -4849,9 +4849,38 @@ class MainActivity : Activity() {
                 orientation = android.widget.LinearLayout.VERTICAL
             }
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_DETAIL_DATA
+        val detailItems =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            ).getStringSet(
+                "money_manager_obligation_months",
+                emptySet()
+            ).orEmpty()
+                .map { it.split("|||") }
+                .filter { it.size == 7 && it[2] == monthKey }
+                .sortedBy { it[5].toIntOrNull() ?: 31 }
+
+        val detailPayments =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            ).getStringSet(
+                "money_manager_obligation_payments",
+                emptySet()
+            ).orEmpty()
+                .map { it.split("|||") }
+                .filter { it.size == 5 }
+
         content.addView(
             android.widget.TextView(this).apply {
-                text = "กำลังเตรียมรายละเอียดรายการ"
+                text =
+                    if (detailItems.isEmpty()) {
+                        "ไม่พบรายการของเดือนนี้"
+                    } else {
+                        "พบ " + detailItems.size + " รายการ"
+                    }
                 textSize = 16f
                 setTextColor(
                     android.graphics.Color.rgb(100, 105, 102)
