@@ -3791,6 +3791,44 @@ class MainActivity : Activity() {
                 .apply()
         }
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_STORAGE
+        val obligationPaymentKey =
+            "money_manager_obligation_payments"
+
+        fun loadObligationPayments(): MutableList<List<String>> {
+            return prefs
+                .getStringSet(
+                    obligationPaymentKey,
+                    emptySet()
+                )
+                .orEmpty()
+                .mapNotNull { record ->
+                    val parts =
+                        record.split(obligationDelimiter)
+
+                    if (parts.size == 5) parts
+                    else null
+                }
+                .sortedBy { it[3].toLongOrNull() ?: 0L }
+                .toMutableList()
+        }
+
+        fun saveObligationPayments(
+            payments: List<List<String>>
+        ) {
+            val records =
+                payments.map { parts ->
+                    parts.joinToString(obligationDelimiter)
+                }.toSet()
+
+            prefs.edit()
+                .putStringSet(
+                    obligationPaymentKey,
+                    records
+                )
+                .apply()
+        }
+
         val now = java.util.Calendar.getInstance()
         // PC_DRONE_MONTHLY_OBLIGATIONS_CURRENT_SNAPSHOT
         val currentMonthKey =
