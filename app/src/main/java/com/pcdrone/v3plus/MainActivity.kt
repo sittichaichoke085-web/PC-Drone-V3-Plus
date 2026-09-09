@@ -3808,6 +3808,148 @@ class MainActivity : Activity() {
             }
         )
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_ADD_BUTTON
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "+ เพิ่มรายการประจำ"
+                isAllCaps = false
+                textSize = 16f
+                setTextColor(android.graphics.Color.WHITE)
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+                        setColor(android.graphics.Color.rgb(0, 121, 107))
+                        cornerRadius = dp(14).toFloat()
+                    }
+                setOnClickListener {
+                    // PC_DRONE_MONTHLY_OBLIGATIONS_ADD_FORM
+                    val form = android.widget.LinearLayout(this@MainActivity).apply {
+                        orientation = android.widget.LinearLayout.VERTICAL
+                        setPadding(dp(20), dp(8), dp(20), 0)
+                    }
+
+                    val nameInput = android.widget.EditText(this@MainActivity).apply {
+                        hint = "ชื่อรายการ เช่น ค่าผ่อนโดรน"
+                        inputType = android.text.InputType.TYPE_CLASS_TEXT
+                    }
+
+                    val amountInput = android.widget.EditText(this@MainActivity).apply {
+                        hint = "จำนวนเงิน เช่น 2000"
+                        inputType =
+                            android.text.InputType.TYPE_CLASS_NUMBER or
+                            android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                    }
+
+                    val dueDayInput = android.widget.EditText(this@MainActivity).apply {
+                        hint = "วันที่ต้องจ่าย 1-31"
+                        inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                    }
+
+                    val noteInput = android.widget.EditText(this@MainActivity).apply {
+                        hint = "หมายเหตุ (ถ้ามี)"
+                        inputType = android.text.InputType.TYPE_CLASS_TEXT
+                    }
+
+                    form.addView(nameInput)
+                    form.addView(amountInput)
+                    form.addView(dueDayInput)
+                    form.addView(noteInput)
+
+                    android.app.AlertDialog.Builder(this@MainActivity)
+                        .setTitle("เพิ่มรายการประจำ")
+                        .setView(form)
+                        .setPositiveButton("บันทึก") { _, _ ->
+                            val name =
+                                nameInput.text.toString().trim()
+
+                            val amount =
+                                amountInput.text.toString()
+                                    .trim()
+                                    .toBigDecimalOrNull()
+
+                            val dueDay =
+                                dueDayInput.text.toString()
+                                    .trim()
+                                    .toIntOrNull()
+
+                            val note =
+                                noteInput.text.toString().trim()
+
+                            when {
+                                name.isBlank() -> {
+                                    android.widget.Toast.makeText(
+                                        this@MainActivity,
+                                        "กรุณากรอกชื่อรายการ",
+                                        android.widget.Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                                amount == null ||
+                                    amount.compareTo(java.math.BigDecimal.ZERO) <= 0 -> {
+                                    android.widget.Toast.makeText(
+                                        this@MainActivity,
+                                        "จำนวนเงินต้องมากกว่า 0",
+                                        android.widget.Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                                dueDay == null ||
+                                    dueDay !in 1..31 -> {
+                                    android.widget.Toast.makeText(
+                                        this@MainActivity,
+                                        "วันที่ต้องจ่ายต้องอยู่ระหว่าง 1-31",
+                                        android.widget.Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                                else -> {
+                                    // PC_DRONE_MONTHLY_OBLIGATIONS_TEMPLATE_SAVE
+                                    val createdAt =
+                                        System.currentTimeMillis()
+
+                                    val templateId =
+                                        "obligation_" +
+                                        java.util.UUID.randomUUID().toString()
+
+                                    val templates =
+                                        loadObligationTemplates()
+
+                                    templates.add(
+                                        listOf(
+                                            templateId,
+                                            name,
+                                            amount.stripTrailingZeros()
+                                                .toPlainString(),
+                                            dueDay.toString(),
+                                            note,
+                                            "true",
+                                            createdAt.toString()
+                                        )
+                                    )
+
+                                    saveObligationTemplates(templates)
+
+                                    android.widget.Toast.makeText(
+                                        this@MainActivity,
+                                        "บันทึกรายการประจำแล้ว",
+                                        android.widget.Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    showMonthlyObligations()
+                                }
+                            }
+                        }
+                        .setNegativeButton("ยกเลิก", null)
+                        .show()
+                }
+            },
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(52)
+            ).apply {
+                bottomMargin = dp(12)
+            }
+        )
+
         root.addView(
             android.widget.TextView(this).apply {
                 text = "ยังไม่มีรายการที่ต้องจ่ายในเดือนนี้"
