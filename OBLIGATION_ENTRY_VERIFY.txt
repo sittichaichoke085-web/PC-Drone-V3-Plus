@@ -1,0 +1,50 @@
+03057:             ).apply {
+03058:                 bottomMargin = dp(6)
+03059:             }
+03060:         )
+03061: 
+03062:         // PC_DRONE_MONTHLY_OBLIGATIONS_ENTRY
+03063:         val monthlyObligationButton =
+03064:             android.widget.Button(this).apply {
+03065:                 text = "รายการที่ต้องจ่ายประจำเดือน"
+03066:                 isAllCaps = false
+03067:                 textSize = 16f
+03068:                 setTextColor(android.graphics.Color.WHITE)
+03069:                 background = rounded(
+03070:                     android.graphics.Color.rgb(0, 121, 107),
+03071:                     dp(14)
+03072:                 )
+03073:                 setPadding(
+03074:                     dp(12),
+03075:                     dp(10),
+03076:                     dp(12),
+03077:                     dp(10)
+03078:                 )
+03079:                 setOnClickListener {
+03080:                     android.app.AlertDialog.Builder(this@MainActivity)
+03081:                         .setTitle("รายการที่ต้องจ่ายประจำเดือน")
+03082:                         .setMessage("กำลังเตรียมระบบติดตามยอดที่ต้องจ่าย จ่ายแล้ว คงเหลือ และประวัติรายเดือน")
+03083:                         .setPositiveButton("ตกลง", null)
+03084:                         .show()
+03085:                 }
+03086:             }
+03087: 
+03088:         root.addView(
+03089:             monthlyObligationButton,
+03090:             android.widget.LinearLayout.LayoutParams(
+03091:                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+03092:                 dp(52)
+03093:             ).apply {
+03094:                 bottomMargin = dp(10)
+03095:             }
+03096:         )
+03097: 
+03098:         // PC_DRONE_PHASE_2FA_STEP2_AUDIT_UI
+03099:         val auditBox =
+03100:             android.widget.LinearLayout(this).apply {
+03101:                 orientation = android.widget.LinearLayout.VERTICAL
+03102:                 setPadding(dp(16), dp(16), dp(16), dp(16))
+03103:                 background = rounded(
+03104:                     if (auditPass) android.graphics.Color.rgb(232, 245, 233)
+03105:                     else android.graphics.Color.rgb(255, 243, 224),
+03106:                     dp(16)
