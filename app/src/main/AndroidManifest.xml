@@ -38,6 +38,11 @@
             android:name=".JobNotificationReceiver"
             android:exported="false" />
 
+        <!-- PC_DRONE_OBLIGATION_NOTIFICATION_RECEIVER -->
+        <receiver
+            android:name=".ObligationNotificationReceiver"
+            android:exported="false" />
+
 
         <provider
             android:name=".BackupFileProvider"
