@@ -3753,6 +3753,44 @@ class MainActivity : Activity() {
                 .apply()
         }
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_MONTH_STORAGE
+        val obligationMonthKey =
+            "money_manager_obligation_months"
+
+        fun loadObligationMonths(): MutableList<List<String>> {
+            return prefs
+                .getStringSet(
+                    obligationMonthKey,
+                    emptySet()
+                )
+                .orEmpty()
+                .mapNotNull { record ->
+                    val parts =
+                        record.split(obligationDelimiter)
+
+                    if (parts.size == 7) parts
+                    else null
+                }
+                .sortedBy { it[6].toLongOrNull() ?: 0L }
+                .toMutableList()
+        }
+
+        fun saveObligationMonths(
+            items: List<List<String>>
+        ) {
+            val records =
+                items.map { parts ->
+                    parts.joinToString(obligationDelimiter)
+                }.toSet()
+
+            prefs.edit()
+                .putStringSet(
+                    obligationMonthKey,
+                    records
+                )
+                .apply()
+        }
+
         val now = java.util.Calendar.getInstance()
         val monthNames = arrayOf(
             "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
