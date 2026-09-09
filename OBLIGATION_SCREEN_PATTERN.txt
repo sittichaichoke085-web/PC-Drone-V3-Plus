@@ -1,0 +1,90 @@
+01576: 
+01577:         setContentView(scroll)
+01578:     }
+01579: 
+01580: 
+01581:     private fun showMoneyManager() {
+01582: 
+01583:         // ============================================================
+01584:         // PC DRONE V3.0.1 - MONEY MANAGER PHASE 2A
+01585:         //
+01586:         // IMPORTANT:
+01587:         // - Wallet data is stored separately in money_manager_wallets
+01588:         // - finance_transactions is NOT modified in Phase 2A
+01589:         // - Wallet balances here are opening/manual wallet balances only
+01590:         // ============================================================
+01591: 
+01592:         val dark = android.graphics.Color.rgb(17, 17, 17)
+01593:         val green = android.graphics.Color.rgb(0, 145, 70)
+01594:         val greenDark = android.graphics.Color.rgb(0, 91, 45)
+01595:         val pageBg = android.graphics.Color.rgb(245, 248, 246)
+01596:         val gray = android.graphics.Color.rgb(100, 105, 102)
+01597:         val red = android.graphics.Color.rgb(180, 35, 35)
+01598: 
+01599:         val prefs =
+01600:             getSharedPreferences(
+01601:                 "pc_drone_v3_data",
+01602:                 MODE_PRIVATE
+01603:             )
+01604: 
+01605:         val walletKey = "money_manager_wallets"
+01606:         val delimiter = "|||"
+01607: 
+01608:         fun clean(value: String): String {
+01609:             return value
+01610:                 .replace(delimiter, " ")
+01611:                 .replace("\n", " ")
+01612:                 .trim()
+01613:         }
+01614: 
+01615:         fun rounded(
+01616:             color: Int,
+01617:             radius: Int
+01618:         ): android.graphics.drawable.GradientDrawable {
+01619: 
+01620:             return android.graphics.drawable.GradientDrawable().apply {
+01621:                 shape =
+01622:                     android.graphics.drawable.GradientDrawable.RECTANGLE
+01623:                 setColor(color)
+01624:                 cornerRadius = dp(radius).toFloat()
+01625:             }
+01626:         }
+01627: 
+01628:         // ------------------------------------------------------------
+01629:         // SEED DEFAULT WALLETS ONLY ON FIRST USE
+01630:         // ------------------------------------------------------------
+01631: 
+01632:         if (!prefs.contains(walletKey)) {
+01633: 
+01634:             val defaults =
+01635:                 linkedSetOf(
+01636:                     "001${delimiter}เงินสด${delimiter}เงินสด${delimiter}0${delimiter}เงินสดที่ถืออยู่",
+01637:                     "002${delimiter}บัญชีธนาคาร${delimiter}ธนาคาร${delimiter}0${delimiter}เงินในบัญชี",
+01638:                     "003${delimiter}ค่าน้ำมัน${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}งบเชื้อเพลิง",
+01639:                     "004${delimiter}ซ่อมบำรุง${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}โดรน รถ และอุปกรณ์",
+01640:                     "005${delimiter}ค่าแรง${delimiter}ค่าใช้จ่าย${delimiter}0${delimiter}ลูกน้องและทีมงาน",
+01641:                     "006${delimiter}เงินงานลูกค้า${delimiter}รายรับ${delimiter}0${delimiter}เงินจากงานบิน",
+01642:                     "007${delimiter}เงินเก็บ / ลงทุน${delimiter}เงินสำรอง${delimiter}0${delimiter}เงินสำรองธุรกิจ",
+01643:                     "008${delimiter}อื่น ๆ${delimiter}อื่น ๆ${delimiter}0${delimiter}ค่าใช้จ่ายหรือเงินกองอื่น"
+01644:                 )
+01645: 
+01646:             prefs.edit()
+01647:                 .putStringSet(
+01648:                     walletKey,
+01649:                     defaults
+01650:                 )
+01651:                 .apply()
+01652:         }
+01653: 
+01654:         fun loadWallets(): MutableList<List<String>> {
+01655: 
+01656:             return prefs
+01657:                 .getStringSet(
+01658:                     walletKey,
+01659:                     emptySet()
+01660:                 )
+01661:                 .orEmpty()
+01662:                 .mapNotNull { record ->
+01663: 
+01664:                     val parts =
+01665:                         record.split(
