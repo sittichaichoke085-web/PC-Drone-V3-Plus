@@ -4105,6 +4105,29 @@ class MainActivity : Activity() {
                 val dueDay =
                     item[5].toIntOrNull() ?: 0
 
+                // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_TOTALS
+                val monthItemId = item[0]
+                val paid =
+                    loadObligationPayments()
+                        .filter { payment ->
+                            payment[1] == monthItemId
+                        }
+                        .fold(java.math.BigDecimal.ZERO) { total, payment ->
+                            total.add(
+                                payment[2].toBigDecimalOrNull()
+                                    ?: java.math.BigDecimal.ZERO
+                            )
+                        }
+
+                val remainingRaw =
+                    planned.subtract(paid)
+
+                val remaining =
+                    if (remainingRaw.compareTo(java.math.BigDecimal.ZERO) < 0)
+                        java.math.BigDecimal.ZERO
+                    else
+                        remainingRaw
+
                 val card =
                     android.widget.LinearLayout(this).apply {
                         orientation = android.widget.LinearLayout.VERTICAL
@@ -4147,9 +4170,11 @@ class MainActivity : Activity() {
                 card.addView(
                     android.widget.TextView(this).apply {
                         text =
-                            "จ่ายแล้ว 0.00 บาท\n" +
+                            "จ่ายแล้ว " +
+                            java.text.NumberFormat.getNumberInstance(java.util.Locale("th", "TH")).format(paid) +
+                            " บาท\n" +
                             "คงเหลือ " +
-                            java.text.NumberFormat.getNumberInstance(java.util.Locale("th", "TH")).format(planned) +
+                            java.text.NumberFormat.getNumberInstance(java.util.Locale("th", "TH")).format(remaining) +
                             " บาท"
                         textSize = 15f
                         setTextColor(gray)
