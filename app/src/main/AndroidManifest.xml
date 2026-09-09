@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:icon="@drawable/pc_drone_icon"
@@ -42,6 +43,16 @@
         <receiver
             android:name=".ObligationNotificationReceiver"
             android:exported="false" />
+
+        <!-- PC_DRONE_OBLIGATION_BOOT_RECEIVER -->
+        <receiver
+            android:name=".ObligationBootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
 
         <provider
