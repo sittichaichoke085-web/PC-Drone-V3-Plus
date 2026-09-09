@@ -1,0 +1,474 @@
+=== MAINACTIVITY RELEVANT MAP ===
+
+00086:         when (route) {
+00087:             AppRoute.DASHBOARD -> showDashboard()
+00088:             AppRoute.MONEY_MANAGER -> showMoneyManager()
+00089:             else -> showPlaceholder(route)
+00090:         }
+
+00180:         val transactions =
+00181:             prefs.getStringSet(
+00182:                 "finance_transactions",
+00183:                 emptySet()
+00184:             )?.toList() ?: emptyList()
+
+00775:                     "บริหารเงิน",
+00776:                     "กระเป๋าและเงินทุน",
+00777:                     AppRoute.MONEY_MANAGER
+00778:                 ),
+00779:                 menuCard(
+
+01023: 
+01024: 
+01025:     // PC_DRONE_MONTHLY_EXPENSE_REPORT
+01026:     private fun showMonthlyExpenseReport() {
+01027: 
+
+01024: 
+01025:     // PC_DRONE_MONTHLY_EXPENSE_REPORT
+01026:     private fun showMonthlyExpenseReport() {
+01027: 
+01028:         val prefs =
+
+01074:         )
+01075: 
+01076:         // PC_DRONE_MONTHLY_DATE_RANGE_STEP1
+01077:         fun createDateInput(
+01078:             hintText: String,
+
+01108:         lastDay.set(java.util.Calendar.MILLISECOND, 999)
+01109: 
+01110:         // PC_DRONE_MONTHLY_DATE_RANGE_STEP2
+01111:         val fromDay = createDateInput("วัน", 2)
+01112:         val fromMonth = createDateInput("เดือน", 2)
+
+01154:         root.addView(header)
+01155: 
+01156:         // PC_DRONE_MONTHLY_DATE_RANGE_STEP4
+01157:         fun setupDateAutoJump(
+01158:             day: android.widget.EditText,
+
+01229:         setupDateAutoJump(toDay, toMonth, toYear)
+01230: 
+01231:         // PC_DRONE_MONTHLY_DATE_RANGE_STEP5
+01232:         fun readDateRange(
+01233:             day: android.widget.EditText,
+
+01271:         }
+01272: 
+01273:         // PC_DRONE_MONTHLY_DATE_RANGE_STEP3
+01274:         fun addDateInputRow(
+01275:             label: String,
+
+01326:         )
+01327: 
+01328:         // PC_DRONE_MONTHLY_DATE_RANGE_STEP6C
+01329:         val resultArea = android.widget.LinearLayout(this).apply {
+01330:             orientation = android.widget.LinearLayout.VERTICAL
+
+01335:             to: java.util.Calendar
+01336:         ) {
+01337:             // PC_DRONE_MONTHLY_DYNAMIC_HEADER
+01338:             header.text =
+01339:                 "จากวันที่ ${dateOnly.format(from.time)} ถึง ${dateOnly.format(to.time)}"
+
+01343:             val rows =
+01344:                 prefs.getStringSet(
+01345:                     "finance_transactions",
+01346:                     emptySet()
+01347:                 ).orEmpty()
+
+01491: 
+01492: 
+01493:         // PC_DRONE_MONTHLY_DATE_RANGE_STEP6D
+01494:         val searchButton =
+01495:             android.widget.Button(this).apply {
+
+01562:                 background = rounded(orange, 12)
+01563:                 setOnClickListener {
+01564:                     showMoneyManager()
+01565:                 }
+01566:             }
+
+01579: 
+01580: 
+01581:     private fun showMoneyManager() {
+01582: 
+01583:         // ============================================================
+
+01585:         //
+01586:         // IMPORTANT:
+01587:         // - Wallet data is stored separately in money_manager_wallets
+01588:         // - finance_transactions is NOT modified in Phase 2A
+01589:         // - Wallet balances here are opening/manual wallet balances only
+
+01586:         // IMPORTANT:
+01587:         // - Wallet data is stored separately in money_manager_wallets
+01588:         // - finance_transactions is NOT modified in Phase 2A
+01589:         // - Wallet balances here are opening/manual wallet balances only
+01590:         // ============================================================
+
+01603:             )
+01604: 
+01605:         val walletKey = "money_manager_wallets"
+01606:         val delimiter = "|||"
+01607: 
+
+01982: 
+01983:                         // Redraw from persisted data
+01984:                         showMoneyManager()
+01985:                     }
+01986:             }
+
+01997:             walletName: String
+01998:         ) {
+01999:             // PC_DRONE_PHASE_2FA_DELETE_GUARD
+02000:             val hasFinanceLink =
+02001:                 prefs.getStringSet("money_manager_links", emptySet()).orEmpty().any { link ->
+
+01999:             // PC_DRONE_PHASE_2FA_DELETE_GUARD
+02000:             val hasFinanceLink =
+02001:                 prefs.getStringSet("money_manager_links", emptySet()).orEmpty().any { link ->
+02002:                     link.split("|||", ignoreCase = false, limit = 2)
+02003:                         .getOrNull(1)?.trim() == walletId
+
+02005: 
+02006:             val hasJobLink =
+02007:                 prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty().any { link ->
+02008:                     link.split("|||", ignoreCase = false, limit = 2)
+02009:                         .getOrNull(1)?.trim() == walletId
+
+02011: 
+02012:             val hasTransferHistory =
+02013:                 prefs.getStringSet("money_manager_transfers", emptySet()).orEmpty().any { record ->
+02014:                     val parts = record.split("|||", ignoreCase = false, limit = 5)
+02015:                     parts.getOrNull(1)?.trim() == walletId ||
+
+02043: 
+02044:                     saveWallets(updated)
+02045:                     showMoneyManager()
+02046:                 }
+02047:                 .show()
+
+02062:             val links =
+02063:                 prefs.getStringSet(
+02064:                     "money_manager_links",
+02065:                     emptySet()
+02066:                 )?.toList()
+
+02102:             val financeRecords =
+02103:                 prefs.getStringSet(
+02104:                     "finance_transactions",
+02105:                     emptySet()
+02106:                 )?.toList()
+
+02153:             val jobLinks =
+02154:                 prefs.getStringSet(
+02155:                     "money_manager_job_links",
+02156:                     emptySet()
+02157:                 )?.toList()
+
+02246:             val transfers =
+02247:                 prefs.getStringSet(
+02248:                     "money_manager_transfers",
+02249:                     emptySet()
+02250:                 )?.toList()
+
+02565:                     val current =
+02566:                         prefs.getStringSet(
+02567:                             "money_manager_transfers",
+02568:                             emptySet()
+02569:                         )?.toMutableSet()
+
+02576:                     prefs.edit()
+02577:                         .putStringSet(
+02578:                             "money_manager_transfers",
+02579:                             current
+02580:                         )
+
+02583:                     dialog.dismiss()
+02584: 
+02585:                     showMoneyManager()
+02586:                 }
+02587:             }
+
+02613:             }
+02614: 
+02615:         // PC_DRONE_PHASE_2FA_STEP1A
+02616:         var auditManualIncome = java.math.BigDecimal.ZERO
+02617:         var auditManualExpense = java.math.BigDecimal.ZERO
+
+02618:         var auditCompletedJobIncome = java.math.BigDecimal.ZERO
+02619: 
+02620:         prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+02621:             val parts = record.split("|||", ignoreCase = false, limit = 5)
+02622:             val type = parts.getOrNull(1)?.trim().orEmpty()
+
+02635:         val auditBusinessNet = auditCompletedJobIncome.add(auditManualIncome).subtract(auditManualExpense)
+02636: 
+02637:         // PC_DRONE_PHASE_2FA_STEP1B
+02638:         val auditFinanceLinks = prefs.getStringSet("money_manager_links", emptySet()).orEmpty()
+02639:         val auditLinkedFinanceIds = auditFinanceLinks.mapNotNull { link ->
+
+02636: 
+02637:         // PC_DRONE_PHASE_2FA_STEP1B
+02638:         val auditFinanceLinks = prefs.getStringSet("money_manager_links", emptySet()).orEmpty()
+02639:         val auditLinkedFinanceIds = auditFinanceLinks.mapNotNull { link ->
+02640:             link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+
+02646:         var auditUnlinkedExpenseAmount = java.math.BigDecimal.ZERO
+02647: 
+02648:         prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+02649:             val parts = record.split("|||", ignoreCase = false, limit = 5)
+02650:             val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+
+02663:         }
+02664: 
+02665:         // PC_DRONE_PHASE_2FA_STEP1C
+02666:         val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+02667:         val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+
+02664: 
+02665:         // PC_DRONE_PHASE_2FA_STEP1C
+02666:         val auditJobLinks = prefs.getStringSet("money_manager_job_links", emptySet()).orEmpty()
+02667:         val auditLinkedJobIds = auditJobLinks.mapNotNull { link ->
+02668:             link.split("|||", ignoreCase = false, limit = 2).getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+
+02684:         }
+02685: 
+02686:         // PC_DRONE_PHASE_2FA_STEP1D
+02687:         val auditValidWalletIds = wallets.map { it[0] }.toSet()
+02688: 
+
+02692: 
+02693:         val auditFinanceTransactionIds =
+02694:             prefs.getStringSet("finance_transactions", emptySet()).orEmpty().mapNotNull { record ->
+02695:                 record.split("|||", ignoreCase = false, limit = 5)
+02696:                     .getOrNull(0)?.trim()?.takeIf { it.isNotEmpty() }
+
+02699:         var auditOrphanFinanceLinkCount = 0
+02700: 
+02701:         prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+02702:             val parts = link.split("|||", ignoreCase = false, limit = 2)
+02703:             val transactionId = parts.getOrNull(0)?.trim().orEmpty()
+
+02714:         }
+02715: 
+02716:         // PC_DRONE_PHASE_2FA_STEP1E
+02717:         val auditFlightJobStatusById =
+02718:             prefs.getStringSet("flight_jobs", emptySet()).orEmpty().mapNotNull { record ->
+
+02749: 
+02750:         val auditFinanceLinkCounts = mutableMapOf<String, Int>()
+02751:         prefs.getStringSet("money_manager_links", emptySet()).orEmpty().forEach { link ->
+02752:             val id = link.split("|||", ignoreCase = false, limit = 2)
+02753:                 .getOrNull(0)?.trim().orEmpty()
+
+02762:         var auditInvalidTransferCount = 0
+02763: 
+02764:         prefs.getStringSet("money_manager_transfers", emptySet()).orEmpty().forEach { record ->
+02765:             val p = record.split("|||", ignoreCase = false, limit = 5)
+02766:             val transferId = p.getOrNull(0)?.trim().orEmpty()
+
+02782:         }
+02783: 
+02784:         // PC_DRONE_PHASE_2FA_STEP1F
+02785:         val auditDifference =
+02786:             auditBusinessNet.subtract(totalBalance)
+
+02875:         )
+02876: 
+02877:         // PC_DRONE_PHASE_2FB_SUMMARY_CARDS
+02878:         val summaryContainer =
+02879:             android.widget.LinearLayout(this).apply {
+
+02932:             )
+02933: 
+02934:             // PC_DRONE_MONTHLY_EXPENSE_CARD
+02935:             val rightCard =
+02936:                 if (rightTitle == "รายจ่ายต่อเดือน") {
+
+02973:                                     )
+02974:                                 setOnClickListener {
+02975:                                     showMonthlyExpenseReport()
+02976:                                 }
+02977:                             },
+
+03014:         var monthlyExpenseTotal = java.math.BigDecimal.ZERO
+03015: 
+03016:         prefs.getStringSet("finance_transactions", emptySet()).orEmpty().forEach { record ->
+03017:             val parts = record.split("|||", ignoreCase = false, limit = 5)
+03018:             val txId = parts.getOrNull(0)?.trim().orEmpty()
+
+03060:         )
+03061: 
+03062:         // PC_DRONE_PHASE_2FA_STEP2_AUDIT_UI
+03063:         val auditBox =
+03064:             android.widget.LinearLayout(this).apply {
+
+03775:         val financeLinks =
+03776:             prefs.getStringSet(
+03777:                 "money_manager_links",
+03778:                 emptySet()
+03779:             )?.toList()
+
+03813:         val financeTransactions =
+03814:             prefs.getStringSet(
+03815:                 "finance_transactions",
+03816:                 emptySet()
+03817:             )?.toList()
+
+03917:         val jobLinks =
+03918:             prefs.getStringSet(
+03919:                 "money_manager_job_links",
+03920:                 emptySet()
+03921:             )?.toList()
+
+04055:         val transfers =
+04056:             prefs.getStringSet(
+04057:                 "money_manager_transfers",
+04058:                 emptySet()
+04059:             )?.toList()
+
+04062:         val walletRecords =
+04063:             prefs.getStringSet(
+04064:                 "money_manager_wallets",
+04065:                 emptySet()
+04066:             )?.toList()
+
+04275: 
+04276:                 setOnClickListener {
+04277:                     showMoneyManager()
+04278:                 }
+04279:             }
+
+05296:                     val rawSet: Set<String> =
+05297:                         financePrefs.getStringSet(
+05298:                             "finance_transactions",
+05299:                             emptySet()
+05300:                         )?.toSet()
+
+10561:                                 val walletRecords =
+10562:                                     prefs.getStringSet(
+10563:                                         "money_manager_wallets",
+10564:                                         emptySet()
+10565:                                     )?.toList()
+
+10630:                                                 val links =
+10631:                                                     prefs.getStringSet(
+10632:                                                         "money_manager_job_links",
+10633:                                                         emptySet()
+10634:                                                     )?.toMutableSet()
+
+10654:                                                 prefs.edit()
+10655:                                                     .putStringSet(
+10656:                                                         "money_manager_job_links",
+10657:                                                         links.toSet()
+10658:                                                     )
+
+10794:                                         val jobLinks =
+10795:                                             prefs.getStringSet(
+10796:                                                 "money_manager_job_links",
+10797:                                                 emptySet()
+10798:                                             )?.toMutableSet()
+
+10812:                                         prefs.edit()
+10813:                                             .putStringSet(
+10814:                                                 "money_manager_job_links",
+10815:                                                 jobLinks.toSet()
+10816:                                             )
+
+12161:             val raw =
+12162:                 prefs.getStringSet(
+12163:                     "money_manager_wallets",
+12164:                     emptySet()
+12165:                 )?.toList()
+
+12382:             val transactions =
+12383:                 prefs.getStringSet(
+12384:                     "finance_transactions",
+12385:                     emptySet()
+12386:                 )?.toList()
+
+12613:                                     val current =
+12614:                                         prefs.getStringSet(
+12615:                                             "finance_transactions",
+12616:                                             emptySet()
+12617:                                         )?.toMutableSet()
+
+12624:                                     prefs.edit()
+12625:                                         .putStringSet(
+12626:                                             "finance_transactions",
+12627:                                             current
+12628:                                         )
+
+12644:                                         val links =
+12645:                                             prefs.getStringSet(
+12646:                                                 "money_manager_links",
+12647:                                                 emptySet()
+12648:                                             )?.toMutableSet()
+
+12662:                                         prefs.edit()
+12663:                                             .putStringSet(
+12664:                                                 "money_manager_links",
+12665:                                                 links.toSet()
+12666:                                             )
+
+12863:                     val current =
+12864:                         prefs.getStringSet(
+12865:                             "finance_transactions",
+12866:                             emptySet()
+12867:                         )?.toMutableSet()
+
+12874:                     prefs.edit()
+12875:                         .putStringSet(
+12876:                             "finance_transactions",
+12877:                             current
+12878:                         )
+
+12911:                             val links =
+12912:                                 prefs.getStringSet(
+12913:                                     "money_manager_links",
+12914:                                     emptySet()
+12915:                                 )?.toMutableSet()
+
+12935:                             prefs.edit()
+12936:                                 .putStringSet(
+12937:                                     "money_manager_links",
+12938:                                     links.toSet()
+12939:                                 )
+
+13335:                 val current =
+13336:                     prefs.getStringSet(
+13337:                         "finance_transactions",
+13338:                         emptySet()
+13339:                     )?.toMutableSet()
+
+13356:                 prefs.edit()
+13357:                     .putStringSet(
+13358:                         "finance_transactions",
+13359:                         current
+13360:                     )
+
+=== BUILD CONFIG ===
+
+--- app/build.gradle.kts ---
+0001: import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+0005:     id("org.jetbrains.kotlin.android")
+0011:     compileSdk = 36
+0015:         minSdk = 26
+0016:         targetSdk = 36
+0017:         versionCode = 2
+0018:         versionName = "3.0.1"
+0022:         sourceCompatibility = JavaVersion.VERSION_17
+0023:         targetCompatibility = JavaVersion.VERSION_17
+0027: kotlin {
+0029:         jvmTarget = JvmTarget.JVM_17
+
+--- build.gradle.kts ---
+0003:     id("org.jetbrains.kotlin.android") version "2.3.21" apply false
+
+--- gradle/wrapper/gradle-wrapper.properties ---
+0003: distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip
+
+--- settings.gradle.kts ---
