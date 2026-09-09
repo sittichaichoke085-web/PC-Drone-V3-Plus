@@ -3059,6 +3059,38 @@ class MainActivity : Activity() {
             }
         )
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_ENTRY
+        val monthlyObligationButton =
+            android.widget.Button(this).apply {
+                text = "รายการที่ต้องจ่ายประจำเดือน"
+                isAllCaps = false
+                textSize = 16f
+                setTextColor(android.graphics.Color.WHITE)
+                background = rounded(
+                    android.graphics.Color.rgb(0, 121, 107),
+                    dp(14)
+                )
+                setPadding(
+                    dp(12),
+                    dp(10),
+                    dp(12),
+                    dp(10)
+                )
+                setOnClickListener {
+                    showMonthlyObligations()
+                }
+            }
+
+        root.addView(
+            monthlyObligationButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(52)
+            ).apply {
+                bottomMargin = dp(10)
+            }
+        )
+
         // PC_DRONE_PHASE_2FA_STEP2_AUDIT_UI
         val auditBox =
             android.widget.LinearLayout(this).apply {
@@ -3666,6 +3698,93 @@ class MainActivity : Activity() {
         setContentView(scroll)
     }
 
+
+
+    // PC_DRONE_MONTHLY_OBLIGATIONS_SCREEN
+    private fun showMonthlyObligations() {
+        val pageBg = android.graphics.Color.rgb(245, 248, 246)
+        val dark = android.graphics.Color.rgb(17, 17, 17)
+        val green = android.graphics.Color.rgb(0, 121, 107)
+        val gray = android.graphics.Color.rgb(100, 105, 102)
+
+        val now = java.util.Calendar.getInstance()
+        val monthNames = arrayOf(
+            "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
+            "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
+            "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+        )
+        val monthText =
+            monthNames[now.get(java.util.Calendar.MONTH)] +
+            " " +
+            (now.get(java.util.Calendar.YEAR) + 543)
+
+        val root = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(16), dp(18), dp(16), dp(24))
+            setBackgroundColor(pageBg)
+        }
+
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "← กลับ"
+                isAllCaps = false
+                setOnClickListener {
+                    showMoneyManager()
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "รายการที่ต้องจ่ายประจำเดือน"
+                textSize = 24f
+                setTextColor(dark)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(0, dp(20), 0, dp(6))
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = monthText
+                textSize = 18f
+                setTextColor(green)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "ติดตามยอดที่ต้องจ่าย • จ่ายแล้ว • คงเหลือ • ประวัติการชำระ"
+                textSize = 14f
+                setTextColor(gray)
+                setPadding(0, dp(8), 0, dp(20))
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "ยังไม่มีรายการที่ต้องจ่ายในเดือนนี้"
+                textSize = 16f
+                setTextColor(gray)
+                setPadding(dp(12), dp(20), dp(12), dp(20))
+                gravity = android.view.Gravity.CENTER
+            }
+        )
+
+        val scroll = android.widget.ScrollView(this).apply {
+            isFillViewport = true
+            addView(
+                root,
+                android.view.ViewGroup.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+        }
+
+        setContentView(scroll)
+    }
 
 
     // =====================================================
