@@ -3792,6 +3792,60 @@ class MainActivity : Activity() {
         }
 
         val now = java.util.Calendar.getInstance()
+        // PC_DRONE_MONTHLY_OBLIGATIONS_CURRENT_SNAPSHOT
+        val currentMonthKey =
+            String.format(
+                java.util.Locale.US,
+                "%04d-%02d",
+                now.get(java.util.Calendar.YEAR),
+                now.get(java.util.Calendar.MONTH) + 1
+            )
+
+        val obligationMonths = loadObligationMonths()
+        val existingMonthPairs =
+            obligationMonths
+                .map { it[1] to it[2] }
+                .toMutableSet()
+
+        var obligationMonthsChanged = false
+
+        loadObligationTemplates()
+            .filter { it[5] == "true" }
+            .forEach { template ->
+                val templateId = template[0]
+                val pair = templateId to currentMonthKey
+
+                if (pair !in existingMonthPairs) {
+                    val createdAt =
+                        System.currentTimeMillis().toString()
+
+                    val monthItemId =
+                        "obligation_month_" +
+                        currentMonthKey +
+                        "_" +
+                        templateId
+
+                    obligationMonths.add(
+                        listOf(
+                            monthItemId,
+                            templateId,
+                            currentMonthKey,
+                            template[1],
+                            template[2],
+                            template[3],
+                            createdAt
+                        )
+                    )
+
+                    existingMonthPairs.add(pair)
+                    obligationMonthsChanged = true
+                }
+            }
+
+        if (obligationMonthsChanged) {
+            saveObligationMonths(obligationMonths)
+        }
+
         val monthNames = arrayOf(
             "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
             "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
