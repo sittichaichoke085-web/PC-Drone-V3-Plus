@@ -1,0 +1,244 @@
+               } else {
+                        null
+                    }
+                }
+
+        val priorOutstandingTotal =
+            priorOutstandingItems.fold(
+                java.math.BigDecimal.ZERO
+            ) { total, pair ->
+                total.add(pair.second)
+            }
+
+        if (priorOutstandingItems.isNotEmpty()) {
+            val priorCard =
+                android.widget.LinearLayout(this).apply {
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+                    setPadding(
+                        dp(16), dp(14), dp(16), dp(14)
+                    )
+                    background =
+                        android.graphics.drawable.GradientDrawable().apply {
+                            setColor(
+                                android.graphics.Color.rgb(
+                                    255, 247, 235
+                                )
+                            )
+                            cornerRadius = dp(14).toFloat()
+                            setStroke(
+                                dp(1),
+                                android.graphics.Color.rgb(
+                                    225, 145, 55
+                                )
+                            )
+                        }
+                }
+
+            priorCard.addView(
+                android.widget.TextView(this).apply {
+                    text = "ยอดค้างจากเดือนก่อน"
+                    textSize = 17f
+                    setTypeface(
+                        typeface,
+                        android.graphics.Typeface.BOLD
+                    )
+                    setTextColor(
+                        android.graphics.Color.rgb(
+                            145, 75, 20
+                        )
+                    )
+                }
+            )
+
+            priorCard.addView(
+                android.widget.TextView(this).apply {
+                    text =
+                        java.text.NumberFormat.getNumberInstance(
+                            java.util.Locale("th", "TH")
+                        ).format(priorOutstandingTotal) +
+                        " บาท" +
+                        System.lineSeparator() +
+                        "ค้าง " +
+                        priorOutstandingItems.size +
+                        " รายการ"
+                    textSize = 16f
+                    setTextColor(dark)
+                    setPadding(0, dp(6), 0, 0)
+                }
+            )
+
+            // PC_DRONE_MONTHLY_OBLIGATIONS_PRIOR_BALANCE_DETAIL
+            priorCard.isClickable = true
+            priorCard.isFocusable = true
+            priorCard.setOnClickListener {
+
+                val thaiMonths =
+                    listOf(
+                        "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.",
+                        "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.",
+                        "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+                    )
+
+                val moneyFormat =
+                    java.text.NumberFormat.getNumberInstance(
+                        java.util.Locale("th", "TH")
+                    )
+
+                val sortedOutstanding =
+                    priorOutstandingItems
+                        .sortedWith(
+                            compareByDescending<
+                                Pair<
+                                    List<String>,
+                                    java.math.BigDecimal
+                                >
+                            > { it.first[2] }
+                                .thenBy {
+                                    it.first[5].toIntOrNull() ?: 31
+                                }
+                        )
+
+                val labels =
+                    sortedOutstanding.map { pair ->
+                        val item = pair.first
+                        val remaining = pair.second
+                        val parts = item[2].split("-")
+
+                        val monthLabel =
+                            if (parts.size == 2) {
+                                val y = parts[0].toIntOrNull()
+                                val m = parts[1].toIntOrNull()
+
+                                if (
+                                    y != null &&
+                                    m != null &&
+                                    m in 1..12
+                                ) {
+                                    thaiMonths[m - 1] +
+                                        " " +
+                                        (y + 543)
+                                } else {
+                                    item[2]
+                                }
+                            } else {
+                                item[2]
+                            }
+
+                        monthLabel +
+                            " • " +
+                            item[3] +
+                            " • คงเหลือ " +
+                            moneyFormat.format(remaining) +
+                            " บาท"
+                    }.toTypedArray()
+
+                android.app.AlertDialog.Builder(
+                    this@MainActivity
+                )
+                    .setTitle("ยอดค้างจากเดือนก่อน")
+                    .setItems(labels) { _, which ->
+
+                        val selectedPair =
+                            sortedOutstanding[which]
+
+                        val item =
+                            selectedPair.first
+
+                        val remaining =
+                            selectedPair.second
+
+                        val monthItemId =
+                            item[0]
+
+                        val form =
+                            android.widget.LinearLayout(
+                                this@MainActivity
+                            ).apply {
+                                orientation =
+                                    android.widget.LinearLayout.VERTICAL
+                                setPadding(
+                                    dp(20),
+                                    dp(8),
+                                    dp(20),
+                                    0
+                                )
+                            }
+
+                        val amountInput =
+                            android.widget.EditText(
+                                this@MainActivity
+                            ).apply {
+                                hint =
+                                    "จำนวนเงินที่จ่าย (คงเหลือ " +
+                                    moneyFormat.format(remaining) +
+                                    " บาท)"
+
+                                inputType =
+                                    android.text.InputType.TYPE_CLASS_NUMBER or
+                                    android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                            }
+
+                        val noteInput =
+                            android.widget.EditText(
+                                this@MainActivity
+                            ).apply {
+                                hint = "หมายเหตุ (ถ้ามี)"
+                                inputType =
+                                    android.text.InputType.TYPE_CLASS_TEXT
+                            }
+
+                        form.addView(amountInput)
+                        form.addView(noteInput)
+
+                        val paymentDialog =
+                            android.app.AlertDialog.Builder(
+                                this@MainActivity
+                            )
+                                .setTitle(
+                                    "ชำระยอดค้าง • " +
+                                    item[3]
+                                )
+                                .setView(form)
+                                .setPositiveButton(
+                                    "บันทึก",
+                                    null
+                                )
+                                .setNegativeButton(
+                                    "ยกเลิก",
+                                    null
+                                )
+                                .create()
+
+                        paymentDialog.setOnShowListener {
+
+                            paymentDialog.getButton(
+                                android.app.AlertDialog.BUTTON_POSITIVE
+                            ).setOnClickListener {
+
+                                val amount =
+                                    amountInput.text.toString()
+                                        .trim()
+                                        .toBigDecimalOrNull()
+
+                                val note =
+                                    noteInput.text.toString()
+                                        .replace(
+                                            obligationDelimiter,
+                                            " "
+                                        )
+                                        .trim()
+
+                                when {
+                                    amount == null ||
+                                        amount.compareTo(
+                                            java.math.BigDecimal.ZERO
+                                        ) <= 0 -> {
+                                            amountInput.error =
+                                                "จำนวนเงินต้องมากกว่า 0"
+                                        }
+
+                                    amount.compareTo(
+                                        remaining
+                                    ) > 0 -> {
+              
