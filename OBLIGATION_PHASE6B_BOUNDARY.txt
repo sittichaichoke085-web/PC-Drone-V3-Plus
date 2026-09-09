@@ -1,0 +1,24 @@
+START=110994
+END=143367
+
+AFTER_FUNCTION:
+
+
+
+    // =====================================================
+    // PHASE 2D - WALLET DETAIL / WALLET HISTORY
+    // =====================================================
+    private fun showWalletDetail(
+        walletId: String,
+        walletName: String,
+        openingBalance: java.math.BigDecimal
+    ) {
+
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val greenDark =
+            android.graphi
