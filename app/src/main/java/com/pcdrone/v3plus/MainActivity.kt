@@ -4571,16 +4571,189 @@ class MainActivity : Activity() {
             )
         )
 
-        content.addView(
-            android.widget.TextView(this).apply {
-                text = "ยังไม่มีประวัติรายเดือน"
-                textSize = 16f
-                setTextColor(
-                    android.graphics.Color.rgb(100, 105, 102)
+        // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_SUMMARY
+        val historyMonths =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            ).getStringSet(
+                "money_manager_obligation_months",
+                emptySet()
+            ).orEmpty()
+                .map { it.split("|||") }
+                .filter { it.size == 7 }
+                .toMutableList()
+                .filter { it.size >= 7 }
+                .groupBy { it[2] }
+                .filterKeys { monthKey ->
+                    val parts = monthKey.split("-")
+                    val year = parts.getOrNull(0)?.toIntOrNull()
+                    val month = parts.getOrNull(1)?.toIntOrNull()
+                    parts.size == 2 &&
+                        year != null &&
+                        month != null &&
+                        month in 1..12
+                }
+                .toList()
+                .sortedByDescending { it.first }
+
+        val historyPayments =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            ).getStringSet(
+                "money_manager_obligation_payments",
+                emptySet()
+            ).orEmpty()
+                .map { it.split("|||") }
+                .filter { it.size == 5 }
+                .toMutableList()
+                .filter { it.size >= 5 }
+
+        if (historyMonths.isEmpty()) {
+            content.addView(
+                android.widget.TextView(this).apply {
+                    text = "ยังไม่มีประวัติรายเดือน"
+                    textSize = 16f
+                    setTextColor(
+                        android.graphics.Color.rgb(100, 105, 102)
+                    )
+                    setPadding(0, dp(20), 0, dp(20))
+                }
+            )
+        } else {
+            val thaiMonths =
+                listOf(
+                    "มกราคม", "กุมภาพันธ์", "มีนาคม",
+                    "เมษายน", "พฤษภาคม", "มิถุนายน",
+                    "กรกฎาคม", "สิงหาคม", "กันยายน",
+                    "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
                 )
-                setPadding(0, dp(20), 0, dp(20))
+
+            val moneyFormat =
+                java.text.NumberFormat.getNumberInstance(
+                    java.util.Locale("th", "TH")
+                )
+
+            historyMonths.forEach { monthEntry ->
+                val monthKey = monthEntry.first
+                val monthItems = monthEntry.second
+
+                val parts = monthKey.split("-")
+                val year = parts[0].toInt()
+                val month = parts[1].toInt()
+
+                var plannedTotal = java.math.BigDecimal.ZERO
+                var paidTotal = java.math.BigDecimal.ZERO
+                var remainingTotal = java.math.BigDecimal.ZERO
+
+                monthItems.forEach { item ->
+                    val planned =
+                        item[4].toBigDecimalOrNull()
+                            ?: java.math.BigDecimal.ZERO
+
+                    val itemId = item[0]
+
+                    val paid =
+                        historyPayments
+                            .filter { payment ->
+                                payment[1] == itemId
+                            }
+                            .fold(java.math.BigDecimal.ZERO) { total, payment ->
+                                total.add(
+                                    payment[2].toBigDecimalOrNull()
+                                        ?: java.math.BigDecimal.ZERO
+                                )
+                            }
+
+                    val rawRemaining =
+                        planned.subtract(paid)
+
+                    val remaining =
+                        if (
+                            rawRemaining.compareTo(
+                                java.math.BigDecimal.ZERO
+                            ) < 0
+                        ) {
+                            java.math.BigDecimal.ZERO
+                        } else {
+                            rawRemaining
+                        }
+
+                    plannedTotal = plannedTotal.add(planned)
+                    paidTotal = paidTotal.add(paid)
+                    remainingTotal = remainingTotal.add(remaining)
+                }
+
+                val card =
+                    android.widget.LinearLayout(this).apply {
+                        orientation = android.widget.LinearLayout.VERTICAL
+                        setPadding(dp(16), dp(14), dp(16), dp(14))
+                        background =
+                            android.graphics.drawable.GradientDrawable().apply {
+                                setColor(android.graphics.Color.WHITE)
+                                cornerRadius = dp(14).toFloat()
+                                setStroke(
+                                    dp(1),
+                                    android.graphics.Color.rgb(220, 226, 222)
+                                )
+                            }
+                    }
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            thaiMonths[month - 1] +
+                            " " +
+                            (year + 543)
+                        textSize = 19f
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                        setTextColor(
+                            android.graphics.Color.rgb(17, 17, 17)
+                        )
+                    }
+                )
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            "ยอดที่ต้องจ่าย " +
+                            moneyFormat.format(plannedTotal) +
+                            " บาท" +
+                            System.lineSeparator() +
+                            "จ่ายแล้ว " +
+                            moneyFormat.format(paidTotal) +
+                            " บาท" +
+                            System.lineSeparator() +
+                            "คงเหลือ " +
+                            moneyFormat.format(remainingTotal) +
+                            " บาท" +
+                            System.lineSeparator() +
+                            "จำนวน " +
+                            monthItems.size +
+                            " รายการ"
+                        textSize = 15f
+                        setTextColor(
+                            android.graphics.Color.rgb(70, 75, 72)
+                        )
+                        setPadding(0, dp(8), 0, 0)
+                    }
+                )
+
+                content.addView(
+                    card,
+                    android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin = dp(10)
+                    }
+                )
             }
-        )
+        }
 
         setContentView(root)
     }
