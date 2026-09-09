@@ -1,0 +1,20 @@
+app/src/main/AndroidManifest.xml
+  JobNotificationReceiver=1
+  POST_NOTIFICATIONS=1
+app/src/main/java/com/pcdrone/v3plus/JobNotificationReceiver.kt
+  AlarmManager=4
+  JobNotificationReceiver=2
+  canScheduleExactAlarms=1
+  setExactAndAllowWhileIdle=2
+app/src/main/java/com/pcdrone/v3plus/JobReminderRestoreManager.kt
+  AlarmManager=6
+  JobNotificationReceiver=2
+  canScheduleExactAlarms=1
+  setExactAndAllowWhileIdle=2
+app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+  AlarmManager=6
+  JobNotificationReceiver=2
+  POST_NOTIFICATIONS=2
+  requestPermissions=1
+  canScheduleExactAlarms=1
+  setExactAndAllowWhileIdle=2
