@@ -4204,6 +4204,84 @@ class MainActivity : Activity() {
                 }
             )
 
+            // PC_DRONE_MONTHLY_OBLIGATIONS_PRIOR_BALANCE_DETAIL
+            priorCard.isClickable = true
+            priorCard.isFocusable = true
+            priorCard.setOnClickListener {
+                val thaiMonths =
+                    listOf(
+                        "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.",
+                        "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.",
+                        "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."
+                    )
+
+                val moneyFormat =
+                    java.text.NumberFormat.getNumberInstance(
+                        java.util.Locale("th", "TH")
+                    )
+
+                val detailText =
+                    priorOutstandingItems
+                        .sortedWith(
+                            compareByDescending<
+                                Pair<
+                                    List<String>,
+                                    java.math.BigDecimal
+                                >
+                            > { it.first[2] }
+                                .thenBy {
+                                    it.first[5].toIntOrNull()
+                                        ?: 31
+                                }
+                        )
+                        .joinToString(
+                            System.lineSeparator() +
+                                System.lineSeparator()
+                        ) { pair ->
+                            val item = pair.first
+                            val remaining = pair.second
+                            val parts = item[2].split("-")
+
+                            val monthText =
+                                if (parts.size == 2) {
+                                    val y =
+                                        parts[0].toIntOrNull()
+                                    val m =
+                                        parts[1].toIntOrNull()
+
+                                    if (
+                                        y != null &&
+                                        m != null &&
+                                        m in 1..12
+                                    ) {
+                                        thaiMonths[m - 1] +
+                                            " " +
+                                            (y + 543)
+                                    } else {
+                                        item[2]
+                                    }
+                                } else {
+                                    item[2]
+                                }
+
+                            monthText +
+                                System.lineSeparator() +
+                                item[3] +
+                                System.lineSeparator() +
+                                "คงเหลือ " +
+                                moneyFormat.format(remaining) +
+                                " บาท"
+                        }
+
+                android.app.AlertDialog.Builder(
+                    this@MainActivity
+                )
+                    .setTitle("รายละเอียดหนี้ค้าง")
+                    .setMessage(detailText)
+                    .setPositiveButton("ปิด", null)
+                    .show()
+            }
+
             root.addView(
                 priorCard,
                 android.widget.LinearLayout.LayoutParams(
