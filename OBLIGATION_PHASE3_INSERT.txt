@@ -1,0 +1,100 @@
+03703:     // PC_DRONE_MONTHLY_OBLIGATIONS_SCREEN
+03704:     private fun showMonthlyObligations() {
+03705:         val pageBg = android.graphics.Color.rgb(245, 248, 246)
+03706:         val dark = android.graphics.Color.rgb(17, 17, 17)
+03707:         val green = android.graphics.Color.rgb(0, 121, 107)
+03708:         val gray = android.graphics.Color.rgb(100, 105, 102)
+03709: 
+03710:         val now = java.util.Calendar.getInstance()
+03711:         val monthNames = arrayOf(
+03712:             "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
+03713:             "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
+03714:             "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+03715:         )
+03716:         val monthText =
+03717:             monthNames[now.get(java.util.Calendar.MONTH)] +
+03718:             " " +
+03719:             (now.get(java.util.Calendar.YEAR) + 543)
+03720: 
+03721:         val root = android.widget.LinearLayout(this).apply {
+03722:             orientation = android.widget.LinearLayout.VERTICAL
+03723:             setPadding(dp(16), dp(18), dp(16), dp(24))
+03724:             setBackgroundColor(pageBg)
+03725:         }
+03726: 
+03727:         root.addView(
+03728:             android.widget.Button(this).apply {
+03729:                 text = "← กลับ"
+03730:                 isAllCaps = false
+03731:                 setOnClickListener {
+03732:                     showMoneyManager()
+03733:                 }
+03734:             }
+03735:         )
+03736: 
+03737:         root.addView(
+03738:             android.widget.TextView(this).apply {
+03739:                 text = "รายการที่ต้องจ่ายประจำเดือน"
+03740:                 textSize = 24f
+03741:                 setTextColor(dark)
+03742:                 setTypeface(typeface, android.graphics.Typeface.BOLD)
+03743:                 setPadding(0, dp(20), 0, dp(6))
+03744:             }
+03745:         )
+03746: 
+03747:         root.addView(
+03748:             android.widget.TextView(this).apply {
+03749:                 text = monthText
+03750:                 textSize = 18f
+03751:                 setTextColor(green)
+03752:                 setTypeface(typeface, android.graphics.Typeface.BOLD)
+03753:             }
+03754:         )
+03755: 
+03756:         root.addView(
+03757:             android.widget.TextView(this).apply {
+03758:                 text = "ติดตามยอดที่ต้องจ่าย • จ่ายแล้ว • คงเหลือ • ประวัติการชำระ"
+03759:                 textSize = 14f
+03760:                 setTextColor(gray)
+03761:                 setPadding(0, dp(8), 0, dp(20))
+03762:             }
+03763:         )
+03764: 
+03765:         root.addView(
+03766:             android.widget.TextView(this).apply {
+03767:                 text = "ยังไม่มีรายการที่ต้องจ่ายในเดือนนี้"
+03768:                 textSize = 16f
+03769:                 setTextColor(gray)
+03770:                 setPadding(dp(12), dp(20), dp(12), dp(20))
+03771:                 gravity = android.view.Gravity.CENTER
+03772:             }
+03773:         )
+03774: 
+03775:         val scroll = android.widget.ScrollView(this).apply {
+03776:             isFillViewport = true
+03777:             addView(
+03778:                 root,
+03779:                 android.view.ViewGroup.LayoutParams(
+03780:                     android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+03781:                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+03782:                 )
+03783:             )
+03784:         }
+03785: 
+03786:         setContentView(scroll)
+03787:     }
+03788: 
+03789: 
+03790:     // =====================================================
+03791:     // PHASE 2D - WALLET DETAIL / WALLET HISTORY
+03792:     // =====================================================
+03793:     private fun showWalletDetail(
+03794:         walletId: String,
+03795:         walletName: String,
+03796:         openingBalance: java.math.BigDecimal
+03797:     ) {
+03798: 
+03799:         val prefs =
+03800:             getSharedPreferences(
+03801:                 "pc_drone_v3_data",
+03802:                 MODE_PRIVATE
