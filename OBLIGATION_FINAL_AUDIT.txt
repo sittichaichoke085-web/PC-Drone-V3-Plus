@@ -1,0 +1,46 @@
+]633;E;echo "=== MANIFEST ===";1cca4a1f-d0b7-4c22-8e84-85167ebb93b4]633;C=== MANIFEST ===
+4:    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+6:    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+7:    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+44:            android:name=".ObligationNotificationReceiver"
+49:            android:name=".ObligationBootReceiver"
+=== RUNTIME_PERMISSION ===
+10731:            checkSelfPermission(
+10732:                "android.permission.POST_NOTIFICATIONS"
+10738:            requestPermissions(
+10740:                    "android.permission.POST_NOTIFICATIONS"
+=== OBLIGATION_MARKERS ===
+3887:        // PC_DRONE_OBLIGATION_NOTIFICATION_CURRENT_MONTH_SCHEDULE
+4417:                                        // PC_DRONE_MONTHLY_OBLIGATIONS_PRIOR_PAYMENT
+4834:                                                // PC_DRONE_OBLIGATION_NOTIFICATION_CANCEL_WHEN_PAID
+=== SCHEDULER ===
+56:            "BEFORE",
+65:            "DUE",
+74:            "OVERDUE",
+119:            !alarmManager.canScheduleExactAlarms()
+121:            alarmManager.setAndAllowWhileIdle(
+136:    fun cancel(
+146:            "BEFORE",
+147:            "DUE",
+148:            "OVERDUE"
+166:                alarmManager.cancel(pendingIntent)
+167:                pendingIntent.cancel()
+=== RECEIVER ===
+19:                "notifications_enabled",
+23:            return
+28:                "sound_enabled",
+38:                "notification_vibration",
+62:                ?: return
+71:                ?: return
+108:        val remaining =
+115:            remaining.compareTo(
+119:            return
+124:                ?: "DUE"
+129:            ).format(remaining)
+133:                "BEFORE" -> "พรุ่งนี้ครบกำหนดชำระ"
+134:                "OVERDUE" -> "รายการค้างชำระ"
+=== BOOT ===
+13:            android.content.Intent.ACTION_BOOT_COMPLETED
+26:                "notifications_enabled",
+40:            "money_manager_obligation_months",
+73:                ObligationReminderScheduler.schedule(
