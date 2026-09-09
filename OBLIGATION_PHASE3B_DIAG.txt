@@ -1,0 +1,11 @@
+]633;E;echo "=== BUILD FILE ===";b80e0761-ce64-4cd6-ab94-f446a1a7303c]633;C=== BUILD FILE ===
+-rw-rw-rw- 1 codespace codespace 1966 Sep  9 02:24 OBLIGATION_PHASE3B_BUILD.txt
+=== STATUS ===
+?? OBLIGATION_PHASE3B_BUILD.txt
+=== TRACKED ===
+=== COMMITS ===
+4641d55 Add monthly obligation template storage
+37965eb Verify obligations template storage build
+84c8563 Inspect obligations phase3 insertion point
+9ca08cb Add monthly obligations screen shell
+27411da Verify monthly obligations phase2 build
