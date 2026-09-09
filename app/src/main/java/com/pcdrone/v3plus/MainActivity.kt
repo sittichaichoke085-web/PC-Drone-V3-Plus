@@ -3945,11 +3945,7 @@ class MainActivity : Activity() {
                 isAllCaps = false
                 textSize = 16f
                 setOnClickListener {
-                    android.widget.Toast.makeText(
-                        this@MainActivity,
-                        "กำลังเปิดประวัติรายเดือน",
-                        android.widget.Toast.LENGTH_SHORT
-                    ).show()
+                    showMonthlyObligationHistory()
                 }
             },
             android.widget.LinearLayout.LayoutParams(
@@ -4509,6 +4505,84 @@ class MainActivity : Activity() {
         }
 
         setContentView(scroll)
+    }
+
+
+    // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_SCREEN
+    private fun showMonthlyObligationHistory() {
+        val root =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                setPadding(dp(16), dp(16), dp(16), dp(16))
+                setBackgroundColor(
+                    android.graphics.Color.rgb(245, 248, 246)
+                )
+            }
+
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "← กลับ"
+                isAllCaps = false
+                setOnClickListener {
+                    showMonthlyObligations()
+                }
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "ประวัติรายเดือน"
+                textSize = 24f
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+                setTextColor(
+                    android.graphics.Color.rgb(17, 17, 17)
+                )
+                setPadding(0, dp(18), 0, dp(8))
+            }
+        )
+
+        root.addView(
+            android.widget.TextView(this).apply {
+                text = "สรุปรายการที่ต้องจ่ายย้อนหลัง แยกตามเดือน"
+                textSize = 15f
+                setTextColor(
+                    android.graphics.Color.rgb(100, 105, 102)
+                )
+                setPadding(0, 0, 0, dp(16))
+            }
+        )
+
+        val content =
+            android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+            }
+
+        root.addView(
+            android.widget.ScrollView(this).apply {
+                addView(content)
+            },
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+        )
+
+        content.addView(
+            android.widget.TextView(this).apply {
+                text = "ยังไม่มีประวัติรายเดือน"
+                textSize = 16f
+                setTextColor(
+                    android.graphics.Color.rgb(100, 105, 102)
+                )
+                setPadding(0, dp(20), 0, dp(20))
+            }
+        )
+
+        setContentView(root)
     }
 
 
