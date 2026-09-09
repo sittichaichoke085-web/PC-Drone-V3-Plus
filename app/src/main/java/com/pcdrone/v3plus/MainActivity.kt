@@ -4128,6 +4128,55 @@ class MainActivity : Activity() {
                     else
                         remainingRaw
 
+                // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_STATUS
+                val monthParts =
+                    currentMonthKey.split("-")
+
+                val statusCalendar =
+                    java.util.Calendar.getInstance().apply {
+                        clear()
+                        set(
+                            monthParts[0].toInt(),
+                            monthParts[1].toInt() - 1,
+                            1,
+                            23,
+                            59,
+                            59
+                        )
+
+                        val actualLastDay =
+                            getActualMaximum(java.util.Calendar.DAY_OF_MONTH)
+
+                        set(
+                            java.util.Calendar.DAY_OF_MONTH,
+                            kotlin.math.min(
+                                dueDay.coerceAtLeast(1),
+                                actualLastDay
+                            )
+                        )
+                    }
+
+                val dueTimeMillis =
+                    statusCalendar.timeInMillis
+
+                val nowMillis =
+                    System.currentTimeMillis()
+
+                val paymentStatus =
+                    when {
+                        remaining.compareTo(java.math.BigDecimal.ZERO) == 0 ->
+                            "จ่ายแล้ว"
+
+                        nowMillis > dueTimeMillis ->
+                            "เกินกำหนด"
+
+                        paid.compareTo(java.math.BigDecimal.ZERO) > 0 ->
+                            "จ่ายบางส่วน"
+
+                        else ->
+                            "ยังไม่จ่าย"
+                    }
+
                 val card =
                     android.widget.LinearLayout(this).apply {
                         orientation = android.widget.LinearLayout.VERTICAL
