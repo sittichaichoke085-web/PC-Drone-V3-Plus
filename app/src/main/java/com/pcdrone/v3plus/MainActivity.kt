@@ -3707,6 +3707,52 @@ class MainActivity : Activity() {
         val green = android.graphics.Color.rgb(0, 121, 107)
         val gray = android.graphics.Color.rgb(100, 105, 102)
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_TEMPLATE_STORAGE
+        val prefs =
+            getSharedPreferences(
+                "pc_drone_v3_data",
+                MODE_PRIVATE
+            )
+
+        val obligationTemplateKey =
+            "money_manager_obligation_templates"
+
+        val obligationDelimiter = "|||"
+
+        fun loadObligationTemplates(): MutableList<List<String>> {
+            return prefs
+                .getStringSet(
+                    obligationTemplateKey,
+                    emptySet()
+                )
+                .orEmpty()
+                .mapNotNull { record ->
+                    val parts =
+                        record.split(obligationDelimiter)
+
+                    if (parts.size == 7) parts
+                    else null
+                }
+                .sortedBy { it[6].toLongOrNull() ?: 0L }
+                .toMutableList()
+        }
+
+        fun saveObligationTemplates(
+            templates: List<List<String>>
+        ) {
+            val records =
+                templates.map { parts ->
+                    parts.joinToString(obligationDelimiter)
+                }.toSet()
+
+            prefs.edit()
+                .putStringSet(
+                    obligationTemplateKey,
+                    records
+                )
+                .apply()
+        }
+
         val now = java.util.Calendar.getInstance()
         val monthNames = arrayOf(
             "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
