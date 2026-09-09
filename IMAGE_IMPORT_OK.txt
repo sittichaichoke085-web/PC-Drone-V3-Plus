@@ -1,0 +1,7 @@
+app_icon_custom.png 1909221 bytes
+bg_customers.png 1788294 bytes
+bg_finance.png 1674864 bytes
+bg_history.png 1784560 bytes
+bg_home.png 2757564 bytes
+bg_money_manager.png 1769589 bytes
+bg_settings.png 1576627 bytes
