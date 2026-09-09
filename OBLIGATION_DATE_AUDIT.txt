@@ -1,0 +1,2 @@
+fun buddhistDateTime=0
+PC_DRONE_MONTHLY_BUDDHIST_YEAR=0
