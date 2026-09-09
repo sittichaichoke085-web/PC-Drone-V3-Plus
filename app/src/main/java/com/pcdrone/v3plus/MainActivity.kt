@@ -4195,6 +4195,103 @@ class MainActivity : Activity() {
                     }
                 )
 
+                // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_HISTORY
+                val paymentHistory =
+                    loadObligationPayments()
+                        .filter { payment ->
+                            payment[1] == monthItemId
+                        }
+                        .sortedByDescending { payment ->
+                            payment[3].toLongOrNull() ?: 0L
+                        }
+
+                if (paymentHistory.isNotEmpty()) {
+                    card.addView(
+                        android.widget.TextView(this).apply {
+                            text = "ประวัติการชำระ"
+                            textSize = 15f
+                            setTextColor(dark)
+                            setTypeface(
+                                typeface,
+                                android.graphics.Typeface.BOLD
+                            )
+                            setPadding(0, dp(12), 0, dp(4))
+                        }
+                    )
+
+                    paymentHistory.forEach { payment ->
+                        val paymentAmount =
+                            payment[2].toBigDecimalOrNull()
+                                ?: java.math.BigDecimal.ZERO
+
+                        val paidAt =
+                            payment[3].toLongOrNull() ?: 0L
+
+                        val paymentNote =
+                            payment[4]
+
+                        val paymentDateText =
+                            if (paidAt > 0L) {
+                                val formatter =
+                                    java.text.SimpleDateFormat(
+                                        "dd/MM/yyyy HH:mm",
+                                        java.util.Locale("th", "TH")
+                                    )
+
+                                val calendar =
+                                    java.util.Calendar.getInstance().apply {
+                                        timeInMillis = paidAt
+                                    }
+
+                                val christianYear =
+                                    calendar.get(java.util.Calendar.YEAR)
+
+                                val buddhistYear =
+                                    christianYear + 543
+
+                                formatter.format(
+                                    java.util.Date(paidAt)
+                                ).replace(
+                                    christianYear.toString(),
+                                    buddhistYear.toString()
+                                )
+                            } else {
+                                "ไม่พบวันเวลา"
+                            }
+
+                        card.addView(
+                            android.widget.TextView(this).apply {
+                                val noteSuffix =
+                                    if (paymentNote.isNotBlank()) {
+                                        System.lineSeparator() +
+                                            "หมายเหตุ: " +
+                                            paymentNote
+                                    } else {
+                                        ""
+                                    }
+
+                                text =
+                                    paymentDateText +
+                                    " • " +
+                                    java.text.NumberFormat.getNumberInstance(
+                                        java.util.Locale("th", "TH")
+                                    ).format(paymentAmount) +
+                                    " บาท" +
+                                    noteSuffix
+
+                                textSize = 14f
+                                setTextColor(gray)
+                                setPadding(
+                                    dp(8),
+                                    dp(5),
+                                    dp(4),
+                                    dp(5)
+                                )
+                            }
+                        )
+                    }
+                }
+
                 // PC_DRONE_MONTHLY_OBLIGATIONS_PAYMENT_BUTTON
                 if (remaining.compareTo(java.math.BigDecimal.ZERO) > 0) {
                     card.addView(
