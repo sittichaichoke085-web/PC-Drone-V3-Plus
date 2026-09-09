@@ -4873,21 +4873,129 @@ class MainActivity : Activity() {
                 .map { it.split("|||") }
                 .filter { it.size == 5 }
 
-        content.addView(
-            android.widget.TextView(this).apply {
-                text =
-                    if (detailItems.isEmpty()) {
-                        "ไม่พบรายการของเดือนนี้"
-                    } else {
-                        "พบ " + detailItems.size + " รายการ"
-                    }
-                textSize = 16f
-                setTextColor(
-                    android.graphics.Color.rgb(100, 105, 102)
+        // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_DETAIL_CARDS
+        if (detailItems.isEmpty()) {
+            content.addView(
+                android.widget.TextView(this).apply {
+                    text = "ไม่พบรายการของเดือนนี้"
+                    textSize = 16f
+                    setTextColor(
+                        android.graphics.Color.rgb(100, 105, 102)
+                    )
+                    setPadding(0, dp(20), 0, dp(20))
+                }
+            )
+        } else {
+            val moneyFormat =
+                java.text.NumberFormat.getNumberInstance(
+                    java.util.Locale("th", "TH")
                 )
-                setPadding(0, dp(20), 0, dp(20))
+
+            detailItems.forEach { item ->
+                val itemId = item[0]
+                val name = item[3]
+                val planned =
+                    item[4].toBigDecimalOrNull()
+                        ?: java.math.BigDecimal.ZERO
+                val dueDay = item[5].toIntOrNull() ?: 1
+
+                val paid =
+                    detailPayments
+                        .filter { it[1] == itemId }
+                        .fold(java.math.BigDecimal.ZERO) { total, payment ->
+                            total.add(
+                                payment[2].toBigDecimalOrNull()
+                                    ?: java.math.BigDecimal.ZERO
+                            )
+                        }
+
+                val remaining =
+                    planned.subtract(paid).max(
+                        java.math.BigDecimal.ZERO
+                    )
+
+                val status =
+                    when {
+                        remaining.compareTo(
+                            java.math.BigDecimal.ZERO
+                        ) == 0 -> "จ่ายแล้ว"
+
+                        paid.compareTo(
+                            java.math.BigDecimal.ZERO
+                        ) > 0 -> "จ่ายบางส่วน"
+
+                        else -> "ยังไม่จ่าย"
+                    }
+
+                val card =
+                    android.widget.LinearLayout(this).apply {
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+                        setPadding(
+                            dp(14), dp(14), dp(14), dp(14)
+                        )
+                        background =
+                            android.graphics.drawable.GradientDrawable().apply {
+                                setColor(
+                                    android.graphics.Color.WHITE
+                                )
+                                cornerRadius = dp(14).toFloat()
+                            }
+                    }
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text = name
+                        textSize = 18f
+                        setTypeface(
+                            typeface,
+                            android.graphics.Typeface.BOLD
+                        )
+                        setTextColor(
+                            android.graphics.Color.rgb(20, 20, 20)
+                        )
+                    }
+                )
+
+                card.addView(
+                    android.widget.TextView(this).apply {
+                        text =
+                            "ยอดที่ต้องจ่าย: " +
+                            moneyFormat.format(planned) +
+                            " บาท" +
+                            System.lineSeparator() +
+                            "จ่ายแล้ว: " +
+                            moneyFormat.format(paid) +
+                            " บาท" +
+                            System.lineSeparator() +
+                            "คงเหลือ: " +
+                            moneyFormat.format(remaining) +
+                            " บาท" +
+                            System.lineSeparator() +
+                            "ครบกำหนดวันที่: " +
+                            dueDay +
+                            System.lineSeparator() +
+                            "สถานะ: " +
+                            status
+                        textSize = 15f
+                        setTextColor(
+                            android.graphics.Color.rgb(65, 70, 67)
+                        )
+                        setPadding(0, dp(8), 0, 0)
+                    }
+                )
+
+                content.addView(
+                    card,
+                    android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin = dp(10)
+                    }
+                )
             }
-        )
+        }
 
         root.addView(
             android.widget.ScrollView(this).apply {
