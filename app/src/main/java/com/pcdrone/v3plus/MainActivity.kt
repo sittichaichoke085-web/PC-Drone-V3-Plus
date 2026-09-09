@@ -3938,6 +3938,28 @@ class MainActivity : Activity() {
             }
         )
 
+        // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_BUTTON
+        root.addView(
+            android.widget.Button(this).apply {
+                text = "ประวัติรายเดือน"
+                isAllCaps = false
+                textSize = 16f
+                setOnClickListener {
+                    android.widget.Toast.makeText(
+                        this@MainActivity,
+                        "กำลังเปิดประวัติรายเดือน",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+            },
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(52)
+            ).apply {
+                bottomMargin = dp(12)
+            }
+        )
+
         // PC_DRONE_MONTHLY_OBLIGATIONS_ADD_BUTTON
         root.addView(
             android.widget.Button(this).apply {
