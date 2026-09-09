@@ -5017,6 +5017,82 @@ class MainActivity : Activity() {
                     }
                 )
 
+                // PC_DRONE_MONTHLY_OBLIGATIONS_HISTORY_DETAIL_PAYMENT_EVENTS
+                val itemPayments =
+                    detailPayments
+                        .filter { it[1] == itemId }
+                        .sortedByDescending {
+                            it[3].toLongOrNull() ?: 0L
+                        }
+
+                if (itemPayments.isNotEmpty()) {
+                    card.addView(
+                        android.widget.TextView(this).apply {
+                            text = "ประวัติการชำระ"
+                            textSize = 15f
+                            setTypeface(
+                                typeface,
+                                android.graphics.Typeface.BOLD
+                            )
+                            setTextColor(
+                                android.graphics.Color.rgb(30, 90, 55)
+                            )
+                            setPadding(0, dp(12), 0, dp(4))
+                        }
+                    )
+
+                    itemPayments.forEach { payment ->
+                        val paymentAmount =
+                            payment[2].toBigDecimalOrNull()
+                                ?: java.math.BigDecimal.ZERO
+                        val paidAt =
+                            payment[3].toLongOrNull() ?: 0L
+                        val paymentNote = payment[4]
+
+                        val paymentDateText =
+                            if (paidAt > 0L) {
+                                val c =
+                                    java.util.Calendar.getInstance().apply {
+                                        timeInMillis = paidAt
+                                    }
+                                "%02d/%02d/%04d %02d:%02d".format(
+                                    c.get(java.util.Calendar.DAY_OF_MONTH),
+                                    c.get(java.util.Calendar.MONTH) + 1,
+                                    c.get(java.util.Calendar.YEAR) + 543,
+                                    c.get(java.util.Calendar.HOUR_OF_DAY),
+                                    c.get(java.util.Calendar.MINUTE)
+                                )
+                            } else {
+                                "ไม่ทราบวันเวลา"
+                            }
+
+                        card.addView(
+                            android.widget.TextView(this).apply {
+                                text =
+                                    "• " +
+                                    moneyFormat.format(paymentAmount) +
+                                    " บาท" +
+                                    System.lineSeparator() +
+                                    paymentDateText +
+                                    if (paymentNote.isNotBlank()) {
+                                        System.lineSeparator() +
+                                        "หมายเหตุ: " +
+                                        paymentNote
+                                    } else {
+                                        ""
+                                    }
+                                textSize = 14f
+                                setTextColor(
+                                    android.graphics.Color.rgb(75, 80, 77)
+                                )
+                                setPadding(
+                                    dp(6), dp(4), 0, dp(4)
+                                )
+                            }
+                        )
+                    }
+                }
+
                 content.addView(
                     card,
                     android.widget.LinearLayout.LayoutParams(
