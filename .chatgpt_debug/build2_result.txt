@@ -1,0 +1,18 @@
+]633;E;echo "=== DATE ===";61146b6c-7f31-4e6d-95ab-5ab05aef7f99]633;C=== DATE ===
+Thu Sep 10 08:28:12 UTC 2026
+
+=== BRANCH ===
+ui-stable-restart
+
+=== JAVA ===
+openjdk version "21.0.10" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13106412 (build 21.0.10+7-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13106412 (build 21.0.10+7-LTS, mixed mode, sharing)
+
+=== JAVA_HOME ===
+/usr/local/sdkman/candidates/java/21.0.10-ms
+
+=== BUILD2 RESULT ===
+BUILD SUCCESSFUL in 1m 38s
+
+=== ERRORS ===
