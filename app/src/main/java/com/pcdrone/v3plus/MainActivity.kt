@@ -9811,6 +9811,7 @@ class MainActivity : Activity() {
             )
         )
 
+        root.setBackgroundResource(R.drawable.bg_work) // PC_DRONE_BG_WORK
         setContentView(root)
     }
 
