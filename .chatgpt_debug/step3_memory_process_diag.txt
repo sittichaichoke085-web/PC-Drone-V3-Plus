@@ -1,0 +1,70 @@
+]633;E;echo "=== MEMORY ===";61146b6c-7f31-4e6d-95ab-5ab05aef7f99]633;C=== MEMORY ===
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       6.4Gi       322Mi        67Mi       1.4Gi       1.3Gi
+Swap:             0B          0B          0B
+
+=== TOP MEMORY PROCESSES ===
+    PID    PPID COMMAND           RSS %MEM COMMAND
+  51897     384 MainThread      338444  4.1 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+  53475     384 MainThread      329376  4.0 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+ 133920     384 MainThread      326392  4.0 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+  87374     384 MainThread      323864  3.9 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+ 257104     384 MainThread      323864  3.9 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+ 228783     384 MainThread      308956  3.7 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+ 117851     384 MainThread      307196  3.7 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+ 203430     384 MainThread      306744  3.7 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+ 188725     384 MainThread      305420  3.7 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+    486     384 MainThread      302740  3.7 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+  38945     384 MainThread      300484  3.6 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+  51150     384 MainThread      286548  3.5 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node --dns-result-order=ipv4first /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=extensionHost --transformURIs --useHostProxy=false
+    384     375 MainThread      192960  2.3 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/server-main.js --log trace --force-disable-user-env --server-data-dir /home/codespace/.vscode-remote --accept-server-license-terms --host 127.0.0.1 --port 0 --connection-token-file /home/codespace/.vscode-remote/data/Machine/.connection-token-645f29cc3176500b4b5762ba887cf2a7f0ffdf2c --extensions-download-dir /home/codespace/.vscode-remote/extensionsCache --start-server  --enable-remote-auto-shutdown --skip-requirements-check
+   1086     574 MainThread      189264  2.3 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node_modules/@github/copilot-linux-x64/index.js --headless --no-auto-update --log-level info --stdio --no-auto-login
+    574     384 MainThread      113292  1.3 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=agentHost --logsPath /home/codespace/.vscode-remote/data/logs/20260910T063840 --user-data-dir /home/codespace/.vscode-remote/data --telemetry-level all
+   3435     384 MainThread      55508  0.6 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=ptyHost --logsPath /home/codespace/.vscode-remote/data/logs/20260910T063840
+  51282   51150 MainThread      47256  0.5 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/extensions/markdown-language-features/dist/serverWorkerMain --node-ipc --clientProcessId=51150
+  52008   51897 MainThread      46776  0.5 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/extensions/markdown-language-features/dist/serverWorkerMain --node-ipc --clientProcessId=51897
+    581     384 MainThread      34540  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+  51176     384 MainThread      33924  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+  53536     384 MainThread      33484  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+  38958     384 MainThread      33408  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+  51915     384 MainThread      33356  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+  87430     384 MainThread      33328  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+ 117826     384 MainThread      33152  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+ 133878     384 MainThread      33120  0.4 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+     58       1 dockerd         31660  0.3 dockerd --dns 168.63.129.16
+ 228832     384 MainThread      29924  0.3 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+ 203414     384 MainThread      29816  0.3 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+ 188700     384 MainThread      29808  0.3 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+ 257138     384 MainThread      29328  0.3 /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/node /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/bootstrap-fork --type=fileWatcher
+     94      58 containerd      18136  0.2 containerd --config /var/run/docker/containerd/containerd.toml
+  54679    3435 bash            13140  0.1 /usr/bin/bash --init-file /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh
+   3448    3435 bash            12612  0.1 /usr/bin/bash --init-file /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh
+  53637    3435 bash            11884  0.1 /usr/bin/bash --init-file /vscode/bin/linux-x64/645f29cc3176500b4b5762ba887cf2a7f0ffdf2c/out/vs/workbench/contrib/terminal/common/scripts/shellIntegration-bash.sh
+ 286788  286787 ps               4648  0.0 ps -F -A -l
+ 286789   54679 ps               4476  0.0 ps -eo pid,ppid,comm,rss,%mem,args --sort=-rss
+     35       1 sshd             2584  0.0 sshd: /usr/sbin/sshd [listener] 0 of 10-100 startups
+ 286790  286787 grep             2240  0.0 grep root
+
+=== CGROUP MEMORY CURRENT ===
+4922421248
+
+=== CGROUP MEMORY MAX ===
+max
+
+=== CGROUP MEMORY EVENTS ===
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+
+=== CGROUP SWAP CURRENT ===
+0
+
+=== CGROUP SWAP MAX ===
+max
+
+=== JAVA / GRADLE PROCESSES ===
+
+=== JVM CRASH FILES ===
