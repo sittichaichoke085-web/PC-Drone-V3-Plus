@@ -1,0 +1,26 @@
+]633;E;echo "=== BRANCH ===";61146b6c-7f31-4e6d-95ab-5ab05aef7f99]633;C=== BRANCH ===
+ui-stable-restart
+
+=== JAVA ===
+openjdk version "21.0.10" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13106412 (build 21.0.10+7-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13106412 (build 21.0.10+7-LTS, mixed mode, sharing)
+
+=== GLOBAL BACK BUILD RESULT ===
+BUILD FAILED in 1m 10s
+
+=== ERRORS ===
+25:e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:38:14 Conflicting overloads:
+27:e: file:///workspaces/PC-Drone-V3-Plus/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt:155:14 Conflicting overloads:
+32:FAILURE: Build failed with an exception.
+34:* What went wrong:
+44:* Exception is:
+45:org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+55:	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+107:Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+209:	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+261:Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+262:	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:21)
+
+=== BACK CODE FOUND ===
+48:    // PC_DRONE_GLOBAL_ANDROID_BACK_STACK
