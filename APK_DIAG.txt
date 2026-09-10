@@ -1,0 +1,20 @@
+]633;E;echo "===== APK FILE =====";56728815-f85a-4749-8c91-546c9f30b702]633;C===== APK FILE =====
+-rw-rw-rw- 1 codespace codespace 2.0M Sep  6 15:24 app/build/outputs/apk/debug/app-debug.apk
+
+===== APK ZIP TEST =====
+    testing: META-INF/services/kotlinx.coroutines.internal.MainDispatcherFactory   OK
+    testing: kotlin/annotation/annotation.kotlin_builtins   OK
+    testing: kotlin/collections/collections.kotlin_builtins   OK
+    testing: kotlin/concurrent/atomics/atomics.kotlin_builtins   OK
+    testing: kotlin/coroutines/coroutines.kotlin_builtins   OK
+    testing: kotlin/internal/internal.kotlin_builtins   OK
+    testing: kotlin/kotlin.kotlin_builtins   OK
+    testing: kotlin/ranges/ranges.kotlin_builtins   OK
+    testing: kotlin/reflect/reflect.kotlin_builtins   OK
+No errors detected in compressed data of app/build/outputs/apk/debug/app-debug.apk.
+
+===== SIGNATURE =====
+APKSIGNER_NOT_FOUND
+
+===== SHA256 =====
+8c5e97eb845884de27a09dc693b984fe273ed310cce3387c3faf1667ebc901ca  app/build/outputs/apk/debug/app-debug.apk
