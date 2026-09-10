@@ -1,0 +1,1026 @@
+private fun showDashboard() {
+
+        val prefs = getSharedPreferences(
+            "pc_drone_v3_data",
+            android.content.Context.MODE_PRIVATE
+        )
+
+        val moneyFormat =
+            java.text.DecimalFormat("#,##0.00")
+
+        fun money(value: String?): java.math.BigDecimal {
+            return try {
+                if (value.isNullOrBlank()) {
+                    java.math.BigDecimal.ZERO
+                } else {
+                    java.math.BigDecimal(value.trim())
+                }
+            } catch (_: Exception) {
+                java.math.BigDecimal.ZERO
+            }
+        }
+
+        val jobs =
+            prefs.getStringSet(
+                "flight_jobs",
+                emptySet()
+            )?.toList() ?: emptyList()
+
+        var completedJobs = 0
+        var waitingJobs = 0
+        var totalRai = 0.0
+
+        var jobIncome =
+            java.math.BigDecimal.ZERO
+
+        jobs.forEach { record ->
+
+            val parts =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 9
+                )
+
+            if (parts.size >= 8) {
+
+                val rai =
+                    parts.getOrNull(4)
+                        ?.toDoubleOrNull() ?: 0.0
+
+                val total =
+                    money(
+                        parts.getOrNull(6)
+                    )
+
+                val status =
+                    parts.getOrNull(7)
+                        ?.trim() ?: ""
+
+                when (status) {
+
+                    "เสร็จแล้ว" -> {
+                        completedJobs++
+                        totalRai += rai
+                        jobIncome =
+                            jobIncome.add(total)
+                    }
+
+                    "ยกเลิก" -> {
+                    }
+
+                    else -> {
+                        waitingJobs++
+                    }
+                }
+            }
+        }
+
+        val transactions =
+            prefs.getStringSet(
+                "finance_transactions",
+                emptySet()
+            )?.toList() ?: emptyList()
+
+        var otherIncome =
+            java.math.BigDecimal.ZERO
+
+        var expense =
+            java.math.BigDecimal.ZERO
+
+        transactions.forEach { record ->
+
+            val parts =
+                record.split(
+                    "|||",
+                    ignoreCase = false,
+                    limit = 5
+                )
+
+            if (parts.size >= 4) {
+
+                val type =
+                    parts.getOrNull(1)
+                        ?.trim() ?: ""
+
+                val amount =
+                    money(
+                        parts.getOrNull(3)
+                    )
+
+                if (type == "INCOME") {
+                    otherIncome =
+                        otherIncome.add(amount)
+                }
+
+                if (type == "EXPENSE") {
+                    expense =
+                        expense.add(amount)
+                }
+            }
+        }
+
+        val totalIncome =
+            jobIncome.add(otherIncome)
+
+        val balance =
+            totalIncome.subtract(expense)
+
+        val dark =
+            android.graphics.Color.rgb(
+                12, 18, 14
+            )
+
+        val deepGreen =
+            android.graphics.Color.rgb(
+                0, 91, 45
+            )
+
+        val green =
+            android.graphics.Color.rgb(
+                0, 145, 70
+            )
+
+        val softGreen =
+            android.graphics.Color.rgb(
+                235, 247, 239
+            )
+
+        val cardGreen =
+            android.graphics.Color.rgb(
+                243, 250, 246
+            )
+
+        val gray =
+            android.graphics.Color.rgb(
+                95, 95, 95
+            )
+
+        window.statusBarColor =
+            dark
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.M
+        ) {
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility and
+                android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }
+
+        fun rounded(
+            color: Int,
+            radius: Float
+        ): android.graphics.drawable.GradientDrawable {
+
+            return android.graphics.drawable.GradientDrawable().apply {
+                shape =
+                    android.graphics.drawable.GradientDrawable.RECTANGLE
+
+                setColor(color)
+
+                cornerRadius =
+                    dp(radius.toInt()).toFloat()
+            }
+        }
+
+        val page =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setBackgroundColor(
+                    softGreen
+                )
+            }
+
+        // =========================
+        // HEADER
+        // =========================
+
+        val header =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(20),
+                    dp(22),
+                    dp(20),
+                    dp(20)
+                )
+
+                background =
+                    rounded(
+                        dark,
+                        0f
+                    )
+            }
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.KITKAT_WATCH
+        ) {
+
+            header.setOnApplyWindowInsetsListener { _, insets ->
+
+                header.setPadding(
+                    dp(20),
+                    dp(22) +
+                        insets.systemWindowInsetTop,
+                    dp(20),
+                    dp(20)
+                )
+
+                insets
+            }
+
+            header.requestApplyInsets()
+        }
+
+        val brandRow =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+            }
+
+        val logoText =
+            android.widget.TextView(this).apply {
+
+                text = "PC"
+
+                textSize = 26f
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+
+                background =
+                    rounded(
+                        green,
+                        16f
+                    )
+
+                setPadding(
+                    dp(12),
+                    dp(8),
+                    dp(12),
+                    dp(8)
+                )
+            }
+
+        val brandText =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(14),
+                    0,
+                    0,
+                    0
+                )
+            }
+
+        brandText.addView(
+            android.widget.TextView(this).apply {
+
+                text = "PC-Drone V3 Plus"
+
+                textSize = 24f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        brandText.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "จัดการงานโดรนเกษตร ครบ จบ ในแอปเดียว"
+
+                textSize = 13f
+
+                setTextColor(
+                    android.graphics.Color.LTGRAY
+                )
+            }
+        )
+
+        brandRow.addView(
+            logoText
+        )
+
+        brandRow.addView(
+            brandText,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+        )
+
+        header.addView(
+            brandRow
+        )
+
+        val hero =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setPadding(
+                    dp(16),
+                    dp(18),
+                    dp(16),
+                    dp(18)
+                )
+
+                background =
+                    rounded(
+                        deepGreen,
+                        20f
+                    )
+            }
+
+        hero.addView(
+            android.widget.TextView(this).apply {
+
+                text = "✦  PC DRONE  ✦"
+
+                textSize = 27f
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        hero.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    "พ่นยา • หว่านปุ๋ย • พืชไร่ • พืชสวน"
+
+                textSize = 15f
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setPadding(
+                    0,
+                    dp(6),
+                    0,
+                    0
+                )
+            }
+        )
+
+        header.addView(
+            hero,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(18)
+            }
+        )
+
+        page.addView(
+            header
+        )
+
+        // =========================
+        // SCROLLABLE CENTER
+        // =========================
+
+        val centerScroll =
+            android.widget.ScrollView(this).apply {
+
+                setBackgroundColor(
+                    softGreen
+                )
+            }
+
+        val content =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(16),
+                    dp(14),
+                    dp(16),
+                    dp(18)
+                )
+            }
+
+        val summaryCard =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(14),
+                    dp(14),
+                    dp(14),
+                    dp(14)
+                )
+
+                background =
+                    rounded(
+                        android.graphics.Color.WHITE,
+                        18f
+                    )
+
+                elevation =
+                    dp(3).toFloat()
+            }
+
+        val summaryTitleRow =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+            }
+
+        summaryTitleRow.addView(
+            android.widget.TextView(this).apply {
+
+                text = "สรุปภาพรวม"
+
+                textSize = 22f
+
+                setTextColor(
+                    dark
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            },
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+        )
+
+        summaryTitleRow.addView(
+            android.widget.TextView(this).apply {
+
+                text = "ดูรายละเอียด ›"
+
+                textSize = 14f
+
+                setTextColor(
+                    green
+                )
+            }
+        )
+
+        summaryCard.addView(
+            summaryTitleRow
+        )
+
+        fun statCard(
+            icon: String,
+            label: String,
+            value: String,
+            sub: String = ""
+        ): android.widget.LinearLayout {
+
+            return android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+
+                setPadding(
+                    dp(12),
+                    dp(12),
+                    dp(12),
+                    dp(12)
+                )
+
+                background =
+                    rounded(
+                        cardGreen,
+                        14f
+                    )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text = icon
+
+                        textSize = 26f
+
+                        gravity =
+                            android.view.Gravity.CENTER
+                    },
+                    android.widget.LinearLayout.LayoutParams(
+                        dp(52),
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                )
+
+                addView(
+                    android.widget.LinearLayout(
+                        this@MainActivity
+                    ).apply {
+
+                        orientation =
+                            android.widget.LinearLayout.VERTICAL
+
+                        addView(
+                            android.widget.TextView(
+                                this@MainActivity
+                            ).apply {
+
+                                text = label
+
+                                textSize = 14f
+
+                                setTextColor(
+                                    gray
+                                )
+                            }
+                        )
+
+                        addView(
+                            android.widget.TextView(
+                                this@MainActivity
+                            ).apply {
+
+                                text = value
+
+                                textSize = 21f
+
+                                setTextColor(
+                                    green
+                                )
+
+                                setTypeface(
+                                    typeface,
+                                    android.graphics.Typeface.BOLD
+                                )
+                            }
+                        )
+
+                        if (sub.isNotBlank()) {
+                            addView(
+                                android.widget.TextView(
+                                    this@MainActivity
+                                ).apply {
+
+                                    text = sub
+
+                                    textSize = 12f
+
+                                    setTextColor(
+                                        gray
+                                    )
+                                }
+                            )
+                        }
+                    },
+                    android.widget.LinearLayout.LayoutParams(
+                        0,
+                        android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                        1f
+                    )
+                )
+            }
+        }
+
+        fun statRow(
+            left: android.view.View,
+            right: android.view.View
+        ): android.widget.LinearLayout {
+
+            return android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                setPadding(
+                    0,
+                    dp(10),
+                    0,
+                    0
+                )
+
+                addView(
+                    left,
+                    android.widget.LinearLayout.LayoutParams(
+                        0,
+                        dp(112),
+                        1f
+                    ).apply {
+                        marginEnd = dp(5)
+                    }
+                )
+
+                addView(
+                    right,
+                    android.widget.LinearLayout.LayoutParams(
+                        0,
+                        dp(112),
+                        1f
+                    ).apply {
+                        marginStart = dp(5)
+                    }
+                )
+            }
+        }
+
+        val allJobs =
+            completedJobs + waitingJobs
+
+        summaryCard.addView(
+            statRow(
+                statCard(
+                    "⌁",
+                    "งานทั้งหมด",
+                    "$allJobs งาน",
+                    "พื้นที่ %.2f ไร่".format(totalRai)
+                ),
+                statCard(
+                    "฿",
+                    "รายรับรวม",
+                    moneyFormat.format(totalIncome),
+                    "บาท"
+                )
+            )
+        )
+
+        summaryCard.addView(
+            statRow(
+                statCard(
+                    "▰",
+                    "รายจ่ายรวม",
+                    moneyFormat.format(expense),
+                    "บาท"
+                ),
+                statCard(
+                    "▮▮▮",
+                    "คงเหลือ",
+                    moneyFormat.format(balance),
+                    "บาท"
+                )
+            )
+        )
+
+        content.addView(
+            summaryCard
+        )
+
+        // placeholder งานล่าสุด
+        val latestCard =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                setPadding(
+                    dp(14),
+                    dp(14),
+                    dp(14),
+                    dp(14)
+                )
+
+                background =
+                    rounded(
+                        android.graphics.Color.WHITE,
+                        18f
+                    )
+
+                elevation =
+                    dp(3).toFloat()
+            }
+
+        latestCard.addView(
+            android.widget.TextView(this).apply {
+
+                text = "งานล่าสุด"
+
+                textSize = 21f
+
+                setTextColor(
+                    dark
+                )
+
+                setTypeface(
+                    typeface,
+                    android.graphics.Typeface.BOLD
+                )
+            }
+        )
+
+        latestCard.addView(
+            android.widget.TextView(this).apply {
+
+                text =
+                    if (jobs.isEmpty()) {
+                        "ยังไม่มีงานที่บันทึกไว้"
+                    } else {
+                        "มี ${jobs.size} งานในระบบ"
+                    }
+
+                textSize = 14f
+
+                setTextColor(
+                    gray
+                )
+
+                setPadding(
+                    0,
+                    dp(8),
+                    0,
+                    0
+                )
+            }
+        )
+
+        content.addView(
+            latestCard,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                topMargin = dp(14)
+            }
+        )
+
+        centerScroll.addView(
+            content,
+            android.view.ViewGroup.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        )
+
+        page.addView(
+            centerScroll,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1f
+            )
+        )
+
+        // =========================
+        // FIXED BOTTOM MENU
+        // =========================
+
+        val bottomBar =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setPadding(
+                    dp(4),
+                    dp(6),
+                    dp(4),
+                    dp(6)
+                )
+
+                setBackgroundColor(
+                    android.graphics.Color.WHITE
+                )
+
+                elevation =
+                    dp(8).toFloat()
+            }
+
+        fun bottomItem(
+            icon: String,
+            label: String,
+            route: AppRoute,
+            selected: Boolean = false
+        ): android.widget.LinearLayout {
+
+            return android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setPadding(
+                    dp(2),
+                    dp(3),
+                    dp(2),
+                    dp(3)
+                )
+
+                isClickable = true
+                isFocusable = true
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text = icon
+
+                        textSize = 21f
+
+                        gravity =
+                            android.view.Gravity.CENTER
+
+                        setTextColor(
+                            if (selected) green else gray
+                        )
+                    }
+                )
+
+                addView(
+                    android.widget.TextView(
+                        this@MainActivity
+                    ).apply {
+
+                        text = label
+
+                        textSize = 10f
+
+                        gravity =
+                            android.view.Gravity.CENTER
+
+                        setTextColor(
+                            if (selected) green else gray
+                        )
+
+                        if (selected) {
+                            setTypeface(
+                                typeface,
+                                android.graphics.Typeface.BOLD
+                            )
+                        }
+                    }
+                )
+
+                if (selected) {
+
+                    addView(
+                        android.view.View(
+                            this@MainActivity
+                        ).apply {
+
+                            background =
+                                rounded(
+                                    green,
+                                    3f
+                                )
+                        },
+                        android.widget.LinearLayout.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            dp(3)
+                        ).apply {
+                            topMargin = dp(3)
+                        }
+                    )
+                }
+
+                setOnClickListener {
+                    showScreen(route)
+                }
+            }
+        }
+
+        val menuItems = listOf(
+            bottomItem(
+                "⌁",
+                "งานของฉัน",
+                AppRoute.JOBS,
+                true
+            ),
+            bottomItem(
+                "👤",
+                "ลูกค้า",
+                AppRoute.CUSTOMERS
+            ),
+            bottomItem(
+                "฿",
+                "การเงิน",
+                AppRoute.FINANCE
+            ),
+            bottomItem(
+                "☰",
+                "ประวัติงาน",
+                AppRoute.HISTORY
+            ),
+            bottomItem(
+                "฿",
+                "บริหารเงิน",
+                AppRoute.MONEY_MANAGER
+            ),
+            bottomItem(
+                "⚙",
+                "ตั้งค่า",
+                AppRoute.SETTINGS
+            )
+        )
+
+        menuItems.forEach { item ->
+
+            bottomBar.addView(
+                item,
+                android.widget.LinearLayout.LayoutParams(
+                    0,
+                    dp(70),
+                    1f
+                )
+            )
+        }
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.KITKAT_WATCH
+        ) {
+
+            bottomBar.setOnApplyWindowInsetsListener { _, insets ->
+
+                bottomBar.setPadding(
+                    dp(4),
+                    dp(6),
+                    dp(4),
+                    dp(6) +
+                        insets.systemWindowInsetBottom
+                )
+
+                insets
+            }
+
+            bottomBar.requestApplyInsets()
+        }
+
+        page.addView(
+            bottomBar
+        )
+
+        setContentView(
+            page
+        )
+    }
+
+
+
+
+
+
+    

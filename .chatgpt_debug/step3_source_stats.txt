@@ -1,0 +1,4 @@
+MainActivity chars: 489118
+MainActivity lines: 15977
+showDashboard chars: 25484
+showDashboard lines: 1026
