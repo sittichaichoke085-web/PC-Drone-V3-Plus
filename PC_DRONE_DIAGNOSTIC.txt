@@ -1,0 +1,99 @@
+]633;E;echo "===== GIT =====";56728815-f85a-4749-8c91-546c9f30b702]633;C===== GIT =====
+main
+569a416
+
+===== JAVA =====
+/home/codespace/java/current/bin/java
+openjdk version "25.0.2" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13053558 (build 25.0.2+10-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13053558 (build 25.0.2+10-LTS, mixed mode, sharing)
+JAVA_HOME=/usr/local/sdkman/candidates/java/current
+
+===== GRADLE =====
+
+------------------------------------------------------------
+Gradle 8.13
+------------------------------------------------------------
+
+Build time:    2025-02-25 09:22:14 UTC
+Revision:      073314332697ba45c16c0a0ce1891fa6794179ff
+
+Kotlin:        2.0.21
+Groovy:        3.0.22
+Ant:           Apache Ant(TM) version 1.10.15 compiled on August 25 2024
+Launcher JVM:  25.0.2 (Microsoft 25.0.2+10-LTS)
+Daemon JVM:    /usr/local/sdkman/candidates/java/25.0.2-ms (no JDK specified, using current Java home)
+OS:            Linux 6.8.0-1064-azure amd64
+
+
+===== ANDROID SDK =====
+ANDROID_HOME=
+ANDROID_SDK_ROOT=
+
+===== APP VERSION =====
+11:    compileSdk = 36
+14:        applicationId = "com.pcdrone.v3plus"
+15:        minSdk = 26
+16:        targetSdk = 36
+17:        versionCode = 1
+18:        versionName = "3.0.0"
+22:        sourceCompatibility = JavaVersion.VERSION_17
+23:        targetCompatibility = JavaVersion.VERSION_17
+29:        jvmTarget = JvmTarget.JVM_17
+
+===== FINAL_BUILD =====
+2109406 bytes | PC-Drone-V3-Plus.apk
+2114282 bytes | PC-Drone-V3-Plus-UI1.2.apk
+2118978 bytes | PC-Drone-V3-Plus-UI1.3.apk
+2124266 bytes | PC-Drone-V3-Plus-PHASE2.1.apk
+2131970 bytes | PC-Drone-V3-Plus-PHASE2.2.1.apk
+2131998 bytes | PC-Drone-V3-Plus-DATE-REPORT-STEP3A.apk
+2131998 bytes | PC-Drone-V3-Plus-SAFE-BEFORE-CALENDAR.apk
+2133002 bytes | PC-Drone-V3-Plus-PHASE2.3.1-FIX.apk
+2133002 bytes | PC-Drone-V3-Plus-PHASE2.3.2.apk
+2133002 bytes | PC-Drone-V3-Plus-PHASE2.3.apk
+2143545 bytes | PC-Drone-V3-Plus-BACK-BUTTON.apk
+2147479 bytes | PC-Drone-V3-Plus-UI1.apk
+2147952 bytes | PC-Drone-V3-Plus-UI1-1.apk
+2168414 bytes | PC-Drone-V3-Plus-PHASE3-2-EDIT-APPOINTMENT.apk
+2175270 bytes | PHASE33-STABLE-AFTER-RESTART.apk
+2178174 bytes | PC-Drone-V3-Plus-PHASE2.2.apk
+2188871 bytes | PC-Drone-V3-Plus-DATE-REPORT-STEP1.apk
+2188871 bytes | PC-Drone-V3-Plus-DATE-REPORT-STEP2.apk
+2192013 bytes | PC-Drone-V3-Plus-DATE-REPORT-STEP3B1.apk
+2192037 bytes | PC-Drone-V3-Plus-DATE-REPORT-STEP3B.apk
+2192078 bytes | PC-Drone-V3-Plus-REPORT-FINANCE-FIX.apk
+2194594 bytes | PC-Drone-V3-Plus-REPORT-FLIGHT-INCOME-FIX.apk
+2204126 bytes | PC-Drone-V3-Plus-PDF-TEST.apk
+2209473 bytes | PC-Drone-V3-Plus-A4-PDF.apk
+2210187 bytes | PC-Drone-V3-Plus-FULL-PDF.apk
+2210187 bytes | PC-Drone-V3-Plus-PDF-STABLE.apk
+2215166 bytes | PC-Drone-V3-Plus-SETTINGS-PHASE.apk
+2215942 bytes | PC-Drone-V3-Plus-SETTINGS-REPORT-PDF.apk
+2219225 bytes | PC-Drone-V3-Plus-APPOINTMENT-PHASE1.apk
+2223763 bytes | PC-Drone-V3-Plus-NOTIFICATION-PHASE2.apk
+2225248 bytes | PC-Drone-V3-Plus-SOUND-VIBRATION-PHASE2-1.apk
+2226390 bytes | PC-Drone-V3-Plus-RINGTONE-REPEAT-PHASE2-2.apk
+2226474 bytes | PC-Drone-V3-Plus-NOTIFICATION-PHASE2-3.apk
+2228014 bytes | PC-Drone-V3-Plus-PHASE3-1-HISTORY-APPOINTMENT.apk
+2261432 bytes | PC-Drone-V3-Plus-PHASE3-3-HISTORY-COMPLETE.apk
+2261750 bytes | PC-Drone-V3-Plus-PHASE3-3-STRONG-COLORS.apk
+2261779 bytes | PC-Drone-V3-Plus-PHASE3-3-STATUS-COLORS.apk
+2264187 bytes | PC-Drone-V3-Plus-PHASE3-3-HISTORY-SEARCH.apk
+2264866 bytes | PC-Drone-V3-Plus-PHASE3-3-HISTORY-DATE-FIELDS.apk
+2265861 bytes | PC-Drone-V3-Plus-PHASE3-3-AUTO-DATE.apk
+2266830 bytes | PC-Drone-V3-Plus-PHASE3-3-HISTORY-REFRESH.apk
+2267072 bytes | VIVID.apk
+2274268 bytes | PHASE33A-LIGHT.apk
+2276481 bytes | PHASE33A-RANGE.apk
+2283502 bytes | PHASE33A-TABLE.apk
+2283935 bytes | PHASE33A-COMPACT-TABLE.apk
+2284402 bytes | PHASE33B-HISTORY-PROVIDER.apk
+2292199 bytes | PHASE33B-HISTORY-PDF.apk
+2292352 bytes | PHASE33B-CLEAN.apk
+2292539 bytes | HISTORY-TABLE-FIX.apk
+2302015 bytes | RESTORE.apk
+2303132 bytes | FULL-BACKUP.apk
+2303132 bytes | RESTORE-QA.apk
+4138224 bytes | PC-Drone-V3.1-v3.0.1-MONTHLY-EXPENSE-TEST.apk
+4138430 bytes | PC-Drone-V3.1-v3.0.1-MONTHLY-EXPENSE-FINAL-TEST.apk
