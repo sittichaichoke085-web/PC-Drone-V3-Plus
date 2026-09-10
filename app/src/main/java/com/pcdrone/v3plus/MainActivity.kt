@@ -493,6 +493,9 @@ class MainActivity : Activity() {
                     elevation =
                         dp(5).toFloat()
 
+                    // PC_DRONE_CARD_CLIP_ROUNDED_CORNER
+                    clipToOutline = true
+
                     isClickable = true
                     isFocusable = true
 
