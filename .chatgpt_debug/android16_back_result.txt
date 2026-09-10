@@ -1,0 +1,15 @@
+]633;E;echo "=== BRANCH ===";61146b6c-7f31-4e6d-95ab-5ab05aef7f99]633;C=== BRANCH ===
+ui-stable-restart
+
+=== BUILD RESULT ===
+BUILD SUCCESSFUL in 1m 59s
+
+=== ERRORS ===
+
+=== BACK CODE ===
+34:            onBackInvokedDispatcher.registerOnBackInvokedCallback(
+37:                handleSystemBack()
+164:    private fun handleSystemBack() {
+192:    override fun onBackPressed() {
+195:            handleSystemBack()
+201:            handleSystemBack()
