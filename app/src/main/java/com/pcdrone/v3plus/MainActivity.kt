@@ -92,11 +92,29 @@ class MainActivity : Activity() {
 
 
 
-    // PC_DRONE_HOME_V2_LAYOUT_SAFE
+    // PC_DRONE_HOME_V3_EXACT_UI
     private fun showDashboardV2() {
 
         window.statusBarColor =
             android.graphics.Color.rgb(0, 45, 32)
+
+        val kanitRegular =
+            resources.getFont(R.font.kanit_regular)
+
+        val kanitBold =
+            resources.getFont(R.font.kanit_bold)
+
+        val sriracha =
+            resources.getFont(R.font.sriracha_regular)
+
+        val green =
+            android.graphics.Color.rgb(0, 137, 67)
+
+        val lime =
+            android.graphics.Color.rgb(78, 225, 72)
+
+        val darkGreen =
+            android.graphics.Color.rgb(0, 67, 38)
 
         val root =
             android.widget.FrameLayout(this)
@@ -116,28 +134,17 @@ class MainActivity : Activity() {
             )
         )
 
+        // =====================================================
+        // BRANDING
+        // =====================================================
 
-        // PC_DRONE_HOME_BRANDING_FONT_V1
-        val kanitRegular =
-            resources.getFont(R.font.kanit_regular)
-
-        val kanitBold =
-            resources.getFont(R.font.kanit_bold)
-
-        val sriracha =
-            resources.getFont(R.font.sriracha_regular)
-
-        val brandFrame =
+        val brand =
             android.widget.LinearLayout(this).apply {
                 orientation =
                     android.widget.LinearLayout.VERTICAL
 
-                setPadding(
-                    dp(14),
-                    dp(8),
-                    dp(14),
-                    dp(8)
-                )
+                gravity =
+                    android.view.Gravity.CENTER_HORIZONTAL
             }
 
         val titleRow =
@@ -149,10 +156,61 @@ class MainActivity : Activity() {
                     android.view.Gravity.CENTER_VERTICAL
             }
 
+        val pcLogo =
+            android.widget.TextView(this).apply {
+                text = "PC"
+                textSize = 27f
+                typeface = kanitBold
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                setShadowLayer(
+                    4f,
+                    1f,
+                    2f,
+                    android.graphics.Color.BLACK
+                )
+
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+                        setColor(
+                            android.graphics.Color.rgb(
+                                0,
+                                73,
+                                36
+                            )
+                        )
+
+                        cornerRadius =
+                            dp(13).toFloat()
+
+                        setStroke(
+                            dp(2),
+                            lime
+                        )
+                    }
+
+                elevation =
+                    dp(5).toFloat()
+            }
+
+        titleRow.addView(
+            pcLogo,
+            android.widget.LinearLayout.LayoutParams(
+                dp(76),
+                dp(55)
+            )
+        )
+
         titleRow.addView(
             android.widget.TextView(this).apply {
-                text = "PC-Drone "
-                textSize = 28f
+                text = " Drone"
+                textSize = 27f
                 typeface = kanitBold
 
                 setTextColor(
@@ -160,7 +218,7 @@ class MainActivity : Activity() {
                 )
 
                 setShadowLayer(
-                    7f,
+                    6f,
                     1f,
                     2f,
                     android.graphics.Color.BLACK
@@ -170,36 +228,57 @@ class MainActivity : Activity() {
 
         titleRow.addView(
             android.widget.TextView(this).apply {
-                text = "V3 Plus"
-                textSize = 28f
+                text = " V3 Plus"
+                textSize = 27f
                 typeface = kanitBold
 
-                setTextColor(
-                    android.graphics.Color.rgb(
-                        70,
-                        225,
-                        75
-                    )
-                )
+                setTextColor(lime)
 
                 setShadowLayer(
-                    7f,
+                    6f,
                     1f,
                     2f,
-                    android.graphics.Color.BLACK
+                    android.graphics.Color.rgb(
+                        0,
+                        55,
+                        25
+                    )
                 )
             }
         )
 
-        brandFrame.addView(titleRow)
+        brand.addView(titleRow)
 
-        brandFrame.addView(
+        val topLine =
+            android.view.View(this).apply {
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+                        setColor(lime)
+                        cornerRadius =
+                            dp(2).toFloat()
+                    }
+            }
+
+        brand.addView(
+            topLine,
+            android.widget.LinearLayout.LayoutParams(
+                dp(300),
+                dp(3)
+            ).apply {
+                topMargin = dp(5)
+            }
+        )
+
+        brand.addView(
             android.widget.TextView(this).apply {
                 text =
                     "จัดการงานโดรนเกษตร ครบ จบ ในแอปเดียว"
 
-                textSize = 15f
-                typeface = kanitRegular
+                textSize = 14f
+                typeface = kanitBold
+
+                gravity =
+                    android.view.Gravity.CENTER
 
                 setTextColor(
                     android.graphics.Color.WHITE
@@ -214,17 +293,17 @@ class MainActivity : Activity() {
 
                 setPadding(
                     0,
+                    dp(5),
                     0,
-                    0,
-                    dp(10)
+                    0
                 )
             }
         )
 
-        val slogan =
+        brand.addView(
             android.widget.TextView(this).apply {
                 text = "ดูแลด้วยใจ"
-                textSize = 37f
+                textSize = 39f
                 typeface = sriracha
 
                 gravity =
@@ -235,52 +314,46 @@ class MainActivity : Activity() {
                 )
 
                 setShadowLayer(
-                    8f,
+                    7f,
                     1f,
                     2f,
                     android.graphics.Color.BLACK
                 )
-            }
 
-        brandFrame.addView(slogan)
-
-        val line =
-            android.view.View(this).apply {
-                background =
-                    android.graphics.drawable.GradientDrawable().apply {
-                        setColor(
-                            android.graphics.Color.rgb(
-                                65,
-                                225,
-                                80
-                            )
-                        )
-                        cornerRadius =
-                            dp(3).toFloat()
-                    }
-            }
-
-        brandFrame.addView(
-            line,
-            android.widget.LinearLayout.LayoutParams(
-                dp(175),
-                dp(3)
-            ).apply {
-                gravity =
-                    android.view.Gravity.CENTER_HORIZONTAL
-
-                topMargin = -dp(5)
-                bottomMargin = dp(2)
+                setPadding(
+                    0,
+                    dp(3),
+                    0,
+                    0
+                )
             }
         )
 
-        brandFrame.addView(
+        val sloganLine =
+            android.view.View(this).apply {
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+                        setColor(lime)
+                        cornerRadius =
+                            dp(2).toFloat()
+                    }
+            }
+
+        brand.addView(
+            sloganLine,
+            android.widget.LinearLayout.LayoutParams(
+                dp(185),
+                dp(3)
+            )
+        )
+
+        brand.addView(
             android.widget.TextView(this).apply {
                 text =
                     "ทำงานแบบเข้าใจชาวสวน"
 
                 textSize = 16f
-                typeface = kanitRegular
+                typeface = kanitBold
 
                 gravity =
                     android.view.Gravity.CENTER
@@ -295,11 +368,18 @@ class MainActivity : Activity() {
                     2f,
                     android.graphics.Color.BLACK
                 )
+
+                setPadding(
+                    0,
+                    dp(2),
+                    0,
+                    0
+                )
             }
         )
 
         root.addView(
-            brandFrame,
+            brand,
             android.widget.FrameLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -307,11 +387,15 @@ class MainActivity : Activity() {
                 gravity =
                     android.view.Gravity.TOP
 
-                leftMargin = dp(18)
-                rightMargin = dp(18)
-                topMargin = dp(28)
+                leftMargin = dp(16)
+                rightMargin = dp(16)
+                topMargin = dp(24)
             }
         )
+
+        // =====================================================
+        // LOWER MENU AREA
+        // =====================================================
 
         val body =
             android.widget.LinearLayout(this).apply {
@@ -319,10 +403,10 @@ class MainActivity : Activity() {
                     android.widget.LinearLayout.VERTICAL
 
                 setPadding(
-                    dp(10),
-                    dp(10),
-                    dp(10),
-                    dp(26)
+                    dp(12),
+                    0,
+                    dp(12),
+                    dp(10)
                 )
             }
 
@@ -334,7 +418,6 @@ class MainActivity : Activity() {
             )
         )
 
-        // พื้นที่แสดงภาพด้านบน
         body.addView(
             android.view.View(this),
             android.widget.LinearLayout.LayoutParams(
@@ -344,35 +427,6 @@ class MainActivity : Activity() {
             )
         )
 
-        val panel =
-            android.widget.LinearLayout(this).apply {
-
-                orientation =
-                    android.widget.LinearLayout.VERTICAL
-
-                setPadding(
-                    dp(8),
-                    dp(10),
-                    dp(8),
-                    dp(8)
-                )
-
-                background =
-                    android.graphics.drawable.GradientDrawable().apply {
-                        setColor(
-                            android.graphics.Color.argb(
-                                238,
-                                245,
-                                255,
-                                248
-                            )
-                        )
-                        cornerRadius =
-                            dp(26).toFloat()
-                    }
-            }
-
-        // PC_DRONE_HOME_CARD_V2
         fun card(
             icon: String,
             title: String,
@@ -387,17 +441,31 @@ class MainActivity : Activity() {
 
                     background =
                         android.graphics.drawable.GradientDrawable().apply {
-
                             setColor(
-                                android.graphics.Color.WHITE
+                                android.graphics.Color.argb(
+                                    248,
+                                    255,
+                                    255,
+                                    255
+                                )
                             )
 
                             cornerRadius =
                                 dp(18).toFloat()
+
+                            setStroke(
+                                dp(1),
+                                android.graphics.Color.argb(
+                                    40,
+                                    0,
+                                    80,
+                                    40
+                                )
+                            )
                         }
 
                     elevation =
-                        dp(3).toFloat()
+                        dp(5).toFloat()
 
                     isClickable = true
                     isFocusable = true
@@ -407,7 +475,62 @@ class MainActivity : Activity() {
                     }
                 }
 
-            // เนื้อหา Card
+            // ตัดมุมเขียวจริง
+            val corner =
+                object : android.view.View(
+                    this@MainActivity
+                ) {
+                    val paint =
+                        android.graphics.Paint(
+                            android.graphics.Paint.ANTI_ALIAS_FLAG
+                        ).apply {
+                            color = lime
+                        }
+
+                    override fun onDraw(
+                        canvas: android.graphics.Canvas
+                    ) {
+                        super.onDraw(canvas)
+
+                        val path =
+                            android.graphics.Path()
+
+                        path.moveTo(
+                            0f,
+                            0f
+                        )
+
+                        path.lineTo(
+                            width.toFloat(),
+                            0f
+                        )
+
+                        path.lineTo(
+                            0f,
+                            height.toFloat()
+                        )
+
+                        path.close()
+
+                        canvas.drawPath(
+                            path,
+                            paint
+                        )
+                    }
+                }
+
+            card.addView(
+                corner,
+                android.widget.FrameLayout.LayoutParams(
+                    dp(42),
+                    dp(42)
+                ).apply {
+                    gravity =
+                        android.view.Gravity.TOP or
+                        android.view.Gravity.START
+                }
+            )
+
             val content =
                 android.widget.LinearLayout(
                     this@MainActivity
@@ -420,10 +543,10 @@ class MainActivity : Activity() {
                         android.view.Gravity.CENTER
 
                     setPadding(
-                        dp(5),
+                        dp(7),
                         dp(10),
-                        dp(5),
-                        dp(5)
+                        dp(7),
+                        dp(7)
                     )
                 }
 
@@ -435,43 +558,23 @@ class MainActivity : Activity() {
                 )
             )
 
-            // วงกลมไอคอนเขียว
-            val iconCircle =
+            content.addView(
                 android.widget.TextView(
                     this@MainActivity
                 ).apply {
-
                     text = icon
-                    textSize = 22f
+                    textSize = 28f
 
                     gravity =
                         android.view.Gravity.CENTER
 
-                    setTextColor(
-                        android.graphics.Color.WHITE
-                    )
+                    setTextColor(darkGreen)
 
-                    background =
-                        android.graphics.drawable.GradientDrawable().apply {
-
-                            shape =
-                                android.graphics.drawable.GradientDrawable.OVAL
-
-                            setColor(
-                                android.graphics.Color.rgb(
-                                    0,
-                                    115,
-                                    64
-                                )
-                            )
-                        }
-                }
-
-            content.addView(
-                iconCircle,
+                    typeface = kanitBold
+                },
                 android.widget.LinearLayout.LayoutParams(
-                    dp(48),
-                    dp(48)
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    dp(39)
                 )
             )
 
@@ -479,28 +582,22 @@ class MainActivity : Activity() {
                 android.widget.TextView(
                     this@MainActivity
                 ).apply {
-
                     text = title
                     textSize = 15f
+                    typeface = kanitBold
 
                     gravity =
                         android.view.Gravity.CENTER
 
                     setTextColor(
-                        android.graphics.Color.BLACK
+                        android.graphics.Color.rgb(
+                            20,
+                            20,
+                            20
+                        )
                     )
 
-                    setTypeface(
-                        typeface,
-                        android.graphics.Typeface.BOLD
-                    )
-
-                    setPadding(
-                        0,
-                        dp(3),
-                        0,
-                        0
-                    )
+                    maxLines = 1
                 }
             )
 
@@ -508,27 +605,39 @@ class MainActivity : Activity() {
                 android.widget.TextView(
                     this@MainActivity
                 ).apply {
-
                     text = subtitle
                     textSize = 10f
+                    typeface = kanitRegular
 
                     gravity =
                         android.view.Gravity.CENTER
 
                     setTextColor(
-                        android.graphics.Color.DKGRAY
+                        android.graphics.Color.rgb(
+                            90,
+                            90,
+                            90
+                        )
+                    )
+
+                    maxLines = 1
+
+                    setPadding(
+                        0,
+                        0,
+                        0,
+                        dp(4)
                     )
                 }
             )
 
-            // ปุ่มลูกศรวงกลมเขียว
             val arrow =
                 android.widget.TextView(
                     this@MainActivity
                 ).apply {
-
                     text = "›"
                     textSize = 20f
+                    typeface = kanitBold
 
                     gravity =
                         android.view.Gravity.CENTER
@@ -539,17 +648,10 @@ class MainActivity : Activity() {
 
                     background =
                         android.graphics.drawable.GradientDrawable().apply {
-
                             shape =
                                 android.graphics.drawable.GradientDrawable.OVAL
 
-                            setColor(
-                                android.graphics.Color.rgb(
-                                    0,
-                                    130,
-                                    70
-                                )
-                            )
+                            setColor(green)
                         }
                 }
 
@@ -558,53 +660,11 @@ class MainActivity : Activity() {
                 android.widget.LinearLayout.LayoutParams(
                     dp(25),
                     dp(25)
-                ).apply {
-
-                    topMargin =
-                        dp(3)
-                }
-            )
-
-            // มุมเขียวแบบ Overlay
-            val corner =
-                android.view.View(
-                    this@MainActivity
-                ).apply {
-
-                    background =
-                        android.graphics.drawable.GradientDrawable(
-                            android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
-                            intArrayOf(
-                                android.graphics.Color.rgb(
-                                    45,
-                                    215,
-                                    78
-                                ),
-                                android.graphics.Color.TRANSPARENT
-                            )
-                        ).apply {
-
-                            cornerRadius =
-                                dp(16).toFloat()
-                        }
-                }
-
-            card.addView(
-                corner,
-                android.widget.FrameLayout.LayoutParams(
-                    dp(42),
-                    dp(42)
-                ).apply {
-
-                    gravity =
-                        android.view.Gravity.TOP or
-                        android.view.Gravity.START
-                }
+                )
             )
 
             return card
         }
-
 
         fun addRow(
             first: android.view.View,
@@ -635,7 +695,7 @@ class MainActivity : Activity() {
                 val lp =
                     android.widget.LinearLayout.LayoutParams(
                         0,
-                        dp(118),
+                        dp(124),
                         1f
                     )
 
@@ -654,7 +714,7 @@ class MainActivity : Activity() {
                 )
             }
 
-            panel.addView(row)
+            body.addView(row)
         }
 
         addRow(
@@ -665,13 +725,13 @@ class MainActivity : Activity() {
                 AppRoute.JOBS
             ),
             card(
-                "👥",
+                "♟",
                 "ลูกค้า",
                 "ข้อมูลลูกค้า",
                 AppRoute.CUSTOMERS
             ),
             card(
-                "฿",
+                "▥",
                 "การเงิน",
                 "รายรับ - รายจ่าย",
                 AppRoute.FINANCE
@@ -698,48 +758,85 @@ class MainActivity : Activity() {
                 "ข้อมูลและระบบ",
                 AppRoute.SETTINGS
             ),
-            6
+            8
         )
 
-        panel.addView(
+        val footer =
+            android.widget.LinearLayout(this).apply {
+                orientation =
+                    android.widget.LinearLayout.VERTICAL
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setPadding(
+                    dp(10),
+                    dp(8),
+                    dp(10),
+                    dp(8)
+                )
+
+                background =
+                    android.graphics.drawable.GradientDrawable().apply {
+                        setColor(
+                            android.graphics.Color.argb(
+                                238,
+                                0,
+                                61,
+                                35
+                            )
+                        )
+
+                        cornerRadius =
+                            dp(17).toFloat()
+
+                        setStroke(
+                            dp(1),
+                            lime
+                        )
+                    }
+            }
+
+        footer.addView(
             android.widget.TextView(this).apply {
-
-                text =
-                    "PC DRONE\nพ่นยา • หว่านปุ๋ย • พืชไร่ • พืชสวน"
-
-                textSize = 10f
+                text = "PC Drone"
+                textSize = 13f
+                typeface = kanitBold
 
                 gravity =
                     android.view.Gravity.CENTER
 
                 setTextColor(
-                    android.graphics.Color.rgb(
-                        0,
-                        75,
-                        45
-                    )
+                    android.graphics.Color.WHITE
                 )
+            }
+        )
 
-                setTypeface(
-                    typeface,
-                    android.graphics.Typeface.BOLD
-                )
+        footer.addView(
+            android.widget.TextView(this).apply {
+                text =
+                    "“ ดูแลด้วยใจ ทำงานแบบเข้าใจชาวสวน ”"
 
-                setPadding(
-                    0,
-                    dp(7),
-                    0,
-                    0
+                textSize = 10f
+                typeface = kanitRegular
+
+                gravity =
+                    android.view.Gravity.CENTER
+
+                setTextColor(
+                    android.graphics.Color.WHITE
                 )
             }
         )
 
         body.addView(
-            panel,
+            footer,
             android.widget.LinearLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                 android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            ).apply {
+                topMargin = dp(8)
+            }
         )
 
         setContentView(root)
