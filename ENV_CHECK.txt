@@ -1,0 +1,57 @@
+]633;E;echo "===== DATE =====";56728815-f85a-4749-8c91-546c9f30b702]633;C===== DATE =====
+Thu Sep 10 06:49:08 UTC 2026
+
+===== GIT =====
+main
+68c1cef
+?? ENV_CHECK.txt
+?? app/src/main/java/com/pcdrone/v3plus/data/local/CustomerEntity.kt
+
+===== JAVA =====
+/home/codespace/java/current/bin/java
+openjdk version "25.0.2" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13053558 (build 25.0.2+10-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13053558 (build 25.0.2+10-LTS, mixed mode, sharing)
+JAVA_HOME=/usr/local/sdkman/candidates/java/current
+
+===== GRADLE =====
+
+------------------------------------------------------------
+Gradle 8.13
+------------------------------------------------------------
+
+Build time:    2025-02-25 09:22:14 UTC
+Revision:      073314332697ba45c16c0a0ce1891fa6794179ff
+
+Kotlin:        2.0.21
+Groovy:        3.0.22
+Ant:           Apache Ant(TM) version 1.10.15 compiled on August 25 2024
+Launcher JVM:  25.0.2 (Microsoft 25.0.2+10-LTS)
+Daemon JVM:    /usr/local/sdkman/candidates/java/25.0.2-ms (no JDK specified, using current Java home)
+OS:            Linux 6.8.0-1064-azure amd64
+
+
+===== ANDROID SDK =====
+ANDROID_HOME=
+ANDROID_SDK_ROOT=
+
+===== BUILD TOOLS =====
+
+===== SDK PLATFORMS =====
+
+===== APP CONFIG =====
+10:    namespace = "com.pcdrone.v3plus"
+11:    compileSdk = 36
+14:        applicationId = "com.pcdrone.v3plus"
+15:        minSdk = 26
+16:        targetSdk = 36
+17:        versionCode = 1
+18:        versionName = "3.0.0"
+
+===== KOTLIN/JAVA TARGET =====
+22:        sourceCompatibility = JavaVersion.VERSION_17
+23:        targetCompatibility = JavaVersion.VERSION_17
+29:        jvmTarget = JvmTarget.JVM_17
+
+===== APK CURRENT =====
+-rw-rw-rw- 1 codespace codespace 2.0M Sep  6 15:24 app/build/outputs/apk/debug/app-debug.apk
