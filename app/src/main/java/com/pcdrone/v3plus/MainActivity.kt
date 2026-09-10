@@ -82,12 +82,35 @@ class MainActivity : Activity() {
     }
 
 
+    // PC_DRONE_ANDROID_BACK_PHASE1
+    private var currentMainRoute: AppRoute =
+        AppRoute.DASHBOARD
+
     private fun showScreen(route: AppRoute) {
+        currentMainRoute = route
+
         when (route) {
             AppRoute.DASHBOARD -> showDashboardV2()
             AppRoute.MONEY_MANAGER -> showMoneyManager()
             else -> showPlaceholder(route)
         }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+
+        if (
+            currentMainRoute !=
+                AppRoute.DASHBOARD
+        ) {
+            showScreen(
+                AppRoute.DASHBOARD
+            )
+            return
+        }
+
+        // อยู่ Home: ไม่ปิดแอปด้วย Back
+        // ผู้ใช้สามารถใช้ปุ่ม Home ของ Android เพื่อออก/ย่อแอป
     }
 
 
