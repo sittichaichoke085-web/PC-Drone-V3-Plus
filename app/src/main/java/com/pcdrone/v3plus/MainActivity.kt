@@ -13,6 +13,9 @@ import com.pcdrone.v3plus.navigation.AppRoute
 
 class MainActivity : Activity() {
 
+    // หน้าปัจจุบัน ใช้ควบคุมปุ่ม Back ของ Android
+    private var currentRoute: AppRoute = AppRoute.DASHBOARD
+
     private val greenDark = Color.rgb(7, 91, 36)
     private val green = Color.rgb(11, 122, 48)
     private val black = Color.rgb(17, 17, 17)
@@ -22,7 +25,580 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         showScreen(AppRoute.DASHBOARD)
+
+        // =====================================================
+        // ANDROID 13+ / ANDROID 16 SYSTEM BACK
+        // Android รุ่นใหม่ไม่ควรพึ่ง onBackPressed() อย่างเดียว
+        // =====================================================
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            onBackInvokedDispatcher.registerOnBackInvokedCallback(
+                android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
+            ) {
+                handleSystemBack()
+            }
+        }
     }
+
+
+
+    // =========================================================
+    // PC_DRONE_ANDROID_SYSTEM_BACK
+    // หน้ารอง -> กลับ Dashboard ใหม่
+    // Dashboard -> ออกจากแอปตามปกติ
+    // =========================================================
+    
+
+
+    // =========================================================
+    // PC_DRONE_GLOBAL_ANDROID_BACK_STACK
+    //
+    // จำ View ทุกหน้าที่เปิดใน MainActivity
+    //
+    // Home
+    //   -> บริหารเงิน
+    //   -> รายละเอียด
+    //   -> หน้าย่อย
+    //
+    // Android Back:
+    // หน้าย่อย -> รายละเอียด -> บริหารเงิน -> Home -> Exit
+    //
+    // ใช้ได้กับทุกหน้าที่เปลี่ยนด้วย setContentView(View)
+    // =========================================================
+
+    private data class AndroidScreenState(
+        val key: String,
+        val view: android.view.View
+    )
+
+    private val androidScreenBackStack =
+        java.util.ArrayDeque<AndroidScreenState>()
+
+    private var androidCurrentScreen:
+        AndroidScreenState? = null
+
+    /**
+     * หาให้ได้ว่า setContentView ถูกเรียกมาจาก show... ตัวไหน
+     * เพื่อแยก "หน้าจริง" ออกจากการ redraw หน้าเดิม
+     */
+    private fun detectAndroidScreenKey(
+        view: android.view.View
+    ): String {
+
+        val caller =
+            Throwable()
+                .stackTrace
+                .firstOrNull { element ->
+
+                    element.className ==
+                        this@MainActivity.javaClass.name &&
+
+                    element.methodName
+                        .startsWith("show") &&
+
+                    element.methodName !=
+                        "showScreen"
+                }
+                ?.methodName
+                ?: "VIEW_" +
+                    System.identityHashCode(view)
+
+        // showPlaceholder ใช้หลาย route
+        // จึงเติม route เข้าไปเพื่อไม่ให้หน้าต่างคนละเมนูชนกัน
+        return if (
+            caller == "showPlaceholder"
+        ) {
+            caller + "_" + currentRoute.name
+        } else {
+            caller
+        }
+    }
+
+
+    /**
+     * ดักทุกหน้าที่ใช้ setContentView(View)
+     *
+     * ถ้าเป็น "หน้าใหม่"
+     * -> เก็บหน้าปัจจุบันลง Back Stack
+     *
+     * ถ้าเป็น redraw หน้าเดิม
+     * -> ไม่เพิ่ม history ซ้ำ
+     */
+    // =========================================================
+    // GLOBAL NAVIGATION BAR
+    // ทุกหน้ารอง:
+    // [<]                                 [Home]
+    //
+    // Back = history เดียวกับ Android system Back
+    // Home = กลับ Dashboard และล้าง history ทั้งหมด
+    // =========================================================
+
+    private var suppressNextBackStackPush = false
+
+
+    private fun hideLegacyBackButtons(
+        root: android.view.View
+    ) {
+        if (root is android.widget.Button) {
+
+            val t =
+                root.text
+                    ?.toString()
+                    ?.trim()
+                    ?: ""
+
+            if (
+                t == "กลับ" ||
+                t == "ย้อนกลับ" ||
+                t == "<" ||
+                t == "←" ||
+                t == "‹" ||
+                t.contains("ย้อนกลับ")
+            ) {
+                root.visibility =
+                    android.view.View.GONE
+            }
+        }
+
+        if (root is android.view.ViewGroup) {
+
+            for (
+                i in 0 until root.childCount
+            ) {
+                hideLegacyBackButtons(
+                    root.getChildAt(i)
+                )
+            }
+        }
+    }
+
+
+    private fun goHomeDirect() {
+
+        androidScreenBackStack.clear()
+
+        androidCurrentScreen = null
+
+        currentRoute =
+            AppRoute.DASHBOARD
+
+        suppressNextBackStackPush =
+            true
+
+        showDashboard()
+    }
+
+
+    private fun makeGlobalNavBar():
+        android.widget.LinearLayout {
+
+        val buttonGreen =
+            android.graphics.Color.rgb(
+                0,
+                145,
+                70
+            )
+
+        val buttonGreenDark =
+            android.graphics.Color.rgb(
+                0,
+                105,
+                50
+            )
+
+        fun navButtonBackground():
+            android.graphics.drawable.StateListDrawable {
+
+            val normal =
+                android.graphics.drawable.GradientDrawable().apply {
+
+                    shape =
+                        android.graphics.drawable.GradientDrawable.RECTANGLE
+
+                    setColor(buttonGreen)
+
+                    cornerRadius =
+                        dp(14).toFloat()
+
+                    setStroke(
+                        dp(1),
+                        buttonGreenDark
+                    )
+                }
+
+            val pressed =
+                android.graphics.drawable.GradientDrawable().apply {
+
+                    shape =
+                        android.graphics.drawable.GradientDrawable.RECTANGLE
+
+                    setColor(buttonGreenDark)
+
+                    cornerRadius =
+                        dp(14).toFloat()
+                }
+
+            return android.graphics.drawable.StateListDrawable().apply {
+
+                addState(
+                    intArrayOf(
+                        android.R.attr.state_pressed
+                    ),
+                    pressed
+                )
+
+                addState(
+                    intArrayOf(),
+                    normal
+                )
+            }
+        }
+
+
+        val bar =
+            android.widget.LinearLayout(this).apply {
+
+                orientation =
+                    android.widget.LinearLayout.HORIZONTAL
+
+                gravity =
+                    android.view.Gravity.CENTER_VERTICAL
+
+                setPadding(
+                    dp(12),
+                    dp(10),
+                    dp(12),
+                    dp(10)
+                )
+
+                setBackgroundColor(
+                    android.graphics.Color.WHITE
+                )
+
+                elevation =
+                    dp(4).toFloat()
+            }
+
+
+        if (
+            android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.KITKAT_WATCH
+        ) {
+
+            bar.setOnApplyWindowInsetsListener { _, insets ->
+
+                bar.setPadding(
+                    dp(12),
+                    dp(10) +
+                        insets.systemWindowInsetTop,
+                    dp(12),
+                    dp(10)
+                )
+
+                insets
+            }
+
+            bar.requestApplyInsets()
+        }
+
+
+        val backButton =
+            android.widget.Button(this).apply {
+
+                text = "<"
+
+                textSize = 24f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                isAllCaps = false
+
+                minimumWidth = 0
+                minWidth = 0
+
+                setPadding(
+                    dp(16),
+                    0,
+                    dp(16),
+                    0
+                )
+
+                background =
+                    navButtonBackground()
+
+                elevation =
+                    dp(6).toFloat()
+
+                stateListAnimator =
+                    android.animation.StateListAnimator().apply {
+
+                        addState(
+                            intArrayOf(
+                                android.R.attr.state_pressed
+                            ),
+                            android.animation.ObjectAnimator.ofFloat(
+                                this@apply,
+                                "translationZ",
+                                dp(1).toFloat()
+                            )
+                        )
+
+                        addState(
+                            intArrayOf(),
+                            android.animation.ObjectAnimator.ofFloat(
+                                this@apply,
+                                "translationZ",
+                                dp(6).toFloat()
+                            )
+                        )
+                    }
+
+                setOnClickListener {
+
+                    handleSystemBack()
+                }
+            }
+
+
+        val spacer =
+            android.view.View(this)
+
+
+        val homeButton =
+            android.widget.Button(this).apply {
+
+                text = "Home"
+
+                textSize = 17f
+
+                setTextColor(
+                    android.graphics.Color.WHITE
+                )
+
+                isAllCaps = false
+
+                setPadding(
+                    dp(18),
+                    0,
+                    dp(18),
+                    0
+                )
+
+                background =
+                    navButtonBackground()
+
+                elevation =
+                    dp(6).toFloat()
+
+                stateListAnimator =
+                    android.animation.StateListAnimator().apply {
+
+                        addState(
+                            intArrayOf(
+                                android.R.attr.state_pressed
+                            ),
+                            android.animation.ObjectAnimator.ofFloat(
+                                this@apply,
+                                "translationZ",
+                                dp(1).toFloat()
+                            )
+                        )
+
+                        addState(
+                            intArrayOf(),
+                            android.animation.ObjectAnimator.ofFloat(
+                                this@apply,
+                                "translationZ",
+                                dp(6).toFloat()
+                            )
+                        )
+                    }
+
+                setOnClickListener {
+
+                    goHomeDirect()
+                }
+            }
+
+
+        bar.addView(
+            backButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                dp(46)
+            )
+        )
+
+
+        bar.addView(
+            spacer,
+            android.widget.LinearLayout.LayoutParams(
+                0,
+                1,
+                1f
+            )
+        )
+
+
+        bar.addView(
+            homeButton,
+            android.widget.LinearLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+                dp(46)
+            )
+        )
+
+
+        return bar
+    }
+
+
+    override fun setContentView(
+        view: android.view.View
+    ) {
+
+        val newKey =
+            detectAndroidScreenKey(view)
+
+        val previous =
+            androidCurrentScreen
+
+
+        val isDashboard =
+            newKey == "showDashboard"
+
+
+        /*
+         * ซ่อนปุ่มกลับแบบเดิมก่อน
+         * เพื่อให้ทุกหน้ามี [<] แบบเดียวกัน
+         */
+        if (!isDashboard) {
+
+            hideLegacyBackButtons(view)
+        }
+
+
+        /*
+         * หน้า Home แสดง view เดิมตรงๆ
+         *
+         * หน้ารองถูกครอบด้วย Global Navigation Bar
+         */
+        val displayedView:
+            android.view.View =
+            if (isDashboard) {
+
+                view
+
+            } else {
+
+                android.widget.LinearLayout(this).apply {
+
+                    orientation =
+                        android.widget.LinearLayout.VERTICAL
+
+                    setBackgroundColor(
+                        android.graphics.Color.WHITE
+                    )
+
+                    addView(
+                        makeGlobalNavBar(),
+                        android.widget.LinearLayout.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    )
+
+                    addView(
+                        view,
+                        android.widget.LinearLayout.LayoutParams(
+                            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                            0,
+                            1f
+                        )
+                    )
+                }
+            }
+
+
+        if (suppressNextBackStackPush) {
+
+            suppressNextBackStackPush =
+                false
+
+        } else if (
+            previous != null &&
+            previous.key != newKey
+        ) {
+
+            androidScreenBackStack
+                .addLast(previous)
+        }
+
+
+        super.setContentView(
+            displayedView
+        )
+
+
+        androidCurrentScreen =
+            AndroidScreenState(
+                key = newKey,
+                view = displayedView
+            )
+    }
+
+
+    // =========================================================
+    // ANDROID SYSTEM BACK
+    // =========================================================
+
+    
+    // =========================================================
+    // CENTRAL BACK HANDLER
+    // ใช้ร่วมกันทั้ง Android รุ่นใหม่และรุ่นเก่า
+    // =========================================================
+    private fun handleSystemBack() {
+
+        if (androidScreenBackStack.isNotEmpty()) {
+
+            val previous =
+                androidScreenBackStack.removeLast()
+
+            /*
+             * ใช้ super.setContentView โดยตรง
+             * เพื่อไม่ให้หน้าที่เราย้อนกลับถูก push ซ้ำ
+             */
+            super.setContentView(previous.view)
+
+            androidCurrentScreen = previous
+
+            return
+        }
+
+        /*
+         * stack ว่าง = อยู่หน้า root แล้ว
+         * จึงออกจาก Activity
+         */
+        finish()
+    }
+
+
+    // Android 12 และเก่ากว่า
+    @Suppress("DEPRECATION")
+    override fun onBackPressed() {
+
+        if (android.os.Build.VERSION.SDK_INT < 33) {
+            handleSystemBack()
+        } else {
+            /*
+             * Android 13+ ใช้ OnBackInvokedDispatcher
+             * ปกติจะไม่เข้าตรงนี้
+             */
+            handleSystemBack()
+        }
+    }
+
 
 
     // PC_DRONE_RINGTONE_PICKER_RESULT
@@ -83,6 +659,8 @@ class MainActivity : Activity() {
 
 
     private fun showScreen(route: AppRoute) {
+        currentRoute = route
+
         when (route) {
             AppRoute.DASHBOARD -> showDashboard()
             AppRoute.MONEY_MANAGER -> showMoneyManager()
