@@ -525,24 +525,41 @@ class MainActivity : Activity() {
                         val w = width.toFloat()
                         val h = height.toFloat()
 
+                        // PC_DRONE_HOME_V4_CARD_CORNER_FULLY_ROUNDED
                         path.moveTo(0f, 0f)
-                        path.lineTo(w, 0f)
 
-                        // ขอบด้านในโค้งลงอย่างนุ่ม ไม่เป็นสามเหลี่ยมแหลม
-                        path.cubicTo(
-                            w * 0.82f,
-                            h * 0.08f,
-                            w * 0.70f,
-                            h * 0.36f,
-                            w * 0.50f,
-                            h * 0.55f
+                        // ด้านบนตรงสั้น ๆ ก่อนเข้ามุมโค้ง
+                        path.lineTo(
+                            w * 0.68f,
+                            0f
                         )
 
+                        // มุมบนขวาของแถบเขียว โค้งมนแทนปลายแหลม
                         path.cubicTo(
-                            w * 0.30f,
+                            w * 0.82f,
+                            0f,
+                            w * 0.94f,
+                            h * 0.05f,
+                            w * 0.96f,
+                            h * 0.18f
+                        )
+
+                        // ไล่โค้งลงด้านใน
+                        path.cubicTo(
+                            w * 0.92f,
+                            h * 0.32f,
+                            w * 0.70f,
+                            h * 0.47f,
+                            w * 0.52f,
+                            h * 0.60f
+                        )
+
+                        // โค้งต่อเนื่องลงซ้าย ไม่เกิดมุมหัก
+                        path.cubicTo(
+                            w * 0.32f,
                             h * 0.75f,
-                            w * 0.14f,
-                            h * 0.86f,
+                            w * 0.15f,
+                            h * 0.88f,
                             0f,
                             h
                         )
