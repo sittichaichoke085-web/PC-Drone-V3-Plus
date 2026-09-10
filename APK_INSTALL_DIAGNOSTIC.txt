@@ -1,0 +1,79 @@
+]633;E;echo "===== PC DRONE APK INSTALL DIAGNOSTIC =====";56728815-f85a-4749-8c91-546c9f30b702]633;C===== PC DRONE APK INSTALL DIAGNOSTIC =====
+Thu Sep 10 07:14:09 UTC 2026
+
+BRANCH: ui-stable-restart
+COMMIT: e9497c9
+
+===== JAVA =====
+openjdk version "21.0.10" 2026-01-20 LTS
+OpenJDK Runtime Environment Microsoft-13106412 (build 21.0.10+7-LTS)
+OpenJDK 64-Bit Server VM Microsoft-13106412 (build 21.0.10+7-LTS, mixed mode, sharing)
+
+===== NEW APK =====
+-rw-rw-rw- 1 codespace codespace 2.0M Sep 10 07:03 final_build/PC-Drone-V3.1-SAFE-BUILD.apk
+final_build/PC-Drone-V3.1-SAFE-BUILD.apk: Android package (APK), with gradle app-metadata.properties, with APK Signing Block
+    testing: kotlin/annotation/annotation.kotlin_builtins   OK
+    testing: kotlin/collections/collections.kotlin_builtins   OK
+    testing: kotlin/concurrent/atomics/atomics.kotlin_builtins   OK
+    testing: kotlin/coroutines/coroutines.kotlin_builtins   OK
+    testing: kotlin/internal/internal.kotlin_builtins   OK
+    testing: kotlin/kotlin.kotlin_builtins   OK
+    testing: kotlin/ranges/ranges.kotlin_builtins   OK
+    testing: kotlin/reflect/reflect.kotlin_builtins   OK
+    testing: classes3.dex             OK
+No errors detected in compressed data of final_build/PC-Drone-V3.1-SAFE-BUILD.apk.
+
+===== ANDROID BUILD VERSION =====
+11:    compileSdk = 36
+14:        applicationId = "com.pcdrone.v3plus"
+15:        minSdk = 26
+16:        targetSdk = 36
+17:        versionCode = 1
+18:        versionName = "3.0.0"
+
+===== FIND APKSIGNER =====
+APKSIGNER=/home/codespace/android-sdk/build-tools/36.0.0/apksigner
+
+===== NEW APK SIGNATURE =====
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: 98f928badc8e1384c9ce076e3fd5eb8d7898e4d390c62c9ce6d4d07d2d8a9285
+Signer #1 certificate SHA-1 digest: 766c649489b0388a3ec6fbbc98f8c9f190fa8b2e
+Signer #1 certificate MD5 digest: d1ebc04d471890c1ef9ccc012f5248bd
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: e57c663ad7d936139b69f4ee030dd8f62fbfa8bae44977b5c574f48137f6264b
+Signer #1 public key SHA-1 digest: f820d0da345e2295435d626671dc772ae373a09d
+Signer #1 public key MD5 digest: ac714e523534ba1e1889dec2fe3034f4
+
+===== OLD APK SIGNATURE SAMPLES =====
+
+----- final_build/PC-Drone-V3-Plus.apk -----
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: 22216d78c1e34dad0ec2f322a852e9facc58fc30c7a18c6ed3efdf9e6417f134
+Signer #1 certificate SHA-1 digest: 58b334cfe17058dd0076475b9381bef5b3632807
+Signer #1 certificate MD5 digest: a626c18e5c06c4ec33b073686b1ea1b9
+
+----- final_build/PC-Drone-V3-Plus-UI1.3.apk -----
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: 22216d78c1e34dad0ec2f322a852e9facc58fc30c7a18c6ed3efdf9e6417f134
+Signer #1 certificate SHA-1 digest: 58b334cfe17058dd0076475b9381bef5b3632807
+Signer #1 certificate MD5 digest: a626c18e5c06c4ec33b073686b1ea1b9
+
+----- final_build/PC-Drone-V3.1-v3.0.1-MONTHLY-EXPENSE-FINAL-TEST.apk -----
+Signer #1 certificate DN: C=US, O=Android, CN=Android Debug
+Signer #1 certificate SHA-256 digest: 22216d78c1e34dad0ec2f322a852e9facc58fc30c7a18c6ed3efdf9e6417f134
+Signer #1 certificate SHA-1 digest: 58b334cfe17058dd0076475b9381bef5b3632807
+Signer #1 certificate MD5 digest: a626c18e5c06c4ec33b073686b1ea1b9
+
+===== DEBUG KEYSTORE =====
+-rw-r--r-- 1 codespace codespace 2.6K Sep  6 15:12 /home/codespace/.android/debug.keystore
+
+===== END =====
