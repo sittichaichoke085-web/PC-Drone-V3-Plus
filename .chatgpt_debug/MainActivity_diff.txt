@@ -1,0 +1,45 @@
+diff --git a/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt b/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+index 23f0139..0e5940b 100644
+--- a/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
++++ b/app/src/main/java/com/pcdrone/v3plus/MainActivity.kt
+@@ -13,6 +13,9 @@ import com.pcdrone.v3plus.navigation.AppRoute
+ 
+ class MainActivity : Activity() {
+ 
++    // หน้าปัจจุบัน ใช้ควบคุมปุ่ม Back ของ Android
++    private var currentRoute: AppRoute = AppRoute.DASHBOARD
++
+     private val greenDark = Color.rgb(7, 91, 36)
+     private val green = Color.rgb(11, 122, 48)
+     private val black = Color.rgb(17, 17, 17)
+@@ -25,6 +28,21 @@ class MainActivity : Activity() {
+     }
+ 
+ 
++
++    // =========================================================
++    // PC_DRONE_ANDROID_SYSTEM_BACK
++    // หน้ารอง -> กลับ Dashboard ใหม่
++    // Dashboard -> ออกจากแอปตามปกติ
++    // =========================================================
++    @Suppress("DEPRECATION")
++    override fun onBackPressed() {
++        if (currentRoute != AppRoute.DASHBOARD) {
++            showScreen(AppRoute.DASHBOARD)
++        } else {
++            super.onBackPressed()
++        }
++    }
++
+     // PC_DRONE_RINGTONE_PICKER_RESULT
+     override fun onActivityResult(
+         requestCode: Int,
+@@ -83,6 +101,8 @@ class MainActivity : Activity() {
+ 
+ 
+     private fun showScreen(route: AppRoute) {
++        currentRoute = route
++
+         when (route) {
+             AppRoute.DASHBOARD -> showDashboard()
+             AppRoute.MONEY_MANAGER -> showMoneyManager()

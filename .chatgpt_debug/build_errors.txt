@@ -1,0 +1,4 @@
+4:FAILURE: Build failed with an exception.
+6:* What went wrong:
+14:* Exception is:
+15:java.lang.IllegalArgumentException: 25.0.2
