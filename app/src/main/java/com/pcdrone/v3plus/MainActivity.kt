@@ -134,6 +134,32 @@ class MainActivity : Activity() {
             )
         )
 
+        // PC_DRONE_HOME_V4_PREMIUM_TOP_GRADIENT
+        val topShade =
+            android.view.View(this).apply {
+                background =
+                    android.graphics.drawable.GradientDrawable(
+                        android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(
+                            android.graphics.Color.argb(245, 0, 42, 29),
+                            android.graphics.Color.argb(220, 0, 48, 32),
+                            android.graphics.Color.argb(145, 0, 52, 35),
+                            android.graphics.Color.argb(45, 0, 45, 30),
+                            android.graphics.Color.TRANSPARENT
+                        )
+                    )
+            }
+
+        root.addView(
+            topShade,
+            android.widget.FrameLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                dp(300)
+            ).apply {
+                gravity = android.view.Gravity.TOP
+            }
+        )
+
         // =====================================================
         // BRANDING
         // =====================================================
@@ -389,7 +415,7 @@ class MainActivity : Activity() {
 
                 leftMargin = dp(16)
                 rightMargin = dp(16)
-                topMargin = dp(24)
+                topMargin = dp(52) // PC_DRONE_HOME_V4_SAFE_STATUS_BAR
             }
         )
 
@@ -495,19 +521,30 @@ class MainActivity : Activity() {
                         val path =
                             android.graphics.Path()
 
-                        path.moveTo(
-                            0f,
-                            0f
+                        // PC_DRONE_HOME_V4_CURVED_CORNER
+                        val w = width.toFloat()
+                        val h = height.toFloat()
+
+                        path.moveTo(0f, 0f)
+                        path.lineTo(w, 0f)
+
+                        // ขอบด้านในโค้งลงอย่างนุ่ม ไม่เป็นสามเหลี่ยมแหลม
+                        path.cubicTo(
+                            w * 0.82f,
+                            h * 0.08f,
+                            w * 0.70f,
+                            h * 0.36f,
+                            w * 0.50f,
+                            h * 0.55f
                         )
 
-                        path.lineTo(
-                            width.toFloat(),
-                            0f
-                        )
-
-                        path.lineTo(
+                        path.cubicTo(
+                            w * 0.30f,
+                            h * 0.75f,
+                            w * 0.14f,
+                            h * 0.86f,
                             0f,
-                            height.toFloat()
+                            h
                         )
 
                         path.close()
